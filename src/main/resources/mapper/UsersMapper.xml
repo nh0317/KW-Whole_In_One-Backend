@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Nature_Mobility.Whole_In_One.Backend.mapper.UsersMapper">
+
+    <sql id="insertUser">
+        userNickname,userName,userId,userPassword,userEmail
+    </sql>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="userIdx" parameterType="DTOUsers">
+        INSERT INTO users(userNickname,userName,userId,userPassword,userEmail,userImage)
+        VALUES( #{userNickname}, #{userName}, #{userId}, #{userPassword}, #{userEmail},#{userImage} )
+        ON DUPLICATE KEY UPDATE
+            userNickname = #{userNickname},
+            userName = #{userName},
+            userId = #{userId},
+            userPassword = #{userPassword},
+            userStatus = #{userStatus},
+            userPoint = #{userPoint},
+            userEmail = #{userEmail},
+            userImage = #{userImage}
+    </insert>
+
+    <select id="findById" resultType="DTOUsers">
+        SELECT *
+        FROM users
+        WHERE userId=#{userId}
+    </select>
+
+    <delete id="delete" parameterType="DTOUsers">
+        DELETE FROM users
+        WHERE userIdx=#{userIdx}
+    </delete>
+
+    <select id="findByStatus" resultType="DTOUsers">
+        SELECT *
+        FROM users
+        WHERE userStatus=#{status}
+    </select>
+
+    <select id="findByEmailAndStatus" resultType="DTOUsers">
+        SELECT *
+        FROM users
+        WHERE userStatus=#{status} And userEmail=#{email}
+    </select>
+
+    <select id="findByStatusAndNicknameIsContaining" resultType="DTOUsers">
+        SELECT *
+        FROM users
+        WHERE userStatus=#{status} And userNickname LIKE CONCAT('%',#{word},'%')
+    </select>
+
+
+</mapper>
