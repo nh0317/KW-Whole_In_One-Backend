@@ -1,4 +1,4 @@
-package Nature_Mobility.Whole_In_One.Backend.src;
+package Nature_Mobility.Whole_In_One.Backend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
