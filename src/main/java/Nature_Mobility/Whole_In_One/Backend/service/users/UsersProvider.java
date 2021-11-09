@@ -1,7 +1,6 @@
 package Nature_Mobility.Whole_In_One.Backend.service.users;
 
 import Nature_Mobility.Whole_In_One.Backend.config.BaseException;
-import Nature_Mobility.Whole_In_One.Backend.config.BaseResponse;
 import Nature_Mobility.Whole_In_One.Backend.config.secret.Secret;
 import Nature_Mobility.Whole_In_One.Backend.domain.users.*;
 import Nature_Mobility.Whole_In_One.Backend.mapper.UsersMapper;
@@ -38,7 +37,7 @@ public class UsersProvider {
      */
     public List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
-        List<DTOUsers> userInfoList;
+        List<UserInfo> userInfoList;
         try {
             if (word == null) { // 전체 조회
                 userInfoList = usersMapper.findByStatus(ACTIVE.getValue());
@@ -65,7 +64,7 @@ public class UsersProvider {
      */
     public GetUserRes retrieveUserInfo(Long userIdx) throws BaseException {
         // 1. DB에서 userIdx로 UserInfo 조회
-        DTOUsers userInfo = retrieveUserInfoByUserIdx(userIdx);
+        UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
 
         // 2. UserInfoRes로 변환하여 return
         Long idx = userInfo.getUserIdx();
@@ -84,7 +83,7 @@ public class UsersProvider {
      * @throws BaseException
      */
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
-        DTOUsers userInfo = new DTOUsers();
+        UserInfo userInfo = new UserInfo();
         // 1. DB에서 UserInfo 조회
         String userId=postLoginReq.getId();
         if(userId.contains("@")){
@@ -120,7 +119,7 @@ public class UsersProvider {
      * @throws BaseException
      */
     public PostLoginRes checkPW(Long userIdx, String pw) throws BaseException {
-        DTOUsers userInfo = new DTOUsers();
+        UserInfo userInfo = new UserInfo();
         // 1. DB에서 UserInfo 조회
         userInfo = retrieveUserInfoByUserIdx(userIdx);
 
@@ -151,9 +150,9 @@ public class UsersProvider {
      * @return DTOUsers
      * @throws BaseException
      */
-    public DTOUsers retrieveUserInfoByUserIdx(Long userIdx) throws BaseException {
+    public UserInfo retrieveUserInfoByUserIdx(Long userIdx) throws BaseException {
         // 1. DB에서 UserInfo 조회
-        DTOUsers existsDTOUser;
+        UserInfo existsDTOUser;
         try {
             existsDTOUser = usersMapper.findByIdx(userIdx).orElse(null);
         } catch (Exception ignored) {
@@ -161,7 +160,7 @@ public class UsersProvider {
         }
 
         // 2. 존재하는 회원인지 확인
-        DTOUsers userInfo=null;
+        UserInfo userInfo=null;
         if (existsDTOUser != null) {
             if(existsDTOUser.getUserStatus().equals(ACTIVE.getValue()))
                 userInfo=existsDTOUser;
@@ -183,9 +182,9 @@ public class UsersProvider {
      * @return DTOUsers
      * @throws BaseException
      */
-    public DTOUsers retrieveUserInfoByEmail(String email) throws BaseException {
-        List<DTOUsers> existsDTOUser = new ArrayList<>();
-        DTOUsers userInfo = null;
+    public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
+        List<UserInfo> existsDTOUser = new ArrayList<>();
+        UserInfo userInfo = null;
         try {
             existsDTOUser = usersMapper.findByEmailAndStatus(email, ACTIVE.getValue());
         }
@@ -211,9 +210,9 @@ public class UsersProvider {
      * @return DTOUsers
      * @throws BaseException
      */
-    public DTOUsers retrieveUserInfoByID(String id) throws BaseException{
-        List<DTOUsers> existsDTOUser = new ArrayList<>();
-        DTOUsers userInfo = null;
+    public UserInfo retrieveUserInfoByID(String id) throws BaseException{
+        List<UserInfo> existsDTOUser = new ArrayList<>();
+        UserInfo userInfo = null;
         try {
             existsDTOUser = usersMapper.findByIdAndStatus(id, ACTIVE.getValue());
         }
@@ -237,7 +236,7 @@ public class UsersProvider {
      * @throws BaseException
      */
     public GetMyPageRes myPage(Long userIdx) throws BaseException {
-        DTOUsers user;
+        UserInfo user;
         Integer point=0, cntReservation=0, cntStoreLike=0, cntCoupon=0;
         String image=null, nickName=null;
         try{

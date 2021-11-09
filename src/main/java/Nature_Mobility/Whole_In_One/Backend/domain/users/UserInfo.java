@@ -1,58 +1,61 @@
-package Nature_Mobility.Whole_In_One.Backend.domain.users;//package com.softsquared.template.src.user.models;
-//
-//import com.softsquared.template.config.BaseEntity;
-//import lombok.*;
-//
-//import javax.persistence.*;
-//
-//@NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
-//@EqualsAndHashCode(callSuper = false)
-//@Data // from lombok
-//@Entity // 필수, Class 를 Database Table화 해주는 것이다
-//@Table(name = "UserInfo") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
-//public class UserInfo extends BaseEntity {
-//    /**
-//     * 유저 ID
-//     */
-//    @Id // PK를 의미하는 어노테이션
-//    @Column(name = "id", nullable = false, updatable = false)
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private int id;
-//
-//    /**
-//     * 이메일
-//     */
-//    @Column(name = "email", nullable = false, length = 100)
-//    private String email;
-//
-//    /**
-//     * 비밀번호
-//     */
-//    @Column(name = "password", nullable = false)
-//    private String password;
-//
-//    /**
-//     * 닉네임
-//     */
-//    @Column(name = "nickname", nullable = false, length = 30)
-//    private String nickname;
-//
-//    /**
-//     * 전화번호
-//     */
-//    @Column(name = "phoneNumber", length = 30)
-//    private String phoneNumber;
-//
-//    /**
-//     * 상태
-//     */
-//    @Column(name = "status", nullable = false, length = 10)
-//    private String status = "ACTIVE";
-//
-//    public UserInfo(String email, String password, String nickname, String phoneNumber) {
-//        this.email = email;
-//        this.password = password;
-//        this.nickname = nickname;
-//        this.phoneNumber = phoneNumber;
-//    }
-//}
+package Nature_Mobility.Whole_In_One.Backend.domain.users;
+
+import Nature_Mobility.Whole_In_One.Backend.domain.DTOCommon;
+import Nature_Mobility.Whole_In_One.Backend.domain.UserStatus;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class UserInfo extends DTOCommon {
+    // 유저인덱스
+    private Long userIdx;
+
+    // 유저 닉네임
+    private String userNickname;
+
+    // 유저이름
+    private String userName;
+
+    // 유저 아이디
+    private String userId;
+
+    // 유저 비밀번호 sha512
+    private String userPassword;
+
+    // 유저 이메일
+    private String userEmail;
+
+    // 계정상태 0:활성화, 1:비활성화, 2:탈퇴
+    private Integer userStatus;
+
+    // 유저 포인트
+    private Integer userPoint;
+
+    // 유저 이미지 profileImage
+    private String userImage;
+
+    //mypage (join)
+    private Integer cntReservation; //예약 수
+    private Integer cntStoreLike; // 찜한 매장 수
+    private Integer cntCoupon; // 쿠폰 수
+
+    public UserInfo(String email, String userId, String password, String nickname, String userName) {
+        this.userEmail = email;
+        this.userId=userId;
+        this.userPassword = password;
+        this.userNickname = nickname;
+        this.userName = userName;
+    }
+
+    public UserInfo(String email, String password, String nickname, String userName) {
+        this.userEmail = email;
+        this.userPassword = password;
+        this.userNickname = nickname;
+        this.userName = userName;
+    }
+
+    public UserInfo() {}
+}

@@ -34,16 +34,16 @@ public class UsersService {
      */
     public String checkEmail(String userEmail) throws BaseException {
         //false 이면 중복, true 이면 중복 X
-        DTOUsers users=null;
+        UserInfo userInfo =null;
         try {
-            users = usersProvider.retrieveUserInfoByEmail(userEmail);
-            log.info(users.toString());
+            userInfo = usersProvider.retrieveUserInfoByEmail(userEmail);
+            log.info(userInfo.toString());
         } catch (BaseException exception) {
             log.info(exception.getStatus().toString());
             if (exception.getStatus() != NOT_FOUND_USER)
                 throw exception;
         }
-        if (users != null)
+        if (userInfo != null)
             throw new BaseException(DUPLICATED_EMAIL);
         else  return userEmail+"_valid";
     }
@@ -56,14 +56,14 @@ public class UsersService {
      */
     public String checkID(String userID) throws BaseException {
         //false 이면 중복, true 이면 중복 X
-        DTOUsers users=null;
+        UserInfo userInfo =null;
         try {
-            users = usersProvider.retrieveUserInfoByID(userID);
+            userInfo = usersProvider.retrieveUserInfoByID(userID);
         } catch (BaseException exception) {
             if (exception.getStatus() != NOT_FOUND_USER)
                 throw exception;
         }
-        if (users != null)
+        if (userInfo != null)
             throw new BaseException(DUPLICATED_ID);
         else  return userID+"_valid";
     }
@@ -76,8 +76,8 @@ public class UsersService {
      * @throws BaseException
      */
     public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
-        DTOUsers existsEmail = null;
-        DTOUsers existsId = null;
+        UserInfo existsEmail = null;
+        UserInfo existsId = null;
         try {
             // 1-1. 이미 존재하는 회원이 있는지 조회
             existsId = usersProvider.retrieveUserInfoByID(postUserReq.getId());
@@ -114,7 +114,7 @@ public class UsersService {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
-        DTOUsers userInfo = new DTOUsers(email,id, password, nickname, name);
+        UserInfo userInfo = new UserInfo(email,id, password, nickname, name);
 
         // 3. 유저 정보 저장
         try {
@@ -141,23 +141,23 @@ public class UsersService {
      */
     public PatchUserRes updateUserInfo(Long userIdx, PatchUserReq patchUserReq) throws BaseException {
         try {
-            DTOUsers users = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
+            UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
             String email = patchUserReq.getEmail() + "_edited";
             String nickname = patchUserReq.getNickname()+"_edited";
             String name = patchUserReq.getName()+"_edited";
             String image = patchUserReq.getUserImage()+"_edited";
-            log.info(users.toString());
+            log.info(userInfo.toString());
 
             if (patchUserReq.getEmail() != null && patchUserReq.getEmail().length() != 0)
-                users.setUserName(patchUserReq.getEmail());
+                userInfo.setUserName(patchUserReq.getEmail());
             if (patchUserReq.getName() != null && patchUserReq.getName().length() != 0)
-                users.setUserName(patchUserReq.getName());
+                userInfo.setUserName(patchUserReq.getName());
             if (patchUserReq.getNickname() != null && patchUserReq.getNickname().length() != 0)
-                users.setUserNickname(patchUserReq.getNickname());
+                userInfo.setUserNickname(patchUserReq.getNickname());
             if (patchUserReq.getUserImage() != null && patchUserReq.getNickname().length() != 0)
-                users.setUserName(patchUserReq.getUserImage());
+                userInfo.setUserName(patchUserReq.getUserImage());
 
-            usersMapper.update(users);
+            usersMapper.update(userInfo);
             return new PatchUserRes(email, nickname, name,image);
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_PATCH_USER);
@@ -169,7 +169,7 @@ public class UsersService {
      * @throws BaseException
      */
     public void editPW(Long userIdx, PatchPWReq patchPWReq) throws BaseException {
-        DTOUsers userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_USER));
+        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_USER));
         String password;
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
@@ -208,7 +208,7 @@ public class UsersService {
          */
     public void deleteUserInfo(Long userIdx) throws BaseException {
         // 1. 존재하는 DTOUsers가 있는지 확인 후 저장
-        DTOUsers userInfo = usersProvider.retrieveUserInfoByUserIdx(userIdx);
+        UserInfo userInfo = usersProvider.retrieveUserInfoByUserIdx(userIdx);
 
         // 2-1. 해당 DTOUsers를 완전히 삭제
 //        try {
