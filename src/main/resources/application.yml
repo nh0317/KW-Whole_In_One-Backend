@@ -50,3 +50,8 @@ logging:
     # ????? ?? ?? ??
     Nature_Mobility.Whole_In_One.Backend : debug
     Nature_Mobility.weep.Whole_In_One.Backend.controller : debug
+
+springfox:
+  documentation:
+    swagger:
+      use-model-v3 : false

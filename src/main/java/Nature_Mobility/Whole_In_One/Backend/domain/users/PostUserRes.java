@@ -1,4 +1,4 @@
-package Nature_Mobility.Whole_In_One.Backend.src.user.models;
+package Nature_Mobility.Whole_In_One.Backend.domain.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PostUserRes {
-    private final int userId;
+    private final Long userIdx;
     private final String jwt;
 }

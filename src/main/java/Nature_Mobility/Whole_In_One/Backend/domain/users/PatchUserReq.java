@@ -1,4 +1,4 @@
-package Nature_Mobility.Whole_In_One.Backend.src.user.models;
+package Nature_Mobility.Whole_In_One.Backend.domain.users;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class PatchUserReq {
     private String email;
-    private String password;
-    private String confirmPassword;
     private String nickname;
-    private String phoneNumber;
+    private String name;
+    private String userImage;
 }

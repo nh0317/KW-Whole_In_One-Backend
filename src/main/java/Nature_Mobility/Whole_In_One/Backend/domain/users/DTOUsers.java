@@ -1,5 +1,7 @@
-package Nature_Mobility.Whole_In_One.Backend.domain;
+package Nature_Mobility.Whole_In_One.Backend.domain.users;
 
+import Nature_Mobility.Whole_In_One.Backend.domain.DTOCommon;
+import Nature_Mobility.Whole_In_One.Backend.domain.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DTOUsers extends DTOCommon{
+public class DTOUsers extends DTOCommon {
     // 유저인덱스
     private Long userIdx;
 
@@ -35,9 +37,21 @@ public class DTOUsers extends DTOCommon{
     // 유저 이미지 profileImage
     private String userImage;
 
+    //mypage (join)
+    private Integer cntReservation; //예약 수
+    private Integer cntStoreLike; // 찜한 매장 수
+    private Integer cntCoupon; // 쿠폰 수
+
     public DTOUsers(String email, String userId, String password, String nickname, String userName) {
         this.userEmail = email;
         this.userId=userId;
+        this.userPassword = password;
+        this.userNickname = nickname;
+        this.userName = userName;
+    }
+
+    public DTOUsers(String email, String password, String nickname, String userName) {
+        this.userEmail = email;
         this.userPassword = password;
         this.userNickname = nickname;
         this.userName = userName;

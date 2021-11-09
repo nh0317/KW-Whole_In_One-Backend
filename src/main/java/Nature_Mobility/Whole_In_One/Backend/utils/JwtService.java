@@ -6,11 +6,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import static Nature_Mobility.Whole_In_One.Backend.config.BaseResponseStatus.EMPTY_JWT;
@@ -20,15 +23,15 @@ import static Nature_Mobility.Whole_In_One.Backend.config.BaseResponseStatus.INV
 public class JwtService {
     /**
      * JWT 생성
-     * @param userId
+     * @param userIdx
      * @return String
      */
-    public String createJwt(int userId) {
+    public String createJwt(Long userIdx) {
         Date now = new Date();
         return Jwts.builder()
-                .claim("userId", userId)
+                .claim("userIdx", userIdx)
                 .setIssuedAt(now)
-                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .signWith(Secret.JWT_SECRET_KEY)
                 .compact();
     }
 
@@ -46,7 +49,7 @@ public class JwtService {
      * @return int
      * @throws BaseException
      */
-    public int getUserId() throws BaseException {
+    public Long getUserIdx() throws BaseException {
         // 1. JWT 추출
         String accessToken = getJwt();
         if (accessToken == null || accessToken.length() == 0) {
@@ -64,6 +67,6 @@ public class JwtService {
         }
 
         // 3. userId 추출
-        return claims.getBody().get("userId", Integer.class);
+        return claims.getBody().get("userIdx", Integer.class).longValue();
     }
 }

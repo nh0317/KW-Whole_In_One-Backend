@@ -1,10 +1,10 @@
-package Nature_Mobility.Whole_In_One.Backend.src.user.models;
+package Nature_Mobility.Whole_In_One.Backend.domain.users;
 
 import lombok.*;
 
 @Getter
 @AllArgsConstructor
 public class GetUsersRes {
-    private final int userId;
+    private final Long userId;
     private final String email;
 }

@@ -1,4 +1,4 @@
-package Nature_Mobility.Whole_In_One.Backend.src.user.models;//package com.softsquared.template.src.user.models;
+package Nature_Mobility.Whole_In_One.Backend.domain.users;//package com.softsquared.template.src.user.models;
 //
 //import com.softsquared.template.config.BaseEntity;
 //import lombok.*;
