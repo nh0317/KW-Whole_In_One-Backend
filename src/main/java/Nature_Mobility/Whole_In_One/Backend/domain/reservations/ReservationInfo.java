@@ -40,4 +40,9 @@ public class ReservationInfo extends DTOCommon {
 
     // 인원
     private Boolean personCount;
+    // 삭제한 시간
+    private Date deletedAt;
+
+    // 수정한 사람 idx
+    private Long modiBy;
 }
