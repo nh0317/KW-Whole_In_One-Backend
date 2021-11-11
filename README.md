@@ -26,3 +26,21 @@ spring:
       username : MySQL 호스트 이름
       password : MySQL 비밀번호
 ```
+
+## API 
+### User API 
+* 전체 회원 조회 API  
+* 이메일 중복 확인 API  
+* 아이디 중복 확인 API  
+* 회원가입 API  
+* 로그인API  
+* 비밀번호 확인 API  
+* 마이페이지 API  
+* 회원 정보 조회 API  
+* 회원 정보 수정 API  
+* 비밀번호 수정 API  
+* 회원 탈퇴 API  
+  
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.    
+[API 문서](https://documenter.getpostman.com/view/18157329/UVC5ESgt)
+
