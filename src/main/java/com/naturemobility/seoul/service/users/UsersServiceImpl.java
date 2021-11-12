@@ -118,7 +118,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_POST_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
         UserInfo userInfo = new UserInfo(email,id, password, nickname, name);
 
@@ -127,9 +127,9 @@ public class UsersServiceImpl implements UsersService {
             usersMapper.save(userInfo);
             userInfo = usersMapper.findByIdx(userInfo.getUserIdx()).orElseGet(()->null);
             if (userInfo == null)
-                throw new BaseException(FAILED_TO_POST_USER);
+                throw new BaseException(RESPONSE_ERROR);
         } catch (Exception exception) {
-            throw new BaseException(FAILED_TO_POST_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         // 4. JWT 생성
@@ -167,7 +167,7 @@ public class UsersServiceImpl implements UsersService {
             usersMapper.update(userInfo);
             return new PatchUserRes(email, nickname, name,image);
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_PATCH_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
     }
 
@@ -182,7 +182,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_PATCH_PASSWORD);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         //기존 비밀번호 일치 여부 확인
@@ -198,7 +198,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchPWReq.getNewPassword());
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_PATCH_PASSWORD);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         //변경사항 저장
@@ -206,7 +206,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             usersMapper.update(userInfo);
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_PATCH_PASSWORD);
+            throw new BaseException(RESPONSE_ERROR);
         }
     }
         /**
@@ -231,7 +231,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             usersMapper.update(userInfo);
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_DELETE_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
     }
     /**
@@ -249,7 +249,7 @@ public class UsersServiceImpl implements UsersService {
                 userInfoList = usersMapper.findByStatusAndNicknameIsContaining(UserStatus.ACTIVE.getValue(), word);
             }
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         // 2. UserInfoRes로 변환하여 return
@@ -301,7 +301,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_LOGIN);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         // 3. 비밀번호 일치 여부 확인
@@ -332,7 +332,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_LOGIN);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         // 3. 비밀번호 일치 여부 확인
@@ -360,7 +360,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             existsDTOUser = usersMapper.findByIdx(userIdx).orElse(null);
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         // 2. 존재하는 회원인지 확인
@@ -393,7 +393,7 @@ public class UsersServiceImpl implements UsersService {
             existsDTOUser = usersMapper.findByEmailAndStatus(email, UserStatus.ACTIVE.getValue());
         }
         catch (Exception exception) {
-            throw new BaseException(FAILED_TO_GET_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
 
         if (existsDTOUser.size()>0) userInfo = existsDTOUser.get(0);
@@ -421,7 +421,7 @@ public class UsersServiceImpl implements UsersService {
             existsDTOUser = usersMapper.findByIdAndStatus(id, UserStatus.ACTIVE.getValue());
         }
         catch (Exception exception) {
-            throw new BaseException(FAILED_TO_GET_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
         if (existsDTOUser.size()>0) userInfo = existsDTOUser.get(0);
         if (existsDTOUser.size() == 0) {
@@ -457,7 +457,7 @@ public class UsersServiceImpl implements UsersService {
             }
         }
         catch (Exception exception){
-            throw new BaseException(FAILED_TO_GET_USER);
+            throw new BaseException(RESPONSE_ERROR);
         }
         GetMyPageRes getMyPageRes = new GetMyPageRes(image,nickName,cntReservation, cntStoreLike, point,cntCoupon);
         return getMyPageRes;

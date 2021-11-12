@@ -38,9 +38,9 @@ public class UsersController {
         try {
             List<GetUsersRes> getUsersResList = usersService.retrieveUserInfoList(word);
             if (word == null) {
-                return new BaseResponse<>(SUCCESS_READ_USERS, getUsersResList);
+                return new BaseResponse<>(SUCCESS, getUsersResList);
             } else {
-                return new BaseResponse<>(SUCCESS_READ_SEARCH_USERS, getUsersResList);
+                return new BaseResponse<>(SUCCESS, getUsersResList);
             }
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -61,7 +61,7 @@ public class UsersController {
             userIdx = jwtService.getUserIdx();
             log.info(userIdx.toString());
             GetMyPageRes getMyPageRes = usersService.myPage(userIdx);
-            return new BaseResponse<>(SUCCESS_READ_USER, getMyPageRes);
+            return new BaseResponse<>(SUCCESS, getMyPageRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -79,7 +79,7 @@ public class UsersController {
         try {
             Long userIdx = jwtService.getUserIdx();
             GetUserRes getUserRes = usersService.retrieveUserInfo(userIdx);
-            return new BaseResponse<>(SUCCESS_READ_USER, getUserRes);
+            return new BaseResponse<>(SUCCESS, getUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -96,7 +96,7 @@ public class UsersController {
     public BaseResponse<PatchUserRes> getUser(@RequestBody PatchUserReq parameters , @RequestHeader("X-ACCESS-TOKEN") String token) {
         try {
             Long userIdx = jwtService.getUserIdx();
-            return new BaseResponse<>(SUCCESS_PATCH_USER, usersService.updateUserInfo(userIdx, parameters));
+            return new BaseResponse<>(SUCCESS, usersService.updateUserInfo(userIdx, parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -119,7 +119,7 @@ public class UsersController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-        return new BaseResponse<>(SUCCESS_EDIT_PW);
+        return new BaseResponse<>(SUCCESS);
     }
     /**
      * 이메일 중복 확인 API (반드시 회원 가입전 확인)
@@ -138,7 +138,7 @@ public class UsersController {
             return new BaseResponse<>(exception.getStatus());
         }
         // 2. Post UserInfo
-        return new BaseResponse<>(SUCCESS_CHECK_EMAIL,check);
+        return new BaseResponse<>(SUCCESS,check);
     }
 
     /**
@@ -158,7 +158,7 @@ public class UsersController {
             return new BaseResponse<>(exception.getStatus());
         }
         // 2. Post UserInfo
-        return new BaseResponse<>(SUCCESS_CHECK_ID,check);
+        return new BaseResponse<>(SUCCESS,check);
     }
 
     /**
@@ -172,34 +172,34 @@ public class UsersController {
     public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
         // 1. Body Parameter Validation
         if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
-            return new BaseResponse<>(EMPTY_EMAIL);
+            return new BaseResponse<>(REQUEST_ERROR);
         }
         if (!isRegexEmail(parameters.getEmail())){
             return new BaseResponse<>(INVALID_EMAIL);
         }
         if (parameters.getId() == null || parameters.getId().length() == 0) {
-            return new BaseResponse<>(EMPTY_USERID);
+            return new BaseResponse<>(REQUEST_ERROR);
         }
         if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
-            return new BaseResponse<>(EMPTY_PASSWORD);
+            return new BaseResponse<>(REQUEST_ERROR);
         }
         if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() == 0) {
-            return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
+            return new BaseResponse<>(REQUEST_ERROR);
         }
         if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
             return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
         }
         if (parameters.getNickname() == null || parameters.getNickname().length() == 0) {
-            return new BaseResponse<>(EMPTY_USERNICKNAME);
+            return new BaseResponse<>(REQUEST_ERROR);
         }
         if (parameters.getName() == null || parameters.getName().length() == 0) {
-            return new BaseResponse<>(EMPTY_USERNAME);
+            return new BaseResponse<>(REQUEST_ERROR);
         }
 
         // 2. Post UserInfo
         try {
             PostUserRes postUserRes = usersService.createUserInfo(parameters);
-            return new BaseResponse<>(SUCCESS_POST_USER, postUserRes);
+            return new BaseResponse<>(SUCCESS, postUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -225,7 +225,7 @@ public class UsersController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-        return new BaseResponse<>(SUCCESS_CHECK_PW,postLoginRes);
+        return new BaseResponse<>(SUCCESS,postLoginRes);
     }
 
     //아이디 또는 이메일로 로그인 가능
@@ -240,15 +240,15 @@ public class UsersController {
     public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters) {
         // 1. Body Parameter Validation
         if (parameters.getId() == null || parameters.getId().length() == 0){
-            return new BaseResponse<>(EMPTY_USERID);
+            return new BaseResponse<>(REQUEST_ERROR);
         } else if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
-            return new BaseResponse<>(EMPTY_PASSWORD);
+            return new BaseResponse<>(REQUEST_ERROR);
         }
 
         // 2. Login
         try {
             PostLoginRes postLoginRes = usersService.login(parameters);
-            return new BaseResponse<>(SUCCESS_LOGIN, postLoginRes);
+            return new BaseResponse<>(SUCCESS, postLoginRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -264,7 +264,7 @@ public class UsersController {
         try {
             Long userIdx = jwtService.getUserIdx();
             usersService.deleteUserInfo(userIdx);
-            return new BaseResponse<>(SUCCESS_DELETE_USER);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
