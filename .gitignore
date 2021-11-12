@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 src/main/resources/properties/config.yaml
-src/main/java/Nature_Mobiliy/Whole_In_One/Backend/config/secret/*
+src/main/java/com/naturemobility/seoul/config/secret/*
 src/main/resources/static/*

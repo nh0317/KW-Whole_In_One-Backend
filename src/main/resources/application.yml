@@ -48,8 +48,8 @@ logging:
   level:
     root : info
     # ????? ?? ?? ??
-    Nature_Mobility.Whole_In_One.Backend : debug
-    Nature_Mobility.weep.Whole_In_One.Backend.controller : debug
+    com.naturemobility.seoul : debug
+    com.weep.naturemobility.seoul.controller : debug
 
 springfox:
   documentation:
