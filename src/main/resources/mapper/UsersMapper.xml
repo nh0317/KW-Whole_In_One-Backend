@@ -7,12 +7,11 @@
     </sql>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="userIdx" parameterType="UserInfo">
-        INSERT INTO Users(userNickname,userName,userId,userPassword,userEmail,userImage)
-        VALUES( #{userNickname}, #{userName}, #{userId}, #{userPassword}, #{userEmail}, #{userImage} )
+        INSERT INTO Users(userNickname,userName,userPassword,userEmail,userImage)
+        VALUES( #{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage} )
         ON DUPLICATE KEY UPDATE
             userNickname = #{userNickname},
             userName = #{userName},
-            userId = #{userId},
             userPassword = #{userPassword},
             userStatus = #{userStatus},
             userPoint = #{userPoint},
@@ -25,7 +24,6 @@
         SET
             userNickname = #{userNickname},
             userName = #{userName},
-            userId = #{userId},
             userPassword = #{userPassword},
             userStatus = #{userStatus},
             userPoint = #{userPoint},

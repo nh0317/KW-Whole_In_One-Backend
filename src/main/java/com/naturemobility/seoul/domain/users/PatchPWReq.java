@@ -9,5 +9,4 @@ public class PatchPWReq {
     String password;
     String newPassword;
     String confirmNewPassword;
-    public PatchPWReq(){}
 }

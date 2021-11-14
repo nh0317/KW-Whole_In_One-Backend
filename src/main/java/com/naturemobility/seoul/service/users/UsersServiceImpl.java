@@ -52,27 +52,6 @@ public class UsersServiceImpl implements UsersService {
         else  return userEmail+"_valid";
     }
 
-    /**
-     * 중복 회원 검증
-     * @param userID
-     * @return String
-     * @throws BaseException
-     */
-    @Override
-    public String checkID(String userID) throws BaseException {
-        //false 이면 중복, true 이면 중복 X
-        UserInfo userInfo =null;
-        try {
-            userInfo = retrieveUserInfoByID(userID);
-        } catch (BaseException exception) {
-            if (exception.getStatus() != NOT_FOUND_USER)
-                throw exception;
-        }
-        if (userInfo != null)
-            throw new BaseException(DUPLICATED_ID);
-        else  return userID+"_valid";
-    }
-
 
     /**
      * 회원가입
@@ -83,17 +62,6 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
         UserInfo existsEmail = null;
-        UserInfo existsId = null;
-        try {
-            // 1-1. 이미 존재하는 회원이 있는지 조회
-            existsId = retrieveUserInfoByID(postUserReq.getId());
-            if (existsId != null) log.info(existsId.toString());
-        } catch (BaseException exception) {
-            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
-            if (exception.getStatus() != NOT_FOUND_USER) {
-                throw exception;
-            }
-        }
         try {
             // 1-1. 이미 존재하는 회원이 있는지 조회
             existsEmail = retrieveUserInfoByEmail(postUserReq.getEmail());
@@ -105,7 +73,7 @@ public class UsersServiceImpl implements UsersService {
             }
         }
         // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
-        if (existsEmail != null || existsId != null) {
+        if (existsEmail != null) {
             throw new BaseException(DUPLICATED_USER);
         }
 
@@ -114,20 +82,18 @@ public class UsersServiceImpl implements UsersService {
         String nickname = postUserReq.getNickname();
         String name = postUserReq.getName();
         String password;
-        String id = postUserReq.getId();
+//        String id = postUserReq.getId();
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(RESPONSE_ERROR);
         }
-        UserInfo userInfo = new UserInfo(email,id, password, nickname, name);
+        UserInfo userInfo = new UserInfo(email, password, nickname, name);
 
         // 3. 유저 정보 저장
         try {
             usersMapper.save(userInfo);
-            userInfo = usersMapper.findByIdx(userInfo.getUserIdx()).orElseGet(()->null);
-            if (userInfo == null)
-                throw new BaseException(RESPONSE_ERROR);
+            userInfo = usersMapper.findByIdx(userInfo.getUserIdx()).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
         } catch (Exception exception) {
             throw new BaseException(RESPONSE_ERROR);
         }
@@ -176,7 +142,7 @@ public class UsersServiceImpl implements UsersService {
      * @throws BaseException
      */
     @Override
-    public void editPW(Long userIdx, PatchPWReq patchPWReq) throws BaseException {
+    public void updatePW(Long userIdx, PatchPWReq patchPWReq) throws BaseException {
         UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_USER));
         String password;
         try {
@@ -239,6 +205,7 @@ public class UsersServiceImpl implements UsersService {
      * @return List<GetUsersRes>
      * @throws BaseException
      */
+    @Override
     public List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
         List<UserInfo> userInfoList;
@@ -266,7 +233,8 @@ public class UsersServiceImpl implements UsersService {
      * @return GetUserRes
      * @throws BaseException
      */
-    public GetUserRes retrieveUserInfo(Long userIdx) throws BaseException {
+    @Override
+    public GetUserRes findUserInfo(Long userIdx) throws BaseException {
         // 1. DB에서 userIdx로 UserInfo 조회
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
 
@@ -286,15 +254,14 @@ public class UsersServiceImpl implements UsersService {
      * @return PostLoginRes
      * @throws BaseException
      */
+    @Override
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
         UserInfo userInfo = new UserInfo();
         // 1. DB에서 UserInfo 조회
         String userId=postLoginReq.getId();
-        if(userId.contains("@")){
-            if (!ValidationRegex.isRegexEmail(userId))
-                throw new BaseException(INVALID_EMAIL);
-            else userInfo = retrieveUserInfoByEmail(userId);
-        } else userInfo = retrieveUserInfoByID(userId);
+        if (!ValidationRegex.isRegexEmail(userId))
+            throw new BaseException(INVALID_EMAIL);
+        else userInfo = retrieveUserInfoByEmail(userId);
 
         // 2. UserInfo에서 password 추출
         String password;
@@ -322,6 +289,7 @@ public class UsersServiceImpl implements UsersService {
      * @return PostLoginRes
      * @throws BaseException
      */
+    @Override
     public PostLoginRes checkPW(Long userIdx, String pw) throws BaseException {
         UserInfo userInfo = new UserInfo();
         // 1. DB에서 UserInfo 조회
@@ -354,20 +322,17 @@ public class UsersServiceImpl implements UsersService {
      * @return DTOUsers
      * @throws BaseException
      */
+    @Override
     public UserInfo retrieveUserInfoByUserIdx(Long userIdx) throws BaseException {
         // 1. DB에서 UserInfo 조회
         UserInfo existsDTOUser;
-        try {
-            existsDTOUser = usersMapper.findByIdx(userIdx).orElse(null);
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        existsDTOUser = usersMapper.findByIdx(userIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
 
         // 2. 존재하는 회원인지 확인
-        UserInfo userInfo=null;
+        UserInfo userInfo =null;
         if (existsDTOUser != null) {
             if(existsDTOUser.getUserStatus().equals(UserStatus.ACTIVE.getValue()))
-                userInfo=existsDTOUser;
+                userInfo =existsDTOUser;
             else if(existsDTOUser.getUserStatus().equals(UserStatus.INACTIVE.getValue()))
                 throw new BaseException(INACTIVE_ID);
             else if(existsDTOUser.getUserStatus().equals(UserStatus.WITHDRAWN.getValue()))
@@ -389,12 +354,7 @@ public class UsersServiceImpl implements UsersService {
     public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         List<UserInfo> existsDTOUser = new ArrayList<>();
         UserInfo userInfo = null;
-        try {
-            existsDTOUser = usersMapper.findByEmailAndStatus(email, UserStatus.ACTIVE.getValue());
-        }
-        catch (Exception exception) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        existsDTOUser = usersMapper.findByEmailAndStatus(email, UserStatus.ACTIVE.getValue());
 
         if (existsDTOUser.size()>0) userInfo = existsDTOUser.get(0);
         else {
@@ -403,31 +363,6 @@ public class UsersServiceImpl implements UsersService {
                 log.info(existsDTOUser.size()+" 개");
                 throw new BaseException(INACTIVE_ID);
             }
-            else
-                throw new BaseException(NOT_FOUND_USER);
-        }
-        return userInfo;
-    }
-    /**
-     * 회원 조회
-     * @param id
-     * @return DTOUsers
-     * @throws BaseException
-     */
-    public UserInfo retrieveUserInfoByID(String id) throws BaseException{
-        List<UserInfo> existsDTOUser = new ArrayList<>();
-        UserInfo userInfo = null;
-        try {
-            existsDTOUser = usersMapper.findByIdAndStatus(id, UserStatus.ACTIVE.getValue());
-        }
-        catch (Exception exception) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-        if (existsDTOUser.size()>0) userInfo = existsDTOUser.get(0);
-        if (existsDTOUser.size() == 0) {
-            existsDTOUser = usersMapper.findByIdAndStatus(id, UserStatus.INACTIVE.getValue());
-            if (existsDTOUser.size() > 0)
-                throw new BaseException(INACTIVE_ID);
             else
                 throw new BaseException(NOT_FOUND_USER);
         }
@@ -443,21 +378,14 @@ public class UsersServiceImpl implements UsersService {
         UserInfo user;
         Integer point=0, cntReservation=0, cntStoreLike=0, cntCoupon=0;
         String image=null, nickName=null;
-        try{
-            user = usersMapper.findByIdx(userIdx).orElseGet(()->null);
-            if (user!=null) {
-                nickName = user.getUserNickname();
-                image = user.getUserImage();
-                point = user.getUserPoint();
-                cntReservation = usersMapper.cntReservation(userIdx).orElseGet(()->0);
-                cntCoupon = usersMapper.cntCoupon(userIdx).orElseGet(()->0);
-                log.info("쿠폰 수 : "+cntCoupon);
-                cntStoreLike = usersMapper.cntStoreLike(userIdx).orElseGet(()->0);
-                log.info("찜 매장 수 : "+cntStoreLike);
-            }
-        }
-        catch (Exception exception){
-            throw new BaseException(RESPONSE_ERROR);
+        user = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
+        if (user!=null) {
+            nickName = user.getUserNickname();
+            image = user.getUserImage();
+            point = user.getUserPoint();
+            cntReservation = usersMapper.cntReservation(userIdx).orElseGet(()->0);
+            cntCoupon = usersMapper.cntCoupon(userIdx).orElseGet(()->0);
+            cntStoreLike = usersMapper.cntStoreLike(userIdx).orElseGet(()->0);
         }
         GetMyPageRes getMyPageRes = new GetMyPageRes(image,nickName,cntReservation, cntStoreLike, point,cntCoupon);
         return getMyPageRes;

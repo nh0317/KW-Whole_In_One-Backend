@@ -16,7 +16,7 @@ import static com.naturemobility.seoul.utils.ValidationRegex.isRegexEmail;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("users")
 public class UsersController {
     @Autowired
     private UsersService usersService;
@@ -37,11 +37,7 @@ public class UsersController {
     public BaseResponse<List<GetUsersRes>> getUsers(@RequestParam(required = false) String word) {
         try {
             List<GetUsersRes> getUsersResList = usersService.retrieveUserInfoList(word);
-            if (word == null) {
-                return new BaseResponse<>(SUCCESS, getUsersResList);
-            } else {
-                return new BaseResponse<>(SUCCESS, getUsersResList);
-            }
+            return new BaseResponse<>(SUCCESS, getUsersResList);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -54,12 +50,11 @@ public class UsersController {
      * @return BaseResponse<GetMyPageRes>
      */
     @ResponseBody
-    @GetMapping("/mypage")
+    @GetMapping("mypage")
     public BaseResponse<GetMyPageRes> getMyPage(@RequestHeader("X-ACCESS-TOKEN") String token) {
         Long userIdx;
         try {
             userIdx = jwtService.getUserIdx();
-            log.info(userIdx.toString());
             GetMyPageRes getMyPageRes = usersService.myPage(userIdx);
             return new BaseResponse<>(SUCCESS, getMyPageRes);
         } catch (BaseException exception) {
@@ -74,11 +69,11 @@ public class UsersController {
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
-    @GetMapping("/mypage/edit")
+    @GetMapping("mypage/edit")
     public BaseResponse<GetUserRes> getUser(@RequestHeader("X-ACCESS-TOKEN") String token) {
         try {
             Long userIdx = jwtService.getUserIdx();
-            GetUserRes getUserRes = usersService.retrieveUserInfo(userIdx);
+            GetUserRes getUserRes = usersService.findUserInfo(userIdx);
             return new BaseResponse<>(SUCCESS, getUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -92,7 +87,7 @@ public class UsersController {
      * @return BaseResponse<PatchUserRe>
      */
     @ResponseBody
-    @PatchMapping("/mypage/edit")
+    @PatchMapping("mypage/edit")
     public BaseResponse<PatchUserRes> getUser(@RequestBody PatchUserReq parameters , @RequestHeader("X-ACCESS-TOKEN") String token) {
         try {
             Long userIdx = jwtService.getUserIdx();
@@ -108,13 +103,13 @@ public class UsersController {
      * @return PostCheck
      */
     @ResponseBody
-    @PatchMapping("/mypage/edit_password")
+    @PatchMapping("mypage/edit_password")
     public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq, @RequestHeader("X-ACCESS-TOKEN") String token) {
         // 2. Post UserInfo
         PostLoginRes postLoginRes;
         try {
             Long userIdx = jwtService.getUserIdx();
-            usersService.editPW(userIdx,patchPWReq);
+            usersService.updatePW(userIdx,patchPWReq);
 
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -142,26 +137,6 @@ public class UsersController {
     }
 
     /**
-     * 아이디 중복 확인 API (반드시 회원 가입전 확인)
-     * [Post] /users/sign_up/check_userId
-     * @RequestParam userId
-     * @return BaseResponse<String>
-     */
-    @ResponseBody
-    @PostMapping("sign_up/check_userId")
-    public BaseResponse<String> checkID(@RequestParam("userId") String userId) {
-        String check ="";
-        try {
-            check = usersService.checkID(userId);
-        }
-        catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        // 2. Post UserInfo
-        return new BaseResponse<>(SUCCESS,check);
-    }
-
-    /**
      * 회원가입 API
      * [POST] /sign_up
      * @RequestBody PostUserReq
@@ -176,9 +151,6 @@ public class UsersController {
         }
         if (!isRegexEmail(parameters.getEmail())){
             return new BaseResponse<>(INVALID_EMAIL);
-        }
-        if (parameters.getId() == null || parameters.getId().length() == 0) {
-            return new BaseResponse<>(REQUEST_ERROR);
         }
         if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
             return new BaseResponse<>(REQUEST_ERROR);
@@ -236,7 +208,7 @@ public class UsersController {
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
-    @PostMapping("/login")
+    @PostMapping("login")
     public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters) {
         // 1. Body Parameter Validation
         if (parameters.getId() == null || parameters.getId().length() == 0){
@@ -259,7 +231,7 @@ public class UsersController {
      * [DELETE] /users/withdraw
      * @return BaseResponse<Void>
      */
-    @DeleteMapping("/withdraw")
+    @DeleteMapping("withdraw")
     public BaseResponse<Void> deleteUsers(@RequestHeader("X-ACCESS-TOKEN") String token) {
         try {
             Long userIdx = jwtService.getUserIdx();
