@@ -14,7 +14,7 @@ public interface UsersMapper {
     int delete(UserInfo userInfo);
     Optional<UserInfo> findByIdx(@Param("userIdx") Long userIdx);
     List<UserInfo> findByStatus(@Param("status") Integer status);
-    List<UserInfo> findById(@Param("userId") String userId);
+//    List<UserInfo> findById(@Param("userId") String userId);
     List<UserInfo> findByEmail(@Param("email") String email);
     List<UserInfo> findByIdAndStatus(@Param("userId") String userId, @Param("status") Integer status);
     List<UserInfo> findByEmailAndStatus(@Param("email") String email, @Param("status") Integer status);

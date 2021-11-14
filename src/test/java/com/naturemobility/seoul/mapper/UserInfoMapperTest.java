@@ -23,35 +23,35 @@ class UserInfoMapperTest {
 
     @Test
     void saveAndFindById() {
-        UserInfo userInfo = new UserInfo("kim@naver.com","aaaa123","1234","KIM","김하나");
+        UserInfo userInfo = new UserInfo("kim@naver.com","1234","KIM","김하나");
         log.info(userInfo.toString());
         usersMapper.save(userInfo);
-        UserInfo result=usersMapper.findById(userInfo.getUserId()).get(0);
+        UserInfo result=usersMapper.findByIdx(userInfo.getUserIdx()).get();
         log.info(result.toString());
         assertThat(userInfo.getUserIdx()).isEqualTo(result.getUserIdx());
     }
 
     @Test
     void delete() {
-        UserInfo userInfo = new UserInfo("kim@naver.com","ab123","1234","KIM","김하나");
+        UserInfo userInfo = new UserInfo("kim@naver.com","1234","KIM","김하나");
         log.info(userInfo.toString());
         usersMapper.save(userInfo);
-        UserInfo result=usersMapper.findById(userInfo.getUserId()).get(0);
+        UserInfo result=usersMapper.findByIdx(userInfo.getUserIdx()).get();
         usersMapper.delete(result);
-        UserInfo result2=usersMapper.findById(userInfo.getUserId()).get(0);
+        UserInfo result2=usersMapper.findByIdx(userInfo.getUserIdx()).orElseGet(()->null);
         assertThat(result2).isEqualTo(null);
     }
 
     @Test
     void findByStatus() {
         List<UserInfo> users = new ArrayList<>();
-        users.add(new UserInfo("kim@naver.com", "aaaa123", "1234", "KIM", "김하나"));
-        users.add(new UserInfo("abcd@naver.com","dfd123","1234","KIM","김하나"));
-        users.add(new UserInfo("dfsf@naver.com","ooo123","1234","KIM","김하나"));
-        users.add(new UserInfo("erer@naver.com","vvvv123","1234","KIM","김하나"));
+        users.add(new UserInfo("kim@naver.com", "1234", "KIM", "김하나"));
+        users.add(new UserInfo("abcd@naver.com","1234","KIM","김하나"));
+        users.add(new UserInfo("dfsf@naver.com","1234","KIM","김하나"));
+        users.add(new UserInfo("erer@naver.com","1234","KIM","김하나"));
         for(UserInfo u : users)
             usersMapper.save(u);
-        UserInfo updateUser=usersMapper.findById(users.get(2).getUserId()).get(0);
+        UserInfo updateUser=usersMapper.findByIdx(users.get(2).getUserIdx()).get();
         updateUser.setUserStatus(INACTIVE.getValue());
         usersMapper.save(updateUser);
 
@@ -67,13 +67,13 @@ class UserInfoMapperTest {
     @Test
     void findByEmailAndStatus() {
         List<UserInfo> users = new ArrayList<>();
-        users.add(new UserInfo("kim@naver.com", "aaaa123", "1234", "KIM", "김하나"));
-        users.add(new UserInfo("abcd@naver.com","dfd123","1234","KIM","김하나"));
-        users.add(new UserInfo("dfsf@naver.com","ooo123","1234","KIM","김하나"));
-        users.add(new UserInfo("erer@naver.com","vvvv123","1234","KIM","김하나"));
+        users.add(new UserInfo("kim@naver.com", "1234", "KIM", "김하나"));
+        users.add(new UserInfo("abcd@naver.com","1234","KIM","김하나"));
+        users.add(new UserInfo("dfsf@naver.com","1234","KIM","김하나"));
+        users.add(new UserInfo("erer@naver.com","1234","KIM","김하나"));
         for(UserInfo u : users)
             usersMapper.save(u);
-        UserInfo updateUser=usersMapper.findById(users.get(2).getUserId()).get(0);
+        UserInfo updateUser=usersMapper.findByIdx(users.get(2).getUserIdx()).get();
         updateUser.setUserStatus(INACTIVE.getValue());
         usersMapper.save(updateUser);
 
@@ -87,13 +87,13 @@ class UserInfoMapperTest {
     @Test
     void findByStatusAndNicknameIsContaining() {
         List<UserInfo> users = new ArrayList<>();
-        users.add(new UserInfo("kim@naver.com", "aaaa123", "1234", "KIM", "김하나"));
-        users.add(new UserInfo("abcd@naver.com","dfd123","1234","Park","김하나"));
-        users.add(new UserInfo("dfsf@naver.com","ooo123","1234","HiH","김하나"));
-        users.add(new UserInfo("erer@naver.com","vvvv123","1234","iiii","김하나"));
+        users.add(new UserInfo("kim@naver.com", "1234", "KIM", "김하나"));
+        users.add(new UserInfo("abcd@naver.com","1234","Park","김하나"));
+        users.add(new UserInfo("dfsf@naver.com","1234","HiH","김하나"));
+        users.add(new UserInfo("erer@naver.com","1234","iiii","김하나"));
         for(UserInfo u : users)
             usersMapper.save(u);
-        UserInfo updateUser=usersMapper.findById(users.get(2).getUserId()).get(0);
+        UserInfo updateUser=usersMapper.findByIdx(users.get(2).getUserIdx()).get();
         updateUser.setUserStatus(INACTIVE.getValue());
         usersMapper.save(updateUser);
 
