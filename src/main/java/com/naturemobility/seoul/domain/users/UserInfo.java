@@ -19,7 +19,7 @@ public class UserInfo extends DTOCommon {
     private String userName;
 
     // 유저 아이디
-    private String userId;
+//    private String userId;
 
     // 유저 비밀번호 sha512
     private String userPassword;
@@ -40,14 +40,6 @@ public class UserInfo extends DTOCommon {
     private Integer cntReservation; //예약 수
     private Integer cntStoreLike; // 찜한 매장 수
     private Integer cntCoupon; // 쿠폰 수
-
-    public UserInfo(String email, String userId, String password, String nickname, String userName) {
-        this.userEmail = email;
-        this.userId=userId;
-        this.userPassword = password;
-        this.userNickname = nickname;
-        this.userName = userName;
-    }
 
     public UserInfo(String email, String password, String nickname, String userName) {
         this.userEmail = email;
