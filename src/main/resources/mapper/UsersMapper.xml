@@ -3,7 +3,7 @@
 <mapper namespace="com.naturemobility.seoul.mapper.UsersMapper">
 
     <sql id="insertUser">
-        userNickname,userName,userId,userPassword,userEmail
+        userNickname,userName,userPassword,userEmail
     </sql>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="userIdx" parameterType="UserInfo">
@@ -38,12 +38,6 @@
         WHERE userIdx=#{userIdx}
     </select>
 
-    <select id="findById" resultType="UserInfo">
-        SELECT *
-        FROM Users
-        WHERE userId=#{userId}
-    </select>
-
     <select id="findByEmail" resultType="UserInfo">
         SELECT *
         FROM Users
@@ -59,12 +53,6 @@
         SELECT *
         FROM Users
         WHERE userStatus=#{status}
-    </select>
-
-    <select id="findByIdAndStatus" resultType="UserInfo">
-        SELECT *
-        FROM Users
-        WHERE userId=#{userId} and userStatus=#{status}
     </select>
 
     <select id="findByEmailAndStatus" resultType="UserInfo">
