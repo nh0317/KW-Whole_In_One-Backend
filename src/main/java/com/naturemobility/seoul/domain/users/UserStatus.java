@@ -1,4 +1,4 @@
-package com.naturemobility.seoul.domain;
+package com.naturemobility.seoul.domain.users;
 
 public enum UserStatus {
     ACTIVE(0), INACTIVE(1), WITHDRAWN(2);

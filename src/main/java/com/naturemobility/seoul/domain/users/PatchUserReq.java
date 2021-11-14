@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
 public class PatchUserReq {
-    private String email;
     private String nickname;
     private String name;
     private String userImage;

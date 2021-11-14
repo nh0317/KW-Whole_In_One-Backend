@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.naturemobility.seoul.domain.UserStatus.ACTIVE;
-import static com.naturemobility.seoul.domain.UserStatus.INACTIVE;
+import static com.naturemobility.seoul.domain.users.UserStatus.ACTIVE;
+import static com.naturemobility.seoul.domain.users.UserStatus.INACTIVE;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j

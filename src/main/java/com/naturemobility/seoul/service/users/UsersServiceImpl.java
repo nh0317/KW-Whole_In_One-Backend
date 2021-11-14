@@ -6,7 +6,7 @@ import com.naturemobility.seoul.domain.users.*;
 import com.naturemobility.seoul.mapper.UsersMapper;
 import com.naturemobility.seoul.utils.AES128;
 import com.naturemobility.seoul.utils.JwtService;
-import com.naturemobility.seoul.domain.UserStatus;
+import com.naturemobility.seoul.domain.users.UserStatus;
 import com.naturemobility.seoul.utils.ValidationRegex;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 
-//TODO : AOP로 사장님 회원가입, 로그인 구현
 @Service
 @Slf4j
 public class UsersServiceImpl implements UsersService {
@@ -93,7 +92,6 @@ public class UsersServiceImpl implements UsersService {
         // 3. 유저 정보 저장
         try {
             usersMapper.save(userInfo);
-            userInfo = usersMapper.findByIdx(userInfo.getUserIdx()).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
         } catch (Exception exception) {
             throw new BaseException(RESPONSE_ERROR);
         }
@@ -115,14 +113,11 @@ public class UsersServiceImpl implements UsersService {
     public PatchUserRes updateUserInfo(Long userIdx, PatchUserReq patchUserReq) throws BaseException {
         try {
             UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
-            String email = patchUserReq.getEmail() + "_edited";
             String nickname = patchUserReq.getNickname()+"_edited";
             String name = patchUserReq.getName()+"_edited";
             String image = patchUserReq.getUserImage()+"_edited";
             log.info(userInfo.toString());
 
-            if (patchUserReq.getEmail() != null && patchUserReq.getEmail().length() != 0)
-                userInfo.setUserName(patchUserReq.getEmail());
             if (patchUserReq.getName() != null && patchUserReq.getName().length() != 0)
                 userInfo.setUserName(patchUserReq.getName());
             if (patchUserReq.getNickname() != null && patchUserReq.getNickname().length() != 0)
@@ -131,7 +126,7 @@ public class UsersServiceImpl implements UsersService {
                 userInfo.setUserName(patchUserReq.getUserImage());
 
             usersMapper.update(userInfo);
-            return new PatchUserRes(email, nickname, name,image);
+            return new PatchUserRes(nickname, name,image);
         } catch (Exception ignored) {
             throw new BaseException(RESPONSE_ERROR);
         }

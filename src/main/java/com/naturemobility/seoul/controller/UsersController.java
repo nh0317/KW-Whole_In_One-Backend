@@ -123,7 +123,7 @@ public class UsersController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PostMapping("sign_up/check_userEmail")
+    @PostMapping("sign_up/check_email")
     public BaseResponse<String> checkEmail(@RequestParam("email") String userEmail){
         String check ="";
         try {
@@ -138,7 +138,7 @@ public class UsersController {
 
     /**
      * 회원가입 API
-     * [POST] /sign_up
+     * [POST] /users/sign_up
      * @RequestBody PostUserReq
      * @return BaseResponse<PostUserRes>
      */
@@ -146,26 +146,11 @@ public class UsersController {
     @PostMapping("sign_up")
     public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
         // 1. Body Parameter Validation
-        if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
-            return new BaseResponse<>(REQUEST_ERROR);
-        }
         if (!isRegexEmail(parameters.getEmail())){
             return new BaseResponse<>(INVALID_EMAIL);
         }
-        if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
-            return new BaseResponse<>(REQUEST_ERROR);
-        }
-        if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() == 0) {
-            return new BaseResponse<>(REQUEST_ERROR);
-        }
         if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
             return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
-        }
-        if (parameters.getNickname() == null || parameters.getNickname().length() == 0) {
-            return new BaseResponse<>(REQUEST_ERROR);
-        }
-        if (parameters.getName() == null || parameters.getName().length() == 0) {
-            return new BaseResponse<>(REQUEST_ERROR);
         }
 
         // 2. Post UserInfo
@@ -200,7 +185,6 @@ public class UsersController {
         return new BaseResponse<>(SUCCESS,postLoginRes);
     }
 
-    //아이디 또는 이메일로 로그인 가능
     /**
      * 로그인 API
      * [POST] /users/login
