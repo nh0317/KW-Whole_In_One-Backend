@@ -240,12 +240,11 @@ public class UsersServiceImpl implements UsersService {
 
         // 2. UserInfoRes로 변환하여 return
         Long idx = userInfo.getUserIdx();
-        String id = userInfo.getUserId();
         String email = userInfo.getUserEmail();
         String nickname = userInfo.getUserNickname();
         String name = userInfo.getUserName();
         String image = userInfo.getUserImage();
-        return new GetUserRes(idx,id, email, nickname, name, image);
+        return new GetUserRes(idx, email, nickname, name, image);
     }
 
     /**
