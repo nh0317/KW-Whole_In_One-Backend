@@ -53,7 +53,13 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+node {
+	// Version of node to use.
+	version = '17.01.0'
 
+	// Enabled the automatic download.
+	download = true
+}
 
 //react와 묶어서 빌드하기
 //cmd에서 gradlew clean build 후 실행하면 8080포트에서도 react view가 나타남
