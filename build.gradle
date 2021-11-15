@@ -55,13 +55,10 @@ test {
 }
 node {
 	// Version of node to use.
-	version = '14.18.1'
-	npmVersion = '6.13.4'
+	version = '0.1.0'
 
 	// Enabled the automatic download.
 	download = true
-	workDir = file("${buildDir}/nodejs")
-	npmWorkDir = file("${project.buildDir}/npm")
 }
 
 //react와 묶어서 빌드하기
