@@ -55,7 +55,7 @@ test {
 }
 node {
 	// Version of node to use.
-	version = '0.1.0'
+	version = '14.18.1'
 
 	// Enabled the automatic download.
 	download = true
