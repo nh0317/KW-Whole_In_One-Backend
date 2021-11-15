@@ -59,6 +59,8 @@ node {
 
 	// Enabled the automatic download.
 	download = true
+	workDir = file("${buildDir}/nodejs")
+	npmWorkDir = file("${project.buildDir}/npm")
 }
 
 //react와 묶어서 빌드하기
