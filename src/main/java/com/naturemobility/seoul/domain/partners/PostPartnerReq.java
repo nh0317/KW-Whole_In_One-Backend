@@ -1,10 +1,11 @@
 package com.naturemobility.seoul.domain.partners;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor(access=AccessLevel.PUBLIC)
 public class PostPartnerReq {
     private String email;
     private String name;

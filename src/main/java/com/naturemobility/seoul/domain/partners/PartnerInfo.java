@@ -32,7 +32,7 @@ public class PartnerInfo extends DTOCommon {
     // 사장님 이름
     private String partnerName;
 
-    public PartnerInfo(String partnerName, String partnerEmail, String partnerPassword) {
+    public PartnerInfo(String partnerEmail, String partnerPassword, String partnerName) {
         this.partnerName = partnerName;
         this.partnerPassword = partnerPassword;
         this.partnerEmail = partnerEmail;
