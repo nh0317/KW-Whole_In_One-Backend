@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.StoresMapper">
+
+    <select id="findBySearch" resultType="SearchStoreRes">
+-- -- Latitude 위도, Longitude 경도,위도 (37.5533535 127.0235435)
+        SELECT storeImage,
+               storeName,
+               storeLocation,
+               round((6371 * acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                   - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))), 1) as distanceFromUser
+        FROM Stores WHERE storeName LIKE CONCAT('%',#{storeName},'%');
+    </select>
+
+</mapper>

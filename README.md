@@ -43,5 +43,3 @@ spring:
   
 보다 자세한 설명은 아래의 링크에서 확인가능 합니다.    
 [API 문서](https://documenter.getpostman.com/view/18157329/UVC5ESgt)
-
-#1
