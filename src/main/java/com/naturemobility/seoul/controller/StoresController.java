@@ -31,7 +31,7 @@ public class StoresController {
      * @return BaseResponse<List < GetUsersRes>>
      */
     @ResponseBody
-    @GetMapping("/test")
+    @GetMapping("")
     public BaseResponse<List<SearchStoreRes>> getStores(@RequestParam String storeName, Double userLatitude, Double userLongitude) {
         if (storeName == null || userLatitude==null || userLatitude==null){
             return new BaseResponse<>(REQUEST_ERROR);

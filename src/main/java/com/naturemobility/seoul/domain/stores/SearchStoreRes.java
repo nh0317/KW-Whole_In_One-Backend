@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SearchStoreRes {
+    private final Integer storeIdx;
     private final String storeImage;
     private final String storeName;
     private final String storeLocation;

@@ -4,7 +4,9 @@
 
     <select id="findBySearch" resultType="SearchStoreRes">
 -- -- Latitude 위도, Longitude 경도,위도 (37.5533535 127.0235435)
-        SELECT storeImage,
+        SELECT
+               storeIdx,
+               storeImage,
                storeName,
                storeLocation,
                round((6371 * acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
