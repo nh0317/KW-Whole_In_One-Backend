@@ -4,6 +4,8 @@ import com.naturemobility.seoul.domain.DTOCommon;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.servlet.http.Part;
+
 @Getter
 @Setter
 // 사장님 전용
@@ -13,17 +15,26 @@ public class PartnerInfo extends DTOCommon {
     private Long partnerIdx;
 
     // 골프장 인덱스
-    private Integer storeIdx;
+    private Long storeIdx;
 
     // 파트너 아이디
-    private String partnerId;
+//    private String partnerId;
 
     // 파트너 계정 상태 0:활성화, 1:비활성화, 2:탈퇴
-    private Boolean partnerStatus;
+    private Integer partnerStatus;
 
     // 파트너 비밀번호
     private String partnerPassword;
 
     // 파트너 이메일
     private String partnerEmail;
+
+    // 사장님 이름
+    private String partnerName;
+
+    public PartnerInfo(String partnerName, String partnerEmail, String partnerPassword) {
+        this.partnerName = partnerName;
+        this.partnerPassword = partnerPassword;
+        this.partnerEmail = partnerEmail;
+    }
 }
