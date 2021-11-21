@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.PartnerMapper">
+    <sql id="insertPartner">
+        partnerName,partnerPassword,partnerEmail
+    </sql>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="partnerIdx" parameterType="PartnerInfo">
+        INSERT INTO Partner(partnerName,partnerPassword,partnerEmail)
+        VALUES(#{partnerName}, #{partnerPassword}, #{partnerEmail})
+            ON DUPLICATE KEY UPDATE
+                                 partnerName = #{partnerName},
+                                 partnerPassword = #{partnerPassword},
+                                 partnerStatus = #{partnerStatus},
+                                 partnerEmail = #{partnerEmail}
+    </insert>
+
+    <update id="update" parameterType="PartnerInfo">
+        UPDATE Partner
+        SET
+            partnerName = #{partnerName},
+            partnerPassword = #{partnerPassword},
+            partnerStatus = #{partnerStatus},
+            partnerEmail = #{partnerEmail}
+        WHERE partnerIdx =#{partnerIdx}
+    </update>
+
+    <select id="findByIdx" resultType="PartnerInfo">
+        SELECT *
+        FROM Partner
+        WHERE partnerIdx=#{partnerIdx}
+    </select>
+
+    <select id="findByEmail" resultType="PartnerInfo">
+        SELECT *
+        FROM Partner
+        WHERE partnerEmail=#{email}
+    </select>
+
+    <delete id="delete" parameterType="PartnerInfo">
+        DELETE FROM Partner
+        WHERE partnerIdx=#{partnerIdx}
+    </delete>
+
+    <select id="findByStatus" resultType="PartnerInfo">
+        SELECT *
+        FROM Partner
+        WHERE partnerStatus=#{status}
+    </select>
+
+    <select id="findByEmailAndStatus" resultType="PartnerInfo">
+        SELECT *
+        FROM Partner
+        WHERE partnerStatus=#{status} And partnerEmail=#{email}
+    </select>
+</mapper>

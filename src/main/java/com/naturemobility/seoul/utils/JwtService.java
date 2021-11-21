@@ -32,6 +32,20 @@ public class JwtService {
     }
 
     /**
+     * JWT 생성
+     * @param userIdx
+     * @return String
+     */
+    public String createPartnerJwt(Long userIdx) {
+        Date now = new Date();
+        return Jwts.builder()
+                .claim("partnerIdx", userIdx)
+                .setIssuedAt(now)
+                .signWith(Secret.JWT_SECRET_KEY)
+                .compact();
+    }
+
+    /**
      * Header에서 X-ACCESS-TOKEN 으로 JWT 추출
      * @return String
      */
@@ -64,5 +78,30 @@ public class JwtService {
 
         // 3. userId 추출
         return claims.getBody().get("userIdx", Integer.class).longValue();
+    }
+    /**
+     * JWT에서 userId 추출
+     * @return int
+     * @throws BaseException
+     */
+    public Long getPartnerIdx() throws BaseException {
+        // 1. JWT 추출
+        String accessToken = getJwt();
+        if (accessToken == null || accessToken.length() == 0) {
+            throw new BaseException(EMPTY_JWT);
+        }
+
+        // 2. JWT parsing
+        Jws<Claims> claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .parseClaimsJws(accessToken);
+        } catch (Exception ignored) {
+            throw new BaseException(INVALID_JWT);
+        }
+
+        // 3. userId 추출
+        return claims.getBody().get("partnerIdx", Integer.class).longValue();
     }
 }
