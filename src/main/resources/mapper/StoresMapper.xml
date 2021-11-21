@@ -3,15 +3,34 @@
 <mapper namespace="com.naturemobility.seoul.mapper.StoresMapper">
 
     <select id="findBySearch" resultType="SearchStoreRes">
--- -- Latitude 위도, Longitude 경도,위도 (37.5533535 127.0235435)
-        SELECT
-               storeIdx,
+        -- -- Latitude 위도, Longitude 경도,위도 (37.5533535 127.0235435)
+        SELECT storeIdx,
                storeImage,
                storeName,
                storeLocation,
-               round((6371 * acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
-                   - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))), 1) as distanceFromUser
-        FROM Stores WHERE storeName LIKE CONCAT('%',#{storeName},'%');
+               round((6371 *
+                      acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                          - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+                     1) as distanceFromUser
+        FROM Stores
+        WHERE storeName LIKE CONCAT('%', #{storeName}, '%');
+    </select>
+
+    <select id="retrieveStoreInfoByStoreIdx" resultType="GetStoreRes">
+        SELECT storeImage,
+               storeName,
+               (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+                FROM Reviews
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar,
+               storePhoneNumber,(SELECT Count(reviewIdx) FROM Reviews) AS reviewCount,
+               storeLocation,storeTime
+
+        FROM Stores
+        WHERE storeIdx = #{storeIdx}
+    </select>
+
+    <select id="checkStoreIdx" resultType="Integer">
+        SELECT count(1) AS checkStoreIdx FROM Stores WHERE storeIdx=#{storeIdx};
     </select>
 
 </mapper>
