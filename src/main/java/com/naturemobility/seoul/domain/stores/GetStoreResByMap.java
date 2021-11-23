@@ -7,14 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetStoreRes {
+public class GetStoreResByMap {
     private final String storeImage;
     private final String storeBrand;
     private final String storeName;
+    private final Double storeLatitude;
+    private final Double storeLongitude;
+    private final Double distanceFromUser;
     private final Float reviewStar;
-    private final String storePhoneNumber;
-    private final Integer reviewCount;
-    private final String storeLocation;
-    private final String storeTime;
-    //private final String storePrice; -DB 업데이트후 추가 예정
+
 }

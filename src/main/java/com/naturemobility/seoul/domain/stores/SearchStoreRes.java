@@ -11,6 +11,7 @@ public class SearchStoreRes {
     private final Integer storeIdx;
     private final String storeImage;
     private final String storeName;
+    private final String storeBrand;
     private final String storeLocation;
     private final Float distanceFromUser;
 }

@@ -3,6 +3,7 @@ package com.naturemobility.seoul.controller;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
 import com.naturemobility.seoul.domain.stores.GetStoreRes;
+import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
 import com.naturemobility.seoul.domain.stores.SearchStoreRes;
 import com.naturemobility.seoul.domain.stores.StoreInfo;
 import com.naturemobility.seoul.service.stores.StoreService;
@@ -66,6 +67,33 @@ public class StoresController {
 
             GetStoreRes getStoreList = storeService.retrieveStoreInfoByStoreIdx(storeIdx);
             return new BaseResponse<>(SUCCESS, getStoreList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 지도 매장 조회 API
+     * [GET] /stores/map?userLatitude=37.5533535&userLongitude=127.0235435&orderRule=1
+     *
+     * Params : orderRule [1:거리 가까운 순, 2:리뷰 순]
+     * @return BaseResponse<List<GetStoreResByMap>>
+     */
+    @ResponseBody
+    @GetMapping("/map")
+    public BaseResponse<List<GetStoreResByMap>> getStoresByMap(@RequestParam Double userLatitude, Double userLongitude, Integer orderRule) {
+        if (userLatitude == null || userLongitude == null || orderRule == null) {
+            return new BaseResponse<>(REQUEST_ERROR);
+        }
+
+        //orderRule 1-거리 가까운순, 2-리뷰 별점 순, 추가 사항 있을 시 추가예정
+        if(orderRule != 1 && orderRule!=2){
+            return new BaseResponse<>(REQUEST_ERROR);
+        }
+
+        try {
+            List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMap(userLatitude,userLongitude,orderRule);
+            return new BaseResponse<>(SUCCESS, storeResByMap);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

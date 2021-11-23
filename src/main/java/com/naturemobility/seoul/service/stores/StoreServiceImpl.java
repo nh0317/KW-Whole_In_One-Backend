@@ -3,6 +3,7 @@ package com.naturemobility.seoul.service.stores;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.domain.UserStatus;
 import com.naturemobility.seoul.domain.stores.GetStoreRes;
+import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
 import com.naturemobility.seoul.domain.stores.SearchStoreRes;
 import com.naturemobility.seoul.domain.stores.StoreInfo;
 import com.naturemobility.seoul.domain.users.GetUsersRes;
@@ -69,6 +70,21 @@ public class StoreServiceImpl implements StoreService {
             //ignored.printStackTrace();
         }
         return storeIdxCheck;
+    }
+
+    @Override
+    public List<GetStoreResByMap> retrieveStoreInfoByMap(Double userLatitude, Double userLongitude, Integer orderRule) throws BaseException {
+        List<GetStoreResByMap> storeInfoList;
+        try {
+
+            storesMapper.setOrderRule(orderRule);
+            storeInfoList = storesMapper.retrieveStoreInfoByMap(userLatitude,userLongitude);
+
+        } catch (Exception ignored) {
+            throw new BaseException(RESPONSE_ERROR);
+            //ignored.printStackTrace();
+        }
+        return storeInfoList;
     }
 }
 
