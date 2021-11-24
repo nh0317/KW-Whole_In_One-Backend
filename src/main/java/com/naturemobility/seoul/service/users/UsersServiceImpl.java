@@ -337,7 +337,7 @@ public class UsersServiceImpl implements UsersService {
         try {
             authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         }catch ( Exception exception){
-            throw new BaseException(NOT_FOUND_USER);
+            throw new BaseException(WRONG_PASSWORD);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtService.createJwt(authentication);

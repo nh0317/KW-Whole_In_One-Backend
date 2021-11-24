@@ -281,7 +281,7 @@ public class PartnerServiceImpl implements PartnerService{
             authenticationToken
                     = new UsernamePasswordAuthenticationToken(email+":partner", pw);
         }catch ( UsernameNotFoundException exception){
-            throw new BaseException(NOT_FOUND_USER);
+            throw new BaseException(WRONG_PASSWORD);
         }
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);

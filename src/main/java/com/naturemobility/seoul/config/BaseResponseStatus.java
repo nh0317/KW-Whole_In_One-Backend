@@ -52,6 +52,8 @@ public enum BaseResponseStatus {
 //    FAILED_TO_PATCH_PASSWORD(false, 3020, "비밀번호 수정에 실패하였습니다."),
 
     // 4000 : Database 오류
+    UNATHORIZED(false, 401, "인증에 실패하였습니다."),
+    FORBIDDEN(false, 403, "권한이 없는 유저입니다."),
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");
 
