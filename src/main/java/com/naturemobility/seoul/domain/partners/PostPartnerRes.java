@@ -7,5 +7,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PostPartnerRes {
     private Long idx;
-    private String jwt;
 }

@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.domain.partners;
 
 import com.naturemobility.seoul.domain.DTOCommon;
+import com.naturemobility.seoul.domain.users.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,5 +37,13 @@ public class PartnerInfo extends DTOCommon {
         this.partnerName = partnerName;
         this.partnerPassword = partnerPassword;
         this.partnerEmail = partnerEmail;
+    }
+
+    public Boolean getIsAccountNonExpired() {
+        return partnerStatus.equals(PartnerStatus.ACTIVE.getValue());
+    }
+
+    public Boolean getIsEnabled() {
+        return partnerStatus.equals(PartnerStatus.ACTIVE.getValue());
     }
 }

@@ -7,5 +7,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PostUserRes {
     private final Long userIdx;
-    private final String jwt;
 }

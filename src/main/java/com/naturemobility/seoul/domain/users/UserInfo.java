@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.domain.users;
 
 import com.naturemobility.seoul.domain.DTOCommon;
+import com.naturemobility.seoul.domain.partners.PartnerStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -49,4 +50,12 @@ public class UserInfo extends DTOCommon {
     }
 
     public UserInfo() {}
+
+    public Boolean getIsAccountNonExpired() {
+        return userStatus.equals(UserStatus.ACTIVE.getValue());
+    }
+
+    public Boolean getIsEnabled() {
+        return userStatus.equals(UserStatus.ACTIVE.getValue());
+    }
 }

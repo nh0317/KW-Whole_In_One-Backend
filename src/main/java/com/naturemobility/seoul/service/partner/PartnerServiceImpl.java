@@ -6,12 +6,18 @@ import com.naturemobility.seoul.domain.partners.*;
 import com.naturemobility.seoul.domain.users.PatchPWReq;
 import com.naturemobility.seoul.domain.users.PostLoginReq;
 import com.naturemobility.seoul.domain.users.PostLoginRes;
+import com.naturemobility.seoul.jwt.JwtFilter;
+import com.naturemobility.seoul.jwt.JwtService;
 import com.naturemobility.seoul.mapper.PartnerMapper;
-import com.naturemobility.seoul.utils.AES128;
-import com.naturemobility.seoul.utils.JwtService;
 import com.naturemobility.seoul.utils.ValidationRegex;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,11 +30,17 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.NOT_FOUND_USER;
 @Slf4j
 public class PartnerServiceImpl implements PartnerService{
 
-    @Autowired
-    PartnerMapper partnerMapper;
+    private final PartnerMapper partnerMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @Autowired
-    JwtService jwtService;
+    public PartnerServiceImpl(PartnerMapper partnerMapper, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManagerBuilder authenticationManagerBuilder) {
+        this.partnerMapper = partnerMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
+    }
 
     /**
      * 중복 회원 검증
@@ -78,13 +90,7 @@ public class PartnerServiceImpl implements PartnerService{
         // 2. 유저 정보 생성
         String email = postPartnerReq.getEmail();
         String name = postPartnerReq.getName();
-        String password;
-//        String id = postPartnerReq.getId();
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postPartnerReq.getPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        String password = passwordEncoder.encode(postPartnerReq.getPassword());
         PartnerInfo partnerInfo = new PartnerInfo(email, password, name);
 
         // 3. 유저 정보 저장
@@ -93,12 +99,10 @@ public class PartnerServiceImpl implements PartnerService{
         } catch (Exception exception) {
             throw new BaseException(RESPONSE_ERROR);
         }
-        // 4. JWT 생성
-        String jwt = jwtService.createPartnerJwt(partnerInfo.getPartnerIdx());
 
-        // 5. DTOPartnersLoginRes로 변환하여 return
+        // 4. DTOPartnersLoginRes로 변환하여 return
         Long idx = partnerInfo.getPartnerIdx();
-        return new PostPartnerRes(idx, jwt);
+        return new PostPartnerRes(idx);
     }
 
     /** 로그인
@@ -107,96 +111,46 @@ public class PartnerServiceImpl implements PartnerService{
      * @throws BaseException
      */
     @Override
-    public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
+    public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException, UsernameNotFoundException {
         PartnerInfo partnerInfo;
         // 1. DB에서 PartnerInfo 조회
         String partnerId=postLoginReq.getId();
         if (!ValidationRegex.isRegexEmail(partnerId))
             throw new BaseException(INVALID_EMAIL);
-        else partnerInfo = retrievePartnerInfoByEmail(partnerId);
+        else retrievePartnerInfoByEmail(partnerId);
 
-        // 2. PartnerInfo에서 password 추출
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(partnerInfo.getPartnerPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        // 3. 비밀번호 일치 여부 확인
-        if (!postLoginReq.getPassword().equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
-
-        // 3. Create JWT
-        String jwt = jwtService.createPartnerJwt(partnerInfo.getPartnerIdx());
-
+        // 2.유저 조회 및 비밀 번호 확인
         // 4. PostLoginRes 변환하여 return
-        Long idx = partnerInfo.getPartnerIdx();
-        return new PostLoginRes(idx, jwt);
+        return createJwt(postLoginReq.getId(), postLoginReq.getPassword());
     }
 
     /** 비밀번호 확인
-     * @param partnerIdx, pw
+     * @param partnerEmail, pw
      * @return PostLoginRes
      * @throws BaseException
      */
     @Override
-    public PostLoginRes checkPW(Long partnerIdx, String pw) throws BaseException {
-        PartnerInfo partnerInfo;
-        // 1. DB에서 PartnerInfo 조회
-        partnerInfo = retrievePartnerInfoByPartnerIdx(partnerIdx);
+    public PostLoginRes checkPW(String partnerEmail, String pw) throws BaseException {
 
-        // 2. PartnerInfo에서 password 추출
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(partnerInfo.getPartnerPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        // 3. 비밀번호 일치 여부 확인
-        if (!pw.equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
-
-        // 3. Create JWT
-        String jwt = jwtService.createPartnerJwt(partnerInfo.getPartnerIdx());
-
-        // 4. PostLoginRes 변환하여 return
-        Long idx = partnerInfo.getPartnerIdx();
-        return new PostLoginRes(idx, jwt);
+        return createJwt(partnerEmail, pw);
     }
     /** 비밀번호 수정
-     * @param partnerIdx, patchPWReq
+     * @param partnerInfo, patchPWReq
      * @throws BaseException
      */
     @Override
-    public void updatePW(Long partnerIdx, PatchPWReq patchPWReq) throws BaseException {
+    public void updatePW(PartnerInfo partnerInfo, PatchPWReq patchPWReq) throws BaseException {
 
-        PartnerInfo partnerInfo = partnerMapper.findByIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_USER));
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(partnerInfo.getPartnerPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        // 3. Create JWT
+        createJwt(partnerInfo.getPartnerEmail(), patchPWReq.getPassword());
 
-        //기존 비밀번호 일치 여부 확인
-        if (!patchPWReq.getPassword().equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
         //새로운 비밀번호 일치 확인
         if (!patchPWReq.getNewPassword().equals(patchPWReq.getConfirmNewPassword())) {
             throw new BaseException(WRONG_PASSWORD);
         }
 
         //암호화
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchPWReq.getNewPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        String password = passwordEncoder.encode(patchPWReq.getNewPassword());
 
         //변경사항 저장
         partnerInfo.setPartnerPassword(password);
@@ -207,6 +161,7 @@ public class PartnerServiceImpl implements PartnerService{
         }
 
     }
+
     /**
      * 회원 조회
      * @param partnerIdx
@@ -226,14 +181,13 @@ public class PartnerServiceImpl implements PartnerService{
     }
     /**
      * 회원 수정
-     * @param partnerIdx, patchPartnerReq
+     * @param partnerInfo, patchPartnerReq
      * @return PatchPartnerRes
      * @throws BaseException
      */
     @Override
-    public PatchPartnerRes updatePartnerInfo(Long partnerIdx, PatchPartnerReq patchPartnerReq) throws BaseException {
+    public PatchPartnerRes updatePartnerInfo(PartnerInfo partnerInfo, PatchPartnerReq patchPartnerReq) throws BaseException {
         try {
-            PartnerInfo partnerInfo = partnerMapper.findByIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
             String name = patchPartnerReq.getName()+"_edited";
 
             if (patchPartnerReq.getName() != null && patchPartnerReq.getName().length() != 0)
@@ -247,13 +201,12 @@ public class PartnerServiceImpl implements PartnerService{
     }
     /**
      * 회원 탈퇴
-     * @param partnerIdx
+     * @param partnerInfo
      * @throws BaseException
      */
     @Override
-    public void deletePartnerInfo(Long partnerIdx) throws BaseException {
+    public void deletePartnerInfo(PartnerInfo partnerInfo) throws BaseException {
         // 1. 존재하는 DTOPartners가 있는지 확인 후 저장
-        PartnerInfo partnerInfo = retrievePartnerInfoByPartnerIdx(partnerIdx);
 
         // 2-1. 해당 DTOPartners를 완전히 삭제
 //        try {
@@ -320,5 +273,22 @@ public class PartnerServiceImpl implements PartnerService{
                 throw new BaseException(NOT_FOUND_USER);
         }
         return partnerInfo;
+    }
+
+    private PostLoginRes createJwt(String email, String pw) throws BaseException {
+        UsernamePasswordAuthenticationToken authenticationToken;
+        try {
+            authenticationToken
+                    = new UsernamePasswordAuthenticationToken(email+":partner", pw);
+        }catch ( UsernameNotFoundException exception){
+            throw new BaseException(NOT_FOUND_USER);
+        }
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtService.createJwt(authentication);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        return new PostLoginRes(email, jwt);
     }
 }

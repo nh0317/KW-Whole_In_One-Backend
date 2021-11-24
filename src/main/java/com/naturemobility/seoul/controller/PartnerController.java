@@ -7,7 +7,7 @@ import com.naturemobility.seoul.domain.users.PatchPWReq;
 import com.naturemobility.seoul.domain.users.PostLoginReq;
 import com.naturemobility.seoul.domain.users.PostLoginRes;
 import com.naturemobility.seoul.service.partner.PartnerService;
-import com.naturemobility.seoul.utils.JwtService;
+import com.naturemobility.seoul.utils.CheckUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,8 @@ public class PartnerController {
     PartnerService partnerService;
     
     @Autowired
-    JwtService jwtService;
+    CheckUserService checkUserService;
+//    JwtService jwtService;
     /**
      * 회원가입 API
      * [POST] /partner/sign_up
@@ -100,15 +101,18 @@ public class PartnerController {
     /**
      * 회원 개인 정보 조회 API
      * [GET] /partner/mypage/edit
-     * @RequestHeader X-ACCESS-TOKEN
      * @return BaseResponse<GetPartnerRes>
      */
     @ResponseBody
     @GetMapping("mypage/edit")
-    public BaseResponse<GetPartnerRes> getPartner(@RequestHeader("X-ACCESS-TOKEN") String token) {
+    public BaseResponse<GetPartnerRes> getPartner() {
+
         try {
-            Long partnerIdx = jwtService.getPartnerIdx();
-            GetPartnerRes getPartnerRes = partnerService.findPartnerInfo(partnerIdx);
+            PartnerInfo partnerInfo = checkUserService.getPartner();
+            GetPartnerRes getPartnerRes
+                    = new GetPartnerRes(partnerInfo.getPartnerIdx(),
+                                        partnerInfo.getPartnerEmail(),
+                                        partnerInfo.getPartnerName());
             return new BaseResponse<>(SUCCESS, getPartnerRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -119,15 +123,14 @@ public class PartnerController {
      * 회원 정보 수정 API (id는 수정 불가, 비밀번호는 따로 수정)
      * [PATCH] /partner/mypage/edit
      * @RequestBody PatchPartnerReq
-     * @RequestHeader X-ACCESS-TOKEN
      * @return BaseResponse<PatchPartnerRe>
      */
     @ResponseBody
     @PatchMapping("mypage/edit")
-    public BaseResponse<PatchPartnerRes> getPartner(@RequestBody PatchPartnerReq parameters , @RequestHeader("X-ACCESS-TOKEN") String token) {
+    public BaseResponse<PatchPartnerRes> getPartner(@RequestBody PatchPartnerReq parameters) {
         try {
-            Long partnerIdx = jwtService.getPartnerIdx();
-            return new BaseResponse<>(SUCCESS, partnerService.updatePartnerInfo(partnerIdx, parameters));
+            PartnerInfo partnerInfo = checkUserService.getPartner();
+            return new BaseResponse<>(SUCCESS, partnerService.updatePartnerInfo(partnerInfo, parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -141,12 +144,12 @@ public class PartnerController {
      */
     @ResponseBody
     @PatchMapping("mypage/edit_password")
-    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq, @RequestHeader("X-ACCESS-TOKEN") String token) {
+    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq) {
         // 2. Post PartnerInfo
         PostLoginRes postLoginRes;
         try {
-            Long partnerIdx = jwtService.getPartnerIdx();
-            partnerService.updatePW(partnerIdx,patchPWReq);
+            PartnerInfo partnerInfo = checkUserService.getPartner();
+            partnerService.updatePW(partnerInfo,patchPWReq);
 
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -157,18 +160,17 @@ public class PartnerController {
      * 비밀번호 확인 API (개인정보 조회 및 수정 전 비밀번호 요구 시)
      * [Post] /partner/check_password
      * @RequestParam password
-     * @RequestHeader X-ACCESS-TOKEN
      * BaseResponse<PostLoginRes>
      */
     @ResponseBody
     @PostMapping("check_password")
-    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password,
-                                                @RequestHeader("X-ACCESS-TOKEN") String token) {
+    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password) {
+
         // 2. Post PartnerInfo
         PostLoginRes postLoginRes;
         try {
-            Long partnerIdx = jwtService.getPartnerIdx();
-            postLoginRes = partnerService.checkPW(partnerIdx,password);
+            String partnerEmail = checkUserService.getEmail();
+            postLoginRes = partnerService.checkPW(partnerEmail,password);
 
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -182,10 +184,10 @@ public class PartnerController {
      * @return BaseResponse<Void>
      */
     @DeleteMapping("withdraw")
-    public BaseResponse<Void> deletePartners(@RequestHeader("X-ACCESS-TOKEN") String token) {
+    public BaseResponse<Void> deletePartners() {
         try {
-            Long partnerIdx = jwtService.getPartnerIdx();
-            partnerService.deletePartnerInfo(partnerIdx);
+            PartnerInfo partnerInfo = checkUserService.getPartner();
+            partnerService.deletePartnerInfo(partnerInfo);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

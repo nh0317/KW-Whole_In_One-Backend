@@ -3,13 +3,21 @@ package com.naturemobility.seoul.service.users;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.secret.Secret;
 import com.naturemobility.seoul.domain.users.*;
+import com.naturemobility.seoul.jwt.JwtFilter;
+import com.naturemobility.seoul.jwt.JwtService;
 import com.naturemobility.seoul.mapper.UsersMapper;
-import com.naturemobility.seoul.utils.AES128;
-import com.naturemobility.seoul.utils.JwtService;
 import com.naturemobility.seoul.domain.users.UserStatus;
 import com.naturemobility.seoul.utils.ValidationRegex;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,12 +29,12 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UsersServiceImpl implements UsersService {
-    @Autowired
-    private UsersMapper usersMapper;
-
-    @Autowired
-    private JwtService jwtService;
+    private final UsersMapper usersMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     /**
      * 중복 회원 검증
@@ -80,13 +88,7 @@ public class UsersServiceImpl implements UsersService {
         String email = postUserReq.getEmail();
         String nickname = postUserReq.getNickname();
         String name = postUserReq.getName();
-        String password;
-//        String id = postUserReq.getId();
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        String password = passwordEncoder.encode(postUserReq.getPassword());
         UserInfo userInfo = new UserInfo(email, password, nickname, name);
 
         // 3. 유저 정보 저장
@@ -96,12 +98,9 @@ public class UsersServiceImpl implements UsersService {
             throw new BaseException(RESPONSE_ERROR);
         }
 
-        // 4. JWT 생성
-        String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
         // 5. DTOUsersLoginRes로 변환하여 return
         Long idx = userInfo.getUserIdx();
-        return new PostUserRes(idx, jwt);
+        return new PostUserRes(idx);
     }
 
     /** 회원 정보 수정
@@ -110,9 +109,8 @@ public class UsersServiceImpl implements UsersService {
      * @throws BaseException
      */
     @Override
-    public PatchUserRes updateUserInfo(Long userIdx, PatchUserReq patchUserReq) throws BaseException {
+    public PatchUserRes updateUserInfo(UserInfo userInfo, PatchUserReq patchUserReq) throws BaseException {
         try {
-            UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
             String nickname = patchUserReq.getNickname()+"_edited";
             String name = patchUserReq.getName()+"_edited";
             String image = patchUserReq.getUserImage()+"_edited";
@@ -133,34 +131,20 @@ public class UsersServiceImpl implements UsersService {
     }
 
     /** 비밀번호 수정
-     * @param userIdx, patchPWReq
+     * @param userInfo, patchPWReq
      * @throws BaseException
      */
     @Override
-    public void updatePW(Long userIdx, PatchPWReq patchPWReq) throws BaseException {
-        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_USER));
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        //기존 비밀번호 일치 여부 확인
-        if (!patchPWReq.getPassword().equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
+    public void updatePW(UserInfo userInfo, PatchPWReq patchPWReq) throws BaseException {
+        log.info("비밀번호 변경 " + userInfo.getUserEmail());
+        createJwt(userInfo.getUserEmail(), patchPWReq.getPassword());
         //새로운 비밀번호 일치 확인
         if (!patchPWReq.getNewPassword().equals(patchPWReq.getConfirmNewPassword())) {
             throw new BaseException(WRONG_PASSWORD);
         }
 
         //암호화
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchPWReq.getNewPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        String password = passwordEncoder.encode(patchPWReq.getNewPassword());
 
         //변경사항 저장
         userInfo.setUserPassword(password);
@@ -172,13 +156,11 @@ public class UsersServiceImpl implements UsersService {
     }
         /**
          * 회원 탈퇴
-         * @param userIdx
+         * @param userInfo
          * @throws BaseException
          */
     @Override
-    public void deleteUserInfo(Long userIdx) throws BaseException {
-        // 1. 존재하는 DTOUsers가 있는지 확인 후 저장
-        UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
+    public void deleteUserInfo(UserInfo userInfo) throws BaseException {
 
         // 2-1. 해당 DTOUsers를 완전히 삭제
 //        try {
@@ -250,64 +232,24 @@ public class UsersServiceImpl implements UsersService {
      */
     @Override
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
-        UserInfo userInfo = new UserInfo();
         // 1. DB에서 UserInfo 조회
         String userId=postLoginReq.getId();
         if (!ValidationRegex.isRegexEmail(userId))
             throw new BaseException(INVALID_EMAIL);
-        else userInfo = retrieveUserInfoByEmail(userId);
+        else retrieveUserInfoByEmail(userId);
 
-        // 2. UserInfo에서 password 추출
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        // 3. 비밀번호 일치 여부 확인
-        if (!postLoginReq.getPassword().equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
-
-        // 3. Create JWT
-        String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
-        // 4. PostLoginRes 변환하여 return
-        Long idx = userInfo.getUserIdx();
-        return new PostLoginRes(idx, jwt);
+        // 4. Create JWT
+        return createJwt(postLoginReq.getId(), postLoginReq.getPassword());
     }
     /**
      * 비밀번호 확인
-     * @param userIdx, pw
+     * @param userEmail, pw
      * @return PostLoginRes
      * @throws BaseException
      */
     @Override
-    public PostLoginRes checkPW(Long userIdx, String pw) throws BaseException {
-        UserInfo userInfo = new UserInfo();
-        // 1. DB에서 UserInfo 조회
-        userInfo = retrieveUserInfoByUserIdx(userIdx);
-
-        // 2. UserInfo에서 password 추출
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        // 3. 비밀번호 일치 여부 확인
-        if (!pw.equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
-
-        // 3. Create JWT
-        String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
-        // 4. PostLoginRes 변환하여 return
-        Long idx = userInfo.getUserIdx();
-        return new PostLoginRes(idx, jwt);
+    public PostLoginRes checkPW(String userEmail, String pw) throws BaseException {
+        return createJwt(userEmail, pw);
     }
 
     /**
@@ -345,9 +287,11 @@ public class UsersServiceImpl implements UsersService {
      * @return DTOUsers
      * @throws BaseException
      */
+    @Override
     public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         List<UserInfo> existsDTOUser = new ArrayList<>();
         UserInfo userInfo = null;
+        log.info(email + UserStatus.ACTIVE.getValue().toString());
         existsDTOUser = usersMapper.findByEmailAndStatus(email, UserStatus.ACTIVE.getValue());
 
         if (existsDTOUser.size()>0) userInfo = existsDTOUser.get(0);
@@ -368,6 +312,7 @@ public class UsersServiceImpl implements UsersService {
      * @return GetMyPageRes
      * @throws BaseException
      */
+    @Override
     public GetMyPageRes myPage(Long userIdx) throws BaseException {
         UserInfo user;
         Integer point=0, cntReservation=0, cntStoreLike=0, cntCoupon=0;
@@ -385,4 +330,20 @@ public class UsersServiceImpl implements UsersService {
         return getMyPageRes;
     }
 
+    private PostLoginRes createJwt(String email, String pw) throws BaseException {
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(email+":user", pw);
+        Authentication authentication;
+        try {
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        }catch ( Exception exception){
+            throw new BaseException(NOT_FOUND_USER);
+        }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtService.createJwt(authentication);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        return new PostLoginRes(email, jwt);
+    }
 }
