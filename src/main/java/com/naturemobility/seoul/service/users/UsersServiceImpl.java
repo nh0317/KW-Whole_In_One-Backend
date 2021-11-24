@@ -315,9 +315,10 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public GetMyPageRes myPage(Long userIdx) throws BaseException {
         UserInfo user;
+        log.info("user {}", userIdx);
         Integer point=0, cntReservation=0, cntStoreLike=0, cntCoupon=0;
         String image=null, nickName=null;
-        user = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
+        user = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
         if (user!=null) {
             nickName = user.getUserNickname();
             image = user.getUserImage();
