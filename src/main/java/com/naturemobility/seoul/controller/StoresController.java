@@ -7,7 +7,7 @@ import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
 import com.naturemobility.seoul.domain.stores.SearchStoreRes;
 import com.naturemobility.seoul.domain.stores.StoreInfo;
 import com.naturemobility.seoul.service.stores.StoreService;
-import com.naturemobility.seoul.utils.JwtService;
+//import com.naturemobility.seoul.utils.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +22,7 @@ public class StoresController {
     @Autowired
     private StoreService storeService;
 
-    @Autowired
-    private JwtService jwtService;
+    //private JwtService jwtService;
 
     /**
      * 매장 검색 API
