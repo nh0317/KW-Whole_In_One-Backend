@@ -40,7 +40,7 @@ spring:
 * 비밀번호 수정 API  
 * 회원 탈퇴 API  
   
-보다 자세한 설명은 아래의 링크에서 확인가능 합니다.    
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.
 [API 문서](https://documenter.getpostman.com/view/18157329/UVC5ESgt)
 
 ### Partener API 
@@ -60,3 +60,4 @@ spring:
 * 로그인은 authorization bearer header에 jwt 토큰을 넣는 방식으로 동작합니다. 
 * 현재 상태에서 로그인이 필요한 페이지의 경우 DB상의 1번째 유저의 정보를 반환합니다. 
   (현재 상태에서 로그인이 필요한 페이지에서 전부 로그인을 요청할 경우 귀찮을 수 있다고 판단했습니다.
+  
