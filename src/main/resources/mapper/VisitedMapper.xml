@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.naturemobility.seoul.mapper.VisitedMapper">
     <insert id="save" useGeneratedKeys="true" keyProperty="visitedIdx" parameterType="VisitedInfo">
-        INSERT INTO Partner(storeIdx,userIdx)
+        INSERT INTO Visited(storeIdx,userIdx)
         VALUES(#{storeIdx}, #{userIdx})
             ON DUPLICATE KEY UPDATE
              storeIdx = #{storeIdx},
