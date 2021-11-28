@@ -4,10 +4,14 @@
     <insert id="save" useGeneratedKeys="true" keyProperty="visitedIdx" parameterType="VisitedInfo">
         INSERT INTO Visited(storeIdx,userIdx)
         VALUES(#{storeIdx}, #{userIdx})
-            ON DUPLICATE KEY UPDATE
-             storeIdx = #{storeIdx},
-             userIdx = #{userIdx}
     </insert>
+
+    <update id="update" parameterType="VisitedInfo">
+        UPDATE Visited
+        SET
+            updatedAt = NOW()
+        WHERE userIdx =#{userIdx} and storeIdx=#{storeIdx}
+    </update>
 
     <select id="findAllByUserIdx" parameterType="VisitedInfo" resultType="GetVisitedByUserIdx">
         select s.storeIdx,s.storeName, s.storeImage, s.storeBrand as storeType,  s.reserveStatus, s.couponStatus,
@@ -23,6 +27,12 @@
         select count(*)
         FROM Visited
         WHERE userIdx=#{userIdx}
+    </select>
+
+    <select id="findByStoreIdxAndUserIdx" resultType="VisitedInfo">
+        select *
+        FROM Visited
+        WHERE userIdx=#{userIdx} and storeIdx=#{storeIdx}
     </select>
 
     <delete id="delete" parameterType="VisitedInfo">

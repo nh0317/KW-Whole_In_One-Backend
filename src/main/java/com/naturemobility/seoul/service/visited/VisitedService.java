@@ -11,5 +11,5 @@ public interface VisitedService {
     void setVistiedStore(Long storeIdx, Long userIdx) throws BaseException;
 
     //유저가 방문한 스토어의 목록을 반환하는 함수
-    List<GetVisitedByUserIdx> findAllVistiedStore(Long userIdx) throws BaseException;
+    List<GetVisitedByUserIdx> findAllVisitedStore(Long userIdx) throws BaseException;
 }

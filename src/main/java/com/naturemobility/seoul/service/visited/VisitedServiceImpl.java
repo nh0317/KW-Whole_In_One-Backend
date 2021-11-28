@@ -6,6 +6,7 @@ import com.naturemobility.seoul.domain.visited.GetVisitedByUserIdx;
 import com.naturemobility.seoul.domain.visited.VisitedInfo;
 import com.naturemobility.seoul.mapper.StoresMapper;
 import com.naturemobility.seoul.mapper.VisitedMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 @Service
+@Slf4j
 public class VisitedServiceImpl implements VisitedService {
     @Autowired
     VisitedMapper visitedMapper;
@@ -30,14 +32,18 @@ public class VisitedServiceImpl implements VisitedService {
      */
     @Override
     public void setVistiedStore(Long storeIdx, Long userIdx) throws BaseException {
-        VisitedInfo visitedInfo = new VisitedInfo(storeIdx, userIdx);
+        VisitedInfo visitedInfo = new VisitedInfo(storeIdx,userIdx);
         if (userIdx==0) //로그인 하지 않은 경우 예외 처리
             return;
 
         try{
-            visitedMapper.save(visitedInfo);
+            if(visitedMapper.findByStoreIdxAndUserIdx(visitedInfo).isPresent()) {
+                visitedMapper.update(visitedInfo);
+            }else{
+                visitedMapper.save(visitedInfo);
+            }
         }catch (Exception exception){
-            throw new BaseException(NOT_FOUND_DATA);
+            throw new BaseException(RESPONSE_ERROR);
         }
     }
 
@@ -48,7 +54,7 @@ public class VisitedServiceImpl implements VisitedService {
      * @throws BaseException
      */
     @Override
-    public List<GetVisitedByUserIdx> findAllVistiedStore(Long userIdx) throws BaseException {
+    public List<GetVisitedByUserIdx> findAllVisitedStore(Long userIdx) throws BaseException {
         VisitedInfo visitedInfo = new VisitedInfo(userIdx);
         List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
         Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());

@@ -18,6 +18,7 @@ public class VisitedInfo extends DTOCommon {
     // 유저 인덱스
     private Long userIdx;
 
+    public VisitedInfo(){};
     public VisitedInfo(Long storeIdx, Long userIdx) {
         this.storeIdx = storeIdx;
         this.userIdx = userIdx;

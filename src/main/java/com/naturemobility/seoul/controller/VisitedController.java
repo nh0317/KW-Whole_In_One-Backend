@@ -37,10 +37,9 @@ public class VisitedController {
         }
         // 2. Post PartnerInfo
         try {
-            List<GetVisitedByUserIdx> allVistiedStore = visitedService.findAllVistiedStore(userIdx);
+            List<GetVisitedByUserIdx> allVistiedStore = visitedService.findAllVisitedStore(userIdx);
             return new BaseResponse<>(SUCCESS, allVistiedStore);
         } catch (BaseException exception) {
-            exception.printStackTrace();
             return new BaseResponse<>(exception.getStatus());
         }
     }
