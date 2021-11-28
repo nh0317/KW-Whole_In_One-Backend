@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.utils;
 
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.domain.CustomUserDetails;
 import com.naturemobility.seoul.domain.partners.PartnerInfo;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import com.naturemobility.seoul.mapper.PartnerMapper;
@@ -56,6 +57,7 @@ public class CheckUserService {
         if (authentication.getPrincipal().equals("anonymousUser")) {
             log.info(authentication.getPrincipal().toString());
 //            throw new BaseException(NEED_LOGIN);
+//            CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
             PartnerInfo partnerInfo = partnerService.retrievePartnerInfoByPartnerIdx(1L);
             return partnerInfo;
         }

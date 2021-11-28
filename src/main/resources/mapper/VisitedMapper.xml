@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.VisitedMapper">
+    <insert id="save" useGeneratedKeys="true" keyProperty="visitedIdx" parameterType="VisitedInfo">
+        INSERT INTO Partner(storeIdx,userIdx)
+        VALUES(#{storeIdx}, #{userIdx})
+            ON DUPLICATE KEY UPDATE
+             storeIdx = #{storeIdx},
+             userIdx = #{userIdx}
+    </insert>
+
+    <select id="findAllByUserIdx" parameterType="VisitedInfo" resultType="GetVisitedByUserIdx">
+        select s.storeIdx,s.storeName, s.storeImage, s.storeBrand as storeType,  s.reserveStatus, s.couponStatus,
+               (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+                FROM Reviews r
+                WHERE r.storeIdx = s.storeIdx)                              AS reviewStar
+        FROM Visited v join Stores s on v.storeIdx = s.storeIdx WHERE v.userIdx=#{userIdx}
+        Order By v.updatedAt DESC
+        LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+    </select>
+
+    <select id="cntTotalVisited" resultType="Integer">
+        select count(*)
+        FROM Visited
+        WHERE userIdx=#{userIdx}
+    </select>
+
+    <delete id="delete" parameterType="VisitedInfo">
+        DELETE FROM Visited
+        WHERE visitedIdx=#{visitedIdx}
+    </delete>
+
+</mapper>

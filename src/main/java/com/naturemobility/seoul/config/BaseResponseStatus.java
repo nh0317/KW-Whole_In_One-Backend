@@ -44,6 +44,7 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3012, "이미 존재하는 이메일입니다."),
     DUPLICATED_ID(false, 3013, "이미 존재하는 아이디입니다."),
     INACTIVE_ID(false, 3014, "비활성화된 계정입니다."),
+    NOT_FOUND_DATA(false, 3015, "데이터를 찾을 수 없습니다"),
 //    FAILED_TO_GET_USER(false, 3012, "회원 정보 조회에 실패하였습니다."),
 //    FAILED_TO_POST_USER(false, 3013, "회원가입에 실패하였습니다."),
 //    FAILED_TO_LOGIN(false, 3014, "로그인에 실패하였습니다."),
