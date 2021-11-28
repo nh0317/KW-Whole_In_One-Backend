@@ -12,8 +12,8 @@ import java.util.List;
 public interface StoreService {
 
     public List<SearchStoreRes> retrieveStoreList(String storeName,Double userLatitude,Double userLongitude) throws BaseException;
-    public GetStoreRes retrieveStoreInfoByStoreIdx(Integer storeIdx) throws BaseException;
-    public Integer checkStoreIdx(Integer storeIdx) throws BaseException;
+    public GetStoreRes retrieveStoreInfoByStoreIdx(Long storeIdx) throws BaseException;
+    public Integer checkStoreIdx(Long storeIdx) throws BaseException;
     public List<GetStoreResByMap>retrieveStoreInfoByMap(Double userLatitude, Double userLongitude, Integer orderRule) throws BaseException;
 
 }

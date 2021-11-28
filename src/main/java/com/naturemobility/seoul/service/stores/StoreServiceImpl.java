@@ -44,7 +44,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public GetStoreRes retrieveStoreInfoByStoreIdx(Integer storeIdx) throws BaseException {
+    public GetStoreRes retrieveStoreInfoByStoreIdx(Long storeIdx) throws BaseException {
         GetStoreRes storeInfo;
         try {
 
@@ -58,7 +58,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Integer checkStoreIdx(Integer storeIdx) throws BaseException {
+    public Integer checkStoreIdx(Long storeIdx) throws BaseException {
         Integer storeIdxCheck;
         try {
 

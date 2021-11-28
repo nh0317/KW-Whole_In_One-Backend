@@ -6,8 +6,11 @@ import com.naturemobility.seoul.domain.stores.GetStoreRes;
 import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
 import com.naturemobility.seoul.domain.stores.SearchStoreRes;
 import com.naturemobility.seoul.domain.stores.StoreInfo;
+import com.naturemobility.seoul.mapper.VisitedMapper;
 import com.naturemobility.seoul.service.stores.StoreService;
 //import com.naturemobility.seoul.utils.JwtService;
+import com.naturemobility.seoul.service.visited.VisitedService;
+import com.naturemobility.seoul.utils.CheckUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +24,13 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 public class StoresController {
     @Autowired
     private StoreService storeService;
-
     //private JwtService jwtService;
+
+    @Autowired
+    private CheckUserService checkUserService;
+
+    @Autowired
+    private VisitedService visitedService;
 
     /**
      * 매장 검색 API
@@ -53,9 +61,18 @@ public class StoresController {
      */
     @ResponseBody
     @GetMapping("/{storeIdx}")
-    public BaseResponse<GetStoreRes> getStoresByStoreIdx(@PathVariable Integer storeIdx) {
+    public BaseResponse<GetStoreRes> getStoresByStoreIdx(@PathVariable Long storeIdx) {
         if (storeIdx == null) {
             return new BaseResponse<>(REQUEST_ERROR);
+        }
+
+        //방문한 매장 표시
+        try{
+            Long userIdx = checkUserService.getUserIdx();
+            visitedService.setVistiedStore(storeIdx,userIdx);
+        }catch (BaseException exception){
+            if(exception.getStatus()!=NEED_LOGIN)
+                return new BaseResponse<>(RESPONSE_ERROR);
         }
 
         try {

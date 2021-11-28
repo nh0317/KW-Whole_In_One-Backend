@@ -56,4 +56,10 @@ public class StoreInfo extends DTOCommon {
 
     // 프로교습 여부 0: 없음 1:가능
     private Boolean lessonStatus;
+
+    // 당일 예약 가능 여부 0: 불가능, 1: 가능
+    private Boolean reserveStatus;
+
+    // 쿠폰 사용 가능 여부 0: 불가능, 1: 가능
+    private Boolean reserveCoupon;
 }
