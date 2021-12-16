@@ -16,6 +16,16 @@ public interface StoresMapper {
     Integer checkStoreIdx (@PathVariable("storeIdx") Long storeIdx);
     List<GetStoreResByMap> retrieveStoreInfoByMap(@Param("userLatitude")Double userLatitude,@Param("userLongitude")Double userLongitude);
     void setOrderRule(@Param("orderRule")Integer orderRule);
+    List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter(@Param("userLatitude")Double userLatitude,@Param("userLongitude")Double userLongitude,@Param("brand")Integer brand,
+    @Param("lefthandStatus")Integer lefthandStatus,@Param("parkingStatus")Integer parkingStatus,@Param("groupseatStatus")Integer groupseatStatus,
+                                                            @Param("groupseatStatus")Integer groupStatus,@Param("floorscreenStatus")Integer floorscreenStatus,
+                                                            @Param("storageStatus")Integer storageStatus,@Param("distance")Integer distance);
 
     List<GetVisitedByUserIdx> retriveStoreInfoByUserIdx(@Param("userIdx") Long userIdx);
+
+    List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(@Param("userLatitude")Double userLatitude,@Param("userLongitude")Double userLongitude,@Param("brand")Integer []brand,
+                                                            @Param("lefthandStatus")Integer lefthandStatus,@Param("parkingStatus")Integer parkingStatus,@Param("groupseatStatus")Integer groupseatStatus,
+                                                            @Param("floorscreenStatus")Integer floorscreenStatus,@Param("storageStatus")Integer storageStatus,@Param("lessonStatus")Integer lessonStatus,
+                                                             @Param("distance")Integer distance);
+
 }
