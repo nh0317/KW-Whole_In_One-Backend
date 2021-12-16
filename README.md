@@ -40,7 +40,7 @@ spring:
 * 비밀번호 수정 API  
 * 회원 탈퇴 API  
   
-보다 자세한 설명은 아래의 링크에서 확인가능 합니다.
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
 ### Partener API 
@@ -53,7 +53,7 @@ spring:
 * 비밀번호 수정 API  
 * 회원 탈퇴 API  
 
-보다 자세한 설명은 아래의 링크에서 확인가능 합니다.    
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
 ### 로그인 주의 사항
@@ -63,11 +63,15 @@ spring:
 
 ### Vistied API 
 * 방문한 매장(찜한 매장) 목록 조회 API
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
 ### Reservation API 
 * 예약 내역 목록 조회 API
 * 예약 상세 내용 조회 API
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
 ### Stores API
@@ -75,7 +79,7 @@ spring:
 * 골프장 조회 (storeIdx로 조회)
 * 골프장 목록 조회
 
-보다 자세한 설명은 아래의 링크에서 확인가능 합니다.    
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/14269013/UVJZoJC2)
 
 
