@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import static com.naturemobility.seoul.config.BaseResponseStatus.NEED_LOGIN;
 
 
-// TODO: 중복되는 부분 aop 적용하기
+
 // 로그인한 유저의 정보가 필요한 경우
 // 여기 있는 함수를 통해 user의 정보를 받아올 수 있다.
 @Service

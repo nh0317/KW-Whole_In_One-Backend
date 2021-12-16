@@ -28,16 +28,15 @@ public class VisitedController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<List<GetVisitedByUserIdx>> postPartners() {
+    public BaseResponse<List<GetVisitedByUserIdx>> getVisiteds(@RequestParam(value = "page",required = false) Integer page) {
         Long userIdx=0L;
         try {
              userIdx = checkUserService.getUserIdx();
         }catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        // 2. Post PartnerInfo
         try {
-            List<GetVisitedByUserIdx> allVistiedStore = visitedService.findAllVisitedStore(userIdx);
+            List<GetVisitedByUserIdx> allVistiedStore = visitedService.findAllVisitedStore(userIdx, page);
             return new BaseResponse<>(SUCCESS, allVistiedStore);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

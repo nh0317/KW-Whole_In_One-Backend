@@ -54,21 +54,23 @@ public class VisitedServiceImpl implements VisitedService {
      * @throws BaseException
      */
     @Override
-    public List<GetVisitedByUserIdx> findAllVisitedStore(Long userIdx) throws BaseException {
+    public List<GetVisitedByUserIdx> findAllVisitedStore(Long userIdx, Integer page) throws BaseException {
         VisitedInfo visitedInfo = new VisitedInfo(userIdx);
         List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
         Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
         if(totalVisited != null && totalVisited >0) {
             try {
+                if(page!=null && page > 1){
+                    visitedInfo.setPage(page);
+                }
                 PageInfo pageInfo = new PageInfo(visitedInfo);
-                pageInfo.setTotalPage(totalVisited);
+                pageInfo.SetTotalData(totalVisited);
                 visitedInfo.setPageInfo(pageInfo);
-
                 visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
             } catch (Exception exception) {
                 throw new BaseException(RESPONSE_ERROR);
             }
-        } else throw new BaseException(NOT_FOUND_DATA);
+        } else throw new BaseException(RESPONSE_ERROR);
         return visiteds;
     }
 }

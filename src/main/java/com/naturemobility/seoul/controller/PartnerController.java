@@ -17,8 +17,6 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.REQUEST_ERROR;
 import static com.naturemobility.seoul.utils.ValidationRegex.isRegexEmail;
 
 
-//TODO : API 확인 및 API 문서 작성
-//TODO : review mapper 작성
 @Slf4j
 @RestController
 @RequestMapping("partner")
