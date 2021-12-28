@@ -43,4 +43,10 @@
         WHERE reservationIdx=#{reservationIdx}
     </delete>
 
+    <insert id="postReservation" parameterType="PostRezInfo">
+        INSERT INTO Reservations(storeIdx, userIdx,reservationTime,useTime,numberOfGame,selectedHall,request,
+                                 personCount,reservePrice,discountPrice,payPrice)
+        VALUES (#{storeIdx},#{userIdx},#{reservationTime},#{useTime},#{numberOfGame},#{selectedHall},#{request},#{personCount},#{price},#{discountPrice},#{payPrice});
+    </insert>
+
 </mapper>

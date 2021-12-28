@@ -3,9 +3,7 @@ package com.naturemobility.seoul.service.reservations;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.paging.PageInfo;
-import com.naturemobility.seoul.domain.reservations.GetRezRes;
-import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
-import com.naturemobility.seoul.domain.reservations.ReservationInfo;
+import com.naturemobility.seoul.domain.reservations.*;
 import com.naturemobility.seoul.mapper.ReservationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +74,21 @@ public class ReservationsServiceImpl implements ReservationsService {
                 throw new BaseException(RESPONSE_ERROR);
             }
         }else throw new BaseException(RESPONSE_ERROR);
+    }
+
+    @Override
+    public void postReservation(PostRezReq postRezReq, Long userIdx) throws BaseException {
+        Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
+        PostRezInfo postRezInfo = new PostRezInfo(userIdx,postRezReq.getStoreIdx(),postRezReq.getReservationTime(),postRezReq.getUseTime(),
+                postRezReq.getNumberOfGame(),postRezReq.getSelectedHall(),postRezReq.getRequest(),postRezReq.getPersonCount(),
+                postRezReq.getPrice(),postRezReq.getDiscountPrice(),payPrice);
+        try {
+            reservationMapper.postReservation(postRezInfo);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return;
     }
 
     public String changeDateFormat(Date date, int type) {
