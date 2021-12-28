@@ -38,6 +38,12 @@
         WHERE userIdx=#{userIdx}
     </select>
 
+    <select id="findStoreIdxByRezIdx" resultType="Long">
+        SELECT storeIdx
+        FROM Reservations
+        WHERE reservationIdx=#{reservationIdx}
+    </select>
+
     <delete id="delete" parameterType="ReservationInfo">
         DELETE FROM Reservations
         WHERE reservationIdx=#{reservationIdx}

@@ -1,18 +1,16 @@
 package com.naturemobility.seoul.service.reservations;
 
 import com.naturemobility.seoul.config.BaseException;
-import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.paging.PageInfo;
 import com.naturemobility.seoul.domain.reservations.GetRezRes;
 import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
+import com.naturemobility.seoul.domain.review.PatchReviewsRes;
 import com.naturemobility.seoul.domain.reservations.ReservationInfo;
 import com.naturemobility.seoul.mapper.ReservationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,6 +76,18 @@ public class ReservationsServiceImpl implements ReservationsService {
         }else throw new BaseException(RESPONSE_ERROR);
     }
 
+    @Override
+    public Long getStoreIdx(Long reservationIdx) throws BaseException {
+        Long storeIdx=0L;
+        try{
+            storeIdx = reservationMapper.findStoreIdxByRezIdx(reservationIdx);
+        }catch (Exception exception){
+            exception.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return storeIdx;
+    }
+
     public String changeDateFormat(Date date, int type) {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        Date date = transFormat.parse(dateStr);
@@ -100,7 +110,6 @@ public class ReservationsServiceImpl implements ReservationsService {
                     break;
             }
         }catch (Exception exception){
-
         }
         return result;
     }

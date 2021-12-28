@@ -15,5 +15,6 @@ public interface ReservationMapper {
     List<ReservationInfo> findAllByUserIdx(ReservationInfo reservationInfo);
     Optional<ReservationInfo> findByRezIdx(@Param("reservationIdx") Long reservationIdx);
     Integer cntTotal(@Param("userIdx") Long userIdx);
+    Long findStoreIdxByRezIdx(@Param("reservationIdx") Long storeIdx);
     int delete(ReservationInfo reservationInfo);
 }
