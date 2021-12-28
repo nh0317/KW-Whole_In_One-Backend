@@ -76,8 +76,8 @@
 
     <select id="cntStoreLike" resultType="Integer">
         SELECT count(*) as cntLikeStore
-        FROM Users as u LEFT JOIN StoreLike as sl ON u.userIdx = sl.userIdx
-        WHERE u.userIdx=#{userIdx} AND sl.heartStatus=1
+        FROM Users as u LEFT JOIN Visited as v ON u.userIdx = v.userIdx
+        WHERE u.userIdx=#{userIdx}
         GROUP BY u.userIdx;
     </select>
 
