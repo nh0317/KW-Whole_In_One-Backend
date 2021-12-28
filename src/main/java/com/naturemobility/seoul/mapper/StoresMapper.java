@@ -27,5 +27,5 @@ public interface StoresMapper {
                                                             @Param("lefthandStatus")Integer lefthandStatus,@Param("parkingStatus")Integer parkingStatus,@Param("groupseatStatus")Integer groupseatStatus,
                                                             @Param("floorscreenStatus")Integer floorscreenStatus,@Param("storageStatus")Integer storageStatus,@Param("lessonStatus")Integer lessonStatus,
                                                              @Param("distance")Integer distance);
-
+    List<GetBrandRes> retrieveBrandInfo();
 }

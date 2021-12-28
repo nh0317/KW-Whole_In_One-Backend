@@ -118,5 +118,19 @@ public class StoreServiceImpl implements StoreService {
         }
         return storeInfoList;
     }
+
+    @Override
+    public List<GetBrandRes> retrieveBrandInfo() throws BaseException {
+        List<GetBrandRes> brandInfoList;
+        try {
+
+            brandInfoList = storesMapper.retrieveBrandInfo();
+
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return brandInfoList;
+    }
 }
 

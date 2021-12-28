@@ -171,6 +171,24 @@ public class StoresController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 매장 brand 조회 API
+     * [GET] /stores/brand
+     *
+     * @return BaseResponse<List < GetBrandRes>>
+     */
+    @ResponseBody
+    @GetMapping("/brand")
+    public BaseResponse<List<GetBrandRes>> getStoresByMap() {
+
+        try {
+            List<GetBrandRes> brandRes = storeService.retrieveBrandInfo();
+            return new BaseResponse<>(SUCCESS, brandRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }
 
 

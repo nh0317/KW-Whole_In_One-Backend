@@ -185,5 +185,8 @@
         END DESC;
 
     </select>
+    <select id="retrieveBrandInfo" resultType="GetBrandRes">
+        SELECT brandIdx,brandName FROM StoreBrand;
+    </select>
 
 </mapper>
