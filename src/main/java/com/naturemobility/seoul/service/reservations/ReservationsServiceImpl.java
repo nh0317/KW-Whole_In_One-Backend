@@ -4,6 +4,7 @@ import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.paging.PageInfo;
 import com.naturemobility.seoul.domain.reservations.*;
+import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
 import com.naturemobility.seoul.mapper.ReservationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,18 @@ public class ReservationsServiceImpl implements ReservationsService {
             throw new BaseException(RESPONSE_ERROR);
         }
         return;
+    }
+
+    @Override
+    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay) throws BaseException {
+        List<GetRezTime> getRezTime;
+        try {
+            getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return getRezTime;
     }
 
     public String changeDateFormat(Date date, int type) {

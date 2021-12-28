@@ -1,12 +1,10 @@
 package com.naturemobility.seoul.mapper;
 
-import com.naturemobility.seoul.domain.reservations.GetRezRes;
-import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
-import com.naturemobility.seoul.domain.reservations.PostRezInfo;
-import com.naturemobility.seoul.domain.reservations.ReservationInfo;
+import com.naturemobility.seoul.domain.reservations.*;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -19,4 +17,5 @@ public interface ReservationMapper {
     Integer cntTotal(@Param("userIdx") Long userIdx);
     int delete(ReservationInfo reservationInfo);
     void postReservation(PostRezInfo postRezInfo);
+    List<GetRezTime> getReservationTime(@Param("storeIdx") Long storeIdx, @Param("reservationDay") String reservationDay);
 }

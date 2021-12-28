@@ -49,4 +49,11 @@
         VALUES (#{storeIdx},#{userIdx},#{reservationTime},#{useTime},#{numberOfGame},#{selectedHall},#{request},#{personCount},#{price},#{discountPrice},#{payPrice});
     </insert>
 
+    <select id="getReservationTime" resultType="GetRezTime">
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservedTime
+        FROM Reservations
+        WHERE storeIdx = #{storeIdx}
+          AND DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}
+    </select>
+
 </mapper>
