@@ -17,7 +17,7 @@
                     WHEN 6 then '프렌즈스크린T'
                     WHEN 7 then '프렌즈스크린G'
                     WHEN 8 then 'SG골프'
-                   END)                                   AS storeBrand,
+                   END) AS storeBrand,
                storeLocation,
                round((6371 *
                       acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
@@ -44,22 +44,62 @@
                (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
                 FROM Reviews
                 WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar,
-               storePhoneNumber,(SELECT Count(reviewIdx) FROM Reviews) AS reviewCount,
-               storeLocation,storeTime
+               storePhoneNumber,
+               (SELECT Count(reviewIdx) FROM Reviews)     AS reviewCount,
+               storeLocation,
+               storeTime
 
         FROM Stores
         WHERE storeIdx = #{storeIdx}
     </select>
 
     <select id="checkStoreIdx" resultType="Integer">
-        SELECT count(1) AS checkStoreIdx FROM Stores WHERE storeIdx=#{storeIdx};
+        SELECT count(1) AS checkStoreIdx
+        FROM Stores
+        WHERE storeIdx = #{storeIdx};
     </select>
 
     <select id="setOrderRule">
-        SET @orderRule := #{orderRule};
+        SET
+        @orderRule :=
+        #{orderRule};
     </select>
 
     <select id="retrieveStoreInfoByMap" resultType="GetStoreResByMap">
+        SELECT storeIdx,storeImage,
+               (CASE storeBrand
+                    WHEN 0 then '미 설정'
+                    WHEN 1 then '골프존'
+                    WHEN 2 then '골프존파크'
+                    WHEN 3 then '레드골프'
+                    WHEN 4 then '시티존'
+                    WHEN 5 then '오케이온'
+                    WHEN 6 then '프렌즈스크린T'
+                    WHEN 7 then '프렌즈스크린G'
+                    WHEN 8 then 'SG골프'
+                   END)                                   AS storeBrand,
+               storeName,
+               storeLatitude,
+               storeLongitude,
+               round((6371 *
+                      acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                          - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+                     1)                                   as distanceFromUser,
+               (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+                FROM Reviews
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+        ORDER BY CASE
+                     WHEN @orderRule = 1 THEN distanceFromUser
+                     END ASC,
+                 CASE
+                     WHEN @orderRule = 2 THEN reviewStar
+                     END DESC;
+
+    </select>
+
+    <select id="retrieveStoreInfoByMapWithFilter" resultType="GetStoreResByMap">
         SELECT storeImage,
                (CASE storeBrand
                     WHEN 0 then '미 설정'
@@ -71,17 +111,27 @@
                     WHEN 6 then '프렌즈스크린T'
                     WHEN 7 then '프렌즈스크린G'
                     WHEN 8 then 'SG골프'
-                   END)                                                                AS storeBrand,
+                   END)                                   AS storeBrand,
                storeName,
                storeLatitude,
                storeLongitude,
-               round((6371 * acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
-                   - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))), 1) as distanceFromUser,
+               round((6371 *
+                      acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                          - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+                     1)                                   as distanceFromUser,
                (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
                 FROM Reviews
-                WHERE Reviews.storeIdx = Stores.storeIdx)                              AS reviewStar
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
 
         FROM Stores
+        WHERE storeBrand IN (#{brand})
+          AND lefthandStaus = #{lefthandStatus}
+          AND parkingStatus = #{parkingStatus}
+          AND groupseatStatus = #{groupseatStatus}
+          AND floorscreenStatus = #{floorscreenStatus}
+          AND storageStatus = #{storageStatus}
+          AND lessonStatus = #{lessonStatus}
+        HAVING distanceFromUser &lt; #{distance}
         ORDER BY CASE
                      WHEN @orderRule = 1 THEN distanceFromUser
                      END ASC,
@@ -89,6 +139,54 @@
                      WHEN @orderRule = 2 THEN reviewStar
                      END DESC;
 
+    </select>
+
+    <select id="retrieveStoreInfoByMapWithFilter2" resultType="GetStoreResByMap">
+        SELECT storeIdx,storeImage,
+        (CASE storeBrand
+        WHEN 0 then '미 설정'
+        WHEN 1 then '골프존'
+        WHEN 2 then '골프존파크'
+        WHEN 3 then '레드골프'
+        WHEN 4 then '시티존'
+        WHEN 5 then '오케이온'
+        WHEN 6 then '프렌즈스크린T'
+        WHEN 7 then '프렌즈스크린G'
+        WHEN 8 then 'SG골프'
+        END) AS storeBrand,
+        storeName,
+        storeLatitude,
+        storeLongitude,
+        round((6371 *
+        acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+        - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+        1) as distanceFromUser,
+        (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+        FROM Reviews
+        WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+        WHERE storeBrand IN (
+        <foreach collection="brand" item="brand" index="index" separator=",">
+            ${brand}
+        </foreach>)
+        AND lefthandStaus = #{lefthandStatus}
+        AND parkingStatus = #{parkingStatus}
+        AND groupseatStatus = #{groupseatStatus}
+        AND floorscreenStatus = #{floorscreenStatus}
+        AND storageStatus = #{storageStatus}
+        AND lessonStatus = #{lessonStatus}
+        HAVING distanceFromUser &lt;= #{distance}
+        ORDER BY CASE
+        WHEN @orderRule = 1 THEN distanceFromUser
+        END ASC,
+        CASE
+        WHEN @orderRule = 2 THEN reviewStar
+        END DESC;
+
+    </select>
+    <select id="retrieveBrandInfo" resultType="GetBrandRes">
+        SELECT brandIdx,brandName FROM StoreBrand;
     </select>
 
 </mapper>

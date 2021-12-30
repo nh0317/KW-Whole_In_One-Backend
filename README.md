@@ -79,6 +79,9 @@ spring:
 * 골프장 조회 (storeIdx로 조회)
 * 골프장 목록 조회
 
+### 지도 정보 제공 API
+* 지도 정보 제공
+
 보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/14269013/UVJZoJC2)
 

@@ -1,10 +1,7 @@
 package com.naturemobility.seoul.service.stores;
 
 import com.naturemobility.seoul.config.BaseException;
-import com.naturemobility.seoul.domain.stores.GetStoreRes;
-import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
-import com.naturemobility.seoul.domain.stores.SearchStoreRes;
-import com.naturemobility.seoul.domain.stores.StoreInfo;
+import com.naturemobility.seoul.domain.stores.*;
 import com.naturemobility.seoul.domain.users.GetUsersRes;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import com.naturemobility.seoul.mapper.StoresMapper;
@@ -84,6 +81,56 @@ public class StoreServiceImpl implements StoreService {
             //ignored.printStackTrace();
         }
         return storeInfoList;
+    }
+
+    @Override
+    public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter(StoreInfoReqByMap storeInfoReqByMap) throws BaseException {
+        List<GetStoreResByMap> storeInfoList;
+        try {
+
+            storesMapper.setOrderRule(storeInfoReqByMap.getOrderRule());
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap.getUserLatitude(), storeInfoReqByMap.getUserLongitude(), storeInfoReqByMap.getBrand()
+                    , storeInfoReqByMap.getDistance(), storeInfoReqByMap.getFloorscreenStatus(), storeInfoReqByMap.getStorageStatus(), storeInfoReqByMap.getParkingStatus(), storeInfoReqByMap.getLessonStatus(),
+                    storeInfoReqByMap.getGroupseatStatus(),storeInfoReqByMap.getLefthandStatus()
+                    );
+
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return storeInfoList;
+    }
+
+    @Override
+    public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(Double userLatitude, Double userLongitude, Integer orderRule, Integer []brand,
+                                                                    Integer lefthandStatus, Integer parkingStauts, Integer groupseatStatus, Integer floorscreenStatus,
+                                                                    Integer storageStatus, Integer lessonStatus, Integer distance) throws BaseException {
+        List<GetStoreResByMap> storeInfoList;
+        try {
+
+            storesMapper.setOrderRule(orderRule);
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude,brand, lefthandStatus, parkingStauts,
+                    groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
+
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return storeInfoList;
+    }
+
+    @Override
+    public List<GetBrandRes> retrieveBrandInfo() throws BaseException {
+        List<GetBrandRes> brandInfoList;
+        try {
+
+            brandInfoList = storesMapper.retrieveBrandInfo();
+
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return brandInfoList;
     }
 }
 

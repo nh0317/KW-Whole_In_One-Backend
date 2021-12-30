@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetStoreResByMap {
+    private final Long storeIdx;
     private final String storeImage;
     private final String storeBrand;
     private final String storeName;

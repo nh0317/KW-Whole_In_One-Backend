@@ -6,6 +6,8 @@ import com.naturemobility.seoul.domain.reservations.GetRezRes;
 import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
 import com.naturemobility.seoul.domain.review.PatchReviewsRes;
 import com.naturemobility.seoul.domain.reservations.ReservationInfo;
+import com.naturemobility.seoul.domain.reservations.*;
+import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
 import com.naturemobility.seoul.mapper.ReservationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,14 +80,41 @@ public class ReservationsServiceImpl implements ReservationsService {
 
     @Override
     public Long getStoreIdx(Long reservationIdx) throws BaseException {
-        Long storeIdx=0L;
-        try{
+        Long storeIdx = 0L;
+        try {
             storeIdx = reservationMapper.findStoreIdxByRezIdx(reservationIdx);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
             throw new BaseException(RESPONSE_ERROR);
         }
         return storeIdx;
+    }
+
+    @Override
+    public void postReservation(PostRezReq postRezReq, Long userIdx) throws BaseException {
+        Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
+        PostRezInfo postRezInfo = new PostRezInfo(userIdx,postRezReq.getStoreIdx(),postRezReq.getReservationTime(),postRezReq.getUseTime(),
+                postRezReq.getNumberOfGame(),postRezReq.getSelectedHall(),postRezReq.getRequest(),postRezReq.getPersonCount(),
+                postRezReq.getPrice(),postRezReq.getDiscountPrice(),payPrice);
+        try {
+            reservationMapper.postReservation(postRezInfo);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return;
+    }
+
+    @Override
+    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay) throws BaseException {
+        List<GetRezTime> getRezTime;
+        try {
+            getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return getRezTime;
     }
 
     public String changeDateFormat(Date date, int type) {
