@@ -74,6 +74,19 @@ spring:
 보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
+### Review API
+* 매장 평점 추가 API
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
+### PartnerStore API
+* 사장님 매장 조회 API
+* 매장 등록 또는 수정 API
+* 
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
 ### Stores API
 * 골프장 검색
 * 골프장 조회 (storeIdx로 조회)
