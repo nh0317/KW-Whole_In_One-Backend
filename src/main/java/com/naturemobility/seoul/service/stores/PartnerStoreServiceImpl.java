@@ -102,8 +102,10 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
 
 
             Long partnerIdx = checkUserService.getPartnerIdx();
-            if(partnerStoreMapper.findByStoreIdx(partnerIdx).isPresent())
+            if(partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
+                storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR)));
                 partnerStoreMapper.update(storeInfo);
+            }
             else partnerStoreMapper.save(storeInfo);
 
             commonStoreRes = new CommonStoreRes(storeInfo.getStoreName(), storeInfo.getStoreInfo(), storeInfo.getStorePhoneNumber(),
@@ -124,7 +126,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
         List<String> storeImages=null;
         Long storeIdx=null;
         try{
-            storeIdx = partnerMapper.findStoreIdx(partnerIdx);
+            storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
         }catch (Exception e){
             e.printStackTrace();
             throw new BaseException(RESPONSE_ERROR);
