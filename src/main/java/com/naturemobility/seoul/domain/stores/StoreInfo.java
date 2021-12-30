@@ -68,4 +68,7 @@ public class StoreInfo extends DTOCommon {
 
     // 쿠폰 사용 가능 여부 0: 불가능, 1: 가능
     private Boolean couponStatus;
+
+    //brand 조인 시
+    private String brandName;
 }

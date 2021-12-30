@@ -63,7 +63,7 @@
     <update id="saveStoreIdx" parameterType="PartnerInfo">
         UPDATE Partner
         SET
-            storeIdx = #{storeIdx},
+            storeIdx = #{storeIdx}
         WHERE partnerIdx =#{partnerIdx}
     </update>
 </mapper>

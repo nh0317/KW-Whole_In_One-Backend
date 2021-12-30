@@ -59,14 +59,13 @@
             storageStatus= #{storageStatus},
             lessonStatus=#{lessonStatus},
             reserveStatus=#{reserveStatus},
-            couponStatus=#{couponStatus})
+            couponStatus=#{couponStatus}
         WHERE storeIdx=#{storeIdx}
     </update>
 
     <select id="findByStoreIdx" resultType="StoreInfo">
         SELECT *
-        FROM Stores
+        FROM Stores s LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
         WHERE storeIdx=#{storeIdx}
     </select>
-    
 </mapper>
