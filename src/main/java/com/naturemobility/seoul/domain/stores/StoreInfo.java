@@ -4,6 +4,8 @@ import com.naturemobility.seoul.domain.DTOCommon;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 // 골프장 정보
@@ -21,6 +23,10 @@ public class StoreInfo extends DTOCommon {
     // 골프장 전화번호
     private String storePhoneNumber;
 
+    // 골프장 브랜드
+    // TODO: 골프장 브랜드 수정
+    private Long storeBrand;
+
     // 골프장 주소
     private String storeLocation;
 
@@ -37,7 +43,7 @@ public class StoreInfo extends DTOCommon {
     private String storeTime;
 
     // 타석 수
-    private Boolean batCount;
+    private String batCount;
 
     // 왼손타석 여부 0: 없음 1:가능
     private Boolean leftHandsatus;
@@ -56,4 +62,10 @@ public class StoreInfo extends DTOCommon {
 
     // 프로교습 여부 0: 없음 1:가능
     private Boolean lessonStatus;
+
+    // 당일 예약 가능 여부 0: 불가능, 1: 가능
+    private Boolean reserveStatus;
+
+    // 쿠폰 사용 가능 여부 0: 불가능, 1: 가능
+    private Boolean couponStatus;
 }

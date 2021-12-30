@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.ReservationMapper">
+
+    <select id="findAllByUserIdx" parameterType="ReservationInfo" resultType="ReservationInfo">
+        select r.reservationIdx,
+               s.storeName,
+               r.reservationTime,
+               r.useTime,
+               r.selectedHall,
+               r.personCount,
+               r.alreadyUsed
+        FROM Reservations r join Stores s on r.storeIdx=s.storeIdx
+        WHERE r.userIdx=#{userIdx}
+        Order By alreadyUsed, reservationTime DESC
+            LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+    </select>
+
+    <select id="findByRezIdx" resultType="ReservationInfo">
+        select r.reservationIdx,
+               s.storeName,
+               r.reservationTIme,
+               r.paymentTime,
+               r.useTime,
+               r.selectedHall,
+               r.personCount,
+               r.alreadyUsed,
+               r.reservePrice,
+               r.discountPrice,
+               r.payPrice
+        FROM Reservations r join Stores s on r.storeIdx=s.storeIdx
+        WHERE r.reservationIdx=#{reservationIdx}
+    </select>
+
+    <select id="cntTotal" resultType="Integer">
+        select count(*)
+        FROM Reservations
+        WHERE userIdx=#{userIdx}
+    </select>
+
+    <select id="findStoreIdxByRezIdx" resultType="Long">
+        SELECT storeIdx
+        FROM Reservations
+        WHERE reservationIdx=#{reservationIdx}
+    </select>
+
+    <delete id="delete" parameterType="ReservationInfo">
+        DELETE FROM Reservations
+        WHERE reservationIdx=#{reservationIdx}
+    </delete>
+
+    <insert id="postReservation" parameterType="PostRezInfo">
+        INSERT INTO Reservations(storeIdx, userIdx,reservationTime,useTime,numberOfGame,selectedHall,request,
+                                 personCount,reservePrice,discountPrice,payPrice)
+        VALUES (#{storeIdx},#{userIdx},#{reservationTime},#{useTime},#{numberOfGame},#{selectedHall},#{request},#{personCount},#{price},#{discountPrice},#{payPrice});
+    </insert>
+
+    <select id="getReservationTime" resultType="GetRezTime">
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservedTime
+        FROM Reservations
+        WHERE storeIdx = #{storeIdx}
+          AND DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}
+    </select>
+
+</mapper>

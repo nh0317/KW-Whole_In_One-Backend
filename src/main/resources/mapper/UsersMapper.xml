@@ -3,16 +3,15 @@
 <mapper namespace="com.naturemobility.seoul.mapper.UsersMapper">
 
     <sql id="insertUser">
-        userNickname,userName,userId,userPassword,userEmail
+        userNickname,userName,userPassword,userEmail
     </sql>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="userIdx" parameterType="UserInfo">
-        INSERT INTO Users(userNickname,userName,userId,userPassword,userEmail,userImage)
-        VALUES( #{userNickname}, #{userName}, #{userId}, #{userPassword}, #{userEmail}, #{userImage} )
+        INSERT INTO Users(userNickname,userName,userPassword,userEmail,userImage)
+        VALUES( #{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage} )
         ON DUPLICATE KEY UPDATE
             userNickname = #{userNickname},
             userName = #{userName},
-            userId = #{userId},
             userPassword = #{userPassword},
             userStatus = #{userStatus},
             userPoint = #{userPoint},
@@ -25,7 +24,6 @@
         SET
             userNickname = #{userNickname},
             userName = #{userName},
-            userId = #{userId},
             userPassword = #{userPassword},
             userStatus = #{userStatus},
             userPoint = #{userPoint},
@@ -38,12 +36,6 @@
         SELECT *
         FROM Users
         WHERE userIdx=#{userIdx}
-    </select>
-
-    <select id="findById" resultType="UserInfo">
-        SELECT *
-        FROM Users
-        WHERE userId=#{userId}
     </select>
 
     <select id="findByEmail" resultType="UserInfo">
@@ -63,12 +55,6 @@
         WHERE userStatus=#{status}
     </select>
 
-    <select id="findByIdAndStatus" resultType="UserInfo">
-        SELECT *
-        FROM Users
-        WHERE userId=#{userId} and userStatus=#{status}
-    </select>
-
     <select id="findByEmailAndStatus" resultType="UserInfo">
         SELECT *
         FROM Users
@@ -83,21 +69,21 @@
 
     <select id="cntCoupon" resultType="Integer">
         SELECT count(*) as cntCoupon
-        FROM Users as u LEFT JOIN usercoupons as uc ON u.userIdx=uc.userIdx
+        FROM Users as u LEFT JOIN UserCoupons as uc ON u.userIdx=uc.userIdx
         WHERE u.userIdx=#{userIdx} AND uc.couponStatus=0
         GROUP BY u.userIdx;
     </select>
 
     <select id="cntStoreLike" resultType="Integer">
         SELECT count(*) as cntLikeStore
-        FROM Users as u LEFT JOIN storeLike as sl ON u.userIdx = sl.userIdx
-        WHERE u.userIdx=#{userIdx} AND sl.heartStatus=1
+        FROM Users as u LEFT JOIN Visited as v ON u.userIdx = v.userIdx
+        WHERE u.userIdx=#{userIdx}
         GROUP BY u.userIdx;
     </select>
 
     <select id="cntReservation" resultType="Integer">
         SELECT count(*) as cntReservation
-        FROM Users as u LEFT JOIN reservations as r ON u.userIdx = r.userIdx
+        FROM Users as u LEFT JOIN Reservations as r ON u.userIdx = r.userIdx
         WHERE u.userIdx=#{userIdx} AND r.userIdx=#{userIdx}
         GROUP BY u.userIdx;
     </select>

@@ -3,11 +3,13 @@ package com.naturemobility.seoul.domain.reservations;
 import com.naturemobility.seoul.domain.DTOCommon;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Date;
 
 @Setter
 @Getter
+@ToString
 // 예약 테이블
 public class ReservationInfo extends DTOCommon {
 
@@ -23,6 +25,9 @@ public class ReservationInfo extends DTOCommon {
     // 예약 시간
     private Date reservationTime;
 
+    // 결제 시간
+    private Date paymentTime;
+
     // 이용시간
     private Integer useTime;
 
@@ -33,16 +38,29 @@ public class ReservationInfo extends DTOCommon {
     private Integer selectedHall;
 
     // 가격
-    private Integer price;
+    private Integer reservePrice;
+    private Integer payPrice;
+    private Integer discountPrice;
 
     // 요청사항
     private String request;
 
     // 인원
-    private Boolean personCount;
+    private Integer personCount;
+
+    // 이용 여부
+    private Boolean alreadyUsed;
+
     // 삭제한 시간
     private Date deletedAt;
 
     // 수정한 사람 idx
     private Long modiBy;
+
+    //store join 시
+    private String StoreName;
+
+    public ReservationInfo(Long userIdx) {
+        this.userIdx = userIdx;
+    }
 }

@@ -31,7 +31,6 @@ spring:
 ### User API 
 * 전체 회원 조회 API  
 * 이메일 중복 확인 API  
-* 아이디 중복 확인 API  
 * 회원가입 API  
 * 로그인API  
 * 비밀번호 확인 API  
@@ -41,7 +40,63 @@ spring:
 * 비밀번호 수정 API  
 * 회원 탈퇴 API  
   
-보다 자세한 설명은 아래의 링크에서 확인가능 합니다.    
-[API 문서](https://documenter.getpostman.com/view/18157329/UVC5ESgt)
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
-#1
+### Partener API 
+* 이메일 중복 확인 API  
+* 회원가입 API  
+* 로그인API  
+* 비밀번호 확인 API  
+* 회원 정보 조회 API  
+* 회원 정보 수정 API  
+* 비밀번호 수정 API  
+* 회원 탈퇴 API  
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
+### 로그인 주의 사항
+* 로그인은 authorization bearer header에 jwt 토큰을 넣는 방식으로 동작합니다. 
+* 현재 상태에서 로그인이 필요한 페이지의 경우 DB상의 1번째 유저의 정보를 반환합니다. 
+  (현재 상태에서 로그인이 필요한 페이지에서 전부 로그인을 요청할 경우 귀찮을 수 있다고 판단했습니다.)
+
+### Vistied API 
+* 방문한 매장(찜한 매장) 목록 조회 API
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
+### Reservation API 
+* 예약 내역 목록 조회 API
+* 예약 상세 내용 조회 API
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
+### Review API
+* 매장 평점 추가 API
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
+### PartnerStore API
+* 사장님 매장 조회 API
+* 매장 등록 또는 수정 API
+* 
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
+### Stores API
+* 골프장 검색
+* 골프장 조회 (storeIdx로 조회)
+* 골프장 목록 조회
+
+### 지도 정보 제공 API
+* 지도 정보 제공
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/14269013/UVJZoJC2)
+
+
+  

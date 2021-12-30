@@ -29,6 +29,7 @@ public enum BaseResponseStatus {
     INVALID_EMAIL(false, 2020, "이메일 형식을 확인해주세요."),
     WRONG_PASSWORD(false, 2030, "비밀번호가 틀렸습니다. 비밀번호를 다시 입력해주세요."),
     DO_NOT_MATCH_PASSWORD(false, 2031, "비밀번호와 비밀번호확인 값이 일치하지 않습니다."),
+    NEED_LOGIN(false, 2040, "로그인이 필요합니다"),
 //    EMPTY_EMAIL(false, 2020, "이메일을 입력해주세요."),
 //    EMPTY_PASSWORD(false, 2030, "비밀번호를 입력해주세요."),
 //    EMPTY_CONFIRM_PASSWORD(false, 2031, "비밀번호 확인을 입력해주세요."),
@@ -43,6 +44,7 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3012, "이미 존재하는 이메일입니다."),
     DUPLICATED_ID(false, 3013, "이미 존재하는 아이디입니다."),
     INACTIVE_ID(false, 3014, "비활성화된 계정입니다."),
+    NOT_FOUND_DATA(false, 3015, "데이터를 찾을 수 없습니다"),
 //    FAILED_TO_GET_USER(false, 3012, "회원 정보 조회에 실패하였습니다."),
 //    FAILED_TO_POST_USER(false, 3013, "회원가입에 실패하였습니다."),
 //    FAILED_TO_LOGIN(false, 3014, "로그인에 실패하였습니다."),
@@ -51,6 +53,8 @@ public enum BaseResponseStatus {
 //    FAILED_TO_PATCH_PASSWORD(false, 3020, "비밀번호 수정에 실패하였습니다."),
 
     // 4000 : Database 오류
+    UNATHORIZED(false, 401, "인증에 실패하였습니다."),
+    FORBIDDEN(false, 403, "권한이 없는 유저입니다."),
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");
 

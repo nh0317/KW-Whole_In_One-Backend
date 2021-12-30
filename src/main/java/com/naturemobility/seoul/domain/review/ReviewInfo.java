@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.domain.review;
 
 import com.naturemobility.seoul.domain.DTOCommon;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,4 +23,6 @@ public class ReviewInfo extends DTOCommon {
 
     // 리뷰 점수
     private Float reviewScore;
+
+    private Long reservationIdx;
 }

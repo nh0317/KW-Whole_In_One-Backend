@@ -3,13 +3,21 @@ package com.naturemobility.seoul.service.users;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.secret.Secret;
 import com.naturemobility.seoul.domain.users.*;
+import com.naturemobility.seoul.jwt.JwtFilter;
+import com.naturemobility.seoul.jwt.JwtService;
 import com.naturemobility.seoul.mapper.UsersMapper;
-import com.naturemobility.seoul.utils.AES128;
-import com.naturemobility.seoul.utils.JwtService;
-import com.naturemobility.seoul.domain.UserStatus;
+import com.naturemobility.seoul.domain.users.UserStatus;
 import com.naturemobility.seoul.utils.ValidationRegex;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,15 +27,14 @@ import java.util.stream.Collectors;
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 
-//TODO : AOP로 사장님 회원가입, 로그인 구현
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UsersServiceImpl implements UsersService {
-    @Autowired
-    private UsersMapper usersMapper;
-
-    @Autowired
-    private JwtService jwtService;
+    private final UsersMapper usersMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     /**
      * 중복 회원 검증
@@ -52,27 +59,6 @@ public class UsersServiceImpl implements UsersService {
         else  return userEmail+"_valid";
     }
 
-    /**
-     * 중복 회원 검증
-     * @param userID
-     * @return String
-     * @throws BaseException
-     */
-    @Override
-    public String checkID(String userID) throws BaseException {
-        //false 이면 중복, true 이면 중복 X
-        UserInfo userInfo =null;
-        try {
-            userInfo = retrieveUserInfoByID(userID);
-        } catch (BaseException exception) {
-            if (exception.getStatus() != NOT_FOUND_USER)
-                throw exception;
-        }
-        if (userInfo != null)
-            throw new BaseException(DUPLICATED_ID);
-        else  return userID+"_valid";
-    }
-
 
     /**
      * 회원가입
@@ -83,17 +69,6 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
         UserInfo existsEmail = null;
-        UserInfo existsId = null;
-        try {
-            // 1-1. 이미 존재하는 회원이 있는지 조회
-            existsId = retrieveUserInfoByID(postUserReq.getId());
-            if (existsId != null) log.info(existsId.toString());
-        } catch (BaseException exception) {
-            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
-            if (exception.getStatus() != NOT_FOUND_USER) {
-                throw exception;
-            }
-        }
         try {
             // 1-1. 이미 존재하는 회원이 있는지 조회
             existsEmail = retrieveUserInfoByEmail(postUserReq.getEmail());
@@ -105,7 +80,7 @@ public class UsersServiceImpl implements UsersService {
             }
         }
         // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
-        if (existsEmail != null || existsId != null) {
+        if (existsEmail != null) {
             throw new BaseException(DUPLICATED_USER);
         }
 
@@ -113,31 +88,19 @@ public class UsersServiceImpl implements UsersService {
         String email = postUserReq.getEmail();
         String nickname = postUserReq.getNickname();
         String name = postUserReq.getName();
-        String password;
-        String id = postUserReq.getId();
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-        UserInfo userInfo = new UserInfo(email,id, password, nickname, name);
+        String password = passwordEncoder.encode(postUserReq.getPassword());
+        UserInfo userInfo = new UserInfo(email, password, nickname, name);
 
         // 3. 유저 정보 저장
         try {
             usersMapper.save(userInfo);
-            userInfo = usersMapper.findByIdx(userInfo.getUserIdx()).orElseGet(()->null);
-            if (userInfo == null)
-                throw new BaseException(RESPONSE_ERROR);
         } catch (Exception exception) {
             throw new BaseException(RESPONSE_ERROR);
         }
 
-        // 4. JWT 생성
-        String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
         // 5. DTOUsersLoginRes로 변환하여 return
         Long idx = userInfo.getUserIdx();
-        return new PostUserRes(idx, jwt);
+        return new PostUserRes(idx);
     }
 
     /** 회원 정보 수정
@@ -146,17 +109,13 @@ public class UsersServiceImpl implements UsersService {
      * @throws BaseException
      */
     @Override
-    public PatchUserRes updateUserInfo(Long userIdx, PatchUserReq patchUserReq) throws BaseException {
+    public PatchUserRes updateUserInfo(UserInfo userInfo, PatchUserReq patchUserReq) throws BaseException {
         try {
-            UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
-            String email = patchUserReq.getEmail() + "_edited";
             String nickname = patchUserReq.getNickname()+"_edited";
             String name = patchUserReq.getName()+"_edited";
             String image = patchUserReq.getUserImage()+"_edited";
             log.info(userInfo.toString());
 
-            if (patchUserReq.getEmail() != null && patchUserReq.getEmail().length() != 0)
-                userInfo.setUserName(patchUserReq.getEmail());
             if (patchUserReq.getName() != null && patchUserReq.getName().length() != 0)
                 userInfo.setUserName(patchUserReq.getName());
             if (patchUserReq.getNickname() != null && patchUserReq.getNickname().length() != 0)
@@ -165,41 +124,27 @@ public class UsersServiceImpl implements UsersService {
                 userInfo.setUserName(patchUserReq.getUserImage());
 
             usersMapper.update(userInfo);
-            return new PatchUserRes(email, nickname, name,image);
+            return new PatchUserRes(nickname, name,image);
         } catch (Exception ignored) {
             throw new BaseException(RESPONSE_ERROR);
         }
     }
 
     /** 비밀번호 수정
-     * @param userIdx, patchPWReq
+     * @param userInfo, patchPWReq
      * @throws BaseException
      */
     @Override
-    public void editPW(Long userIdx, PatchPWReq patchPWReq) throws BaseException {
-        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_USER));
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        //기존 비밀번호 일치 여부 확인
-        if (!patchPWReq.getPassword().equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
+    public void updatePW(UserInfo userInfo, PatchPWReq patchPWReq) throws BaseException {
+        log.info("비밀번호 변경 " + userInfo.getUserEmail());
+        createJwt(userInfo.getUserEmail(), patchPWReq.getPassword());
         //새로운 비밀번호 일치 확인
         if (!patchPWReq.getNewPassword().equals(patchPWReq.getConfirmNewPassword())) {
             throw new BaseException(WRONG_PASSWORD);
         }
 
         //암호화
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchPWReq.getNewPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        String password = passwordEncoder.encode(patchPWReq.getNewPassword());
 
         //변경사항 저장
         userInfo.setUserPassword(password);
@@ -211,13 +156,11 @@ public class UsersServiceImpl implements UsersService {
     }
         /**
          * 회원 탈퇴
-         * @param userIdx
+         * @param userInfo
          * @throws BaseException
          */
     @Override
-    public void deleteUserInfo(Long userIdx) throws BaseException {
-        // 1. 존재하는 DTOUsers가 있는지 확인 후 저장
-        UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
+    public void deleteUserInfo(UserInfo userInfo) throws BaseException {
 
         // 2-1. 해당 DTOUsers를 완전히 삭제
 //        try {
@@ -239,6 +182,7 @@ public class UsersServiceImpl implements UsersService {
      * @return List<GetUsersRes>
      * @throws BaseException
      */
+    @Override
     public List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
         List<UserInfo> userInfoList;
@@ -266,18 +210,18 @@ public class UsersServiceImpl implements UsersService {
      * @return GetUserRes
      * @throws BaseException
      */
-    public GetUserRes retrieveUserInfo(Long userIdx) throws BaseException {
+    @Override
+    public GetUserRes findUserInfo(Long userIdx) throws BaseException {
         // 1. DB에서 userIdx로 UserInfo 조회
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
 
         // 2. UserInfoRes로 변환하여 return
         Long idx = userInfo.getUserIdx();
-        String id = userInfo.getUserId();
         String email = userInfo.getUserEmail();
         String nickname = userInfo.getUserNickname();
         String name = userInfo.getUserName();
         String image = userInfo.getUserImage();
-        return new GetUserRes(idx,id, email, nickname, name, image);
+        return new GetUserRes(idx, email, nickname, name, image);
     }
 
     /**
@@ -286,66 +230,26 @@ public class UsersServiceImpl implements UsersService {
      * @return PostLoginRes
      * @throws BaseException
      */
+    @Override
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
-        UserInfo userInfo = new UserInfo();
         // 1. DB에서 UserInfo 조회
         String userId=postLoginReq.getId();
-        if(userId.contains("@")){
-            if (!ValidationRegex.isRegexEmail(userId))
-                throw new BaseException(INVALID_EMAIL);
-            else userInfo = retrieveUserInfoByEmail(userId);
-        } else userInfo = retrieveUserInfoByID(userId);
+        if (!ValidationRegex.isRegexEmail(userId))
+            throw new BaseException(INVALID_EMAIL);
+        else retrieveUserInfoByEmail(userId);
 
-        // 2. UserInfo에서 password 추출
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        // 3. 비밀번호 일치 여부 확인
-        if (!postLoginReq.getPassword().equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
-
-        // 3. Create JWT
-        String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
-        // 4. PostLoginRes 변환하여 return
-        Long idx = userInfo.getUserIdx();
-        return new PostLoginRes(idx, jwt);
+        // 4. Create JWT
+        return createJwt(postLoginReq.getId(), postLoginReq.getPassword());
     }
     /**
      * 비밀번호 확인
-     * @param userIdx, pw
+     * @param userEmail, pw
      * @return PostLoginRes
      * @throws BaseException
      */
-    public PostLoginRes checkPW(Long userIdx, String pw) throws BaseException {
-        UserInfo userInfo = new UserInfo();
-        // 1. DB에서 UserInfo 조회
-        userInfo = retrieveUserInfoByUserIdx(userIdx);
-
-        // 2. UserInfo에서 password 추출
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getUserPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-
-        // 3. 비밀번호 일치 여부 확인
-        if (!pw.equals(password)) {
-            throw new BaseException(WRONG_PASSWORD);
-        }
-
-        // 3. Create JWT
-        String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
-        // 4. PostLoginRes 변환하여 return
-        Long idx = userInfo.getUserIdx();
-        return new PostLoginRes(idx, jwt);
+    @Override
+    public PostLoginRes checkPW(String userEmail, String pw) throws BaseException {
+        return createJwt(userEmail, pw);
     }
 
     /**
@@ -354,20 +258,17 @@ public class UsersServiceImpl implements UsersService {
      * @return DTOUsers
      * @throws BaseException
      */
+    @Override
     public UserInfo retrieveUserInfoByUserIdx(Long userIdx) throws BaseException {
         // 1. DB에서 UserInfo 조회
         UserInfo existsDTOUser;
-        try {
-            existsDTOUser = usersMapper.findByIdx(userIdx).orElse(null);
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        existsDTOUser = usersMapper.findByIdx(userIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
 
         // 2. 존재하는 회원인지 확인
-        UserInfo userInfo=null;
+        UserInfo userInfo =null;
         if (existsDTOUser != null) {
             if(existsDTOUser.getUserStatus().equals(UserStatus.ACTIVE.getValue()))
-                userInfo=existsDTOUser;
+                userInfo =existsDTOUser;
             else if(existsDTOUser.getUserStatus().equals(UserStatus.INACTIVE.getValue()))
                 throw new BaseException(INACTIVE_ID);
             else if(existsDTOUser.getUserStatus().equals(UserStatus.WITHDRAWN.getValue()))
@@ -386,15 +287,12 @@ public class UsersServiceImpl implements UsersService {
      * @return DTOUsers
      * @throws BaseException
      */
+    @Override
     public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         List<UserInfo> existsDTOUser = new ArrayList<>();
         UserInfo userInfo = null;
-        try {
-            existsDTOUser = usersMapper.findByEmailAndStatus(email, UserStatus.ACTIVE.getValue());
-        }
-        catch (Exception exception) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        log.info(email + UserStatus.ACTIVE.getValue().toString());
+        existsDTOUser = usersMapper.findByEmailAndStatus(email, UserStatus.ACTIVE.getValue());
 
         if (existsDTOUser.size()>0) userInfo = existsDTOUser.get(0);
         else {
@@ -408,59 +306,45 @@ public class UsersServiceImpl implements UsersService {
         }
         return userInfo;
     }
-    /**
-     * 회원 조회
-     * @param id
-     * @return DTOUsers
-     * @throws BaseException
-     */
-    public UserInfo retrieveUserInfoByID(String id) throws BaseException{
-        List<UserInfo> existsDTOUser = new ArrayList<>();
-        UserInfo userInfo = null;
-        try {
-            existsDTOUser = usersMapper.findByIdAndStatus(id, UserStatus.ACTIVE.getValue());
-        }
-        catch (Exception exception) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
-        if (existsDTOUser.size()>0) userInfo = existsDTOUser.get(0);
-        if (existsDTOUser.size() == 0) {
-            existsDTOUser = usersMapper.findByIdAndStatus(id, UserStatus.INACTIVE.getValue());
-            if (existsDTOUser.size() > 0)
-                throw new BaseException(INACTIVE_ID);
-            else
-                throw new BaseException(NOT_FOUND_USER);
-        }
-        return userInfo;
-    }
 
     /** 마이페이지
      * @param userIdx
      * @return GetMyPageRes
      * @throws BaseException
      */
+    @Override
     public GetMyPageRes myPage(Long userIdx) throws BaseException {
         UserInfo user;
+        log.info("user {}", userIdx);
         Integer point=0, cntReservation=0, cntStoreLike=0, cntCoupon=0;
         String image=null, nickName=null;
-        try{
-            user = usersMapper.findByIdx(userIdx).orElseGet(()->null);
-            if (user!=null) {
-                nickName = user.getUserNickname();
-                image = user.getUserImage();
-                point = user.getUserPoint();
-                cntReservation = usersMapper.cntReservation(userIdx).orElseGet(()->0);
-                cntCoupon = usersMapper.cntCoupon(userIdx).orElseGet(()->0);
-                log.info("쿠폰 수 : "+cntCoupon);
-                cntStoreLike = usersMapper.cntStoreLike(userIdx).orElseGet(()->0);
-                log.info("찜 매장 수 : "+cntStoreLike);
-            }
-        }
-        catch (Exception exception){
-            throw new BaseException(RESPONSE_ERROR);
+        user = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
+        if (user!=null) {
+            nickName = user.getUserNickname();
+            image = user.getUserImage();
+            point = user.getUserPoint();
+            cntReservation = usersMapper.cntReservation(userIdx).orElseGet(()->0);
+            cntCoupon = usersMapper.cntCoupon(userIdx).orElseGet(()->0);
+            cntStoreLike = usersMapper.cntStoreLike(userIdx).orElseGet(()->0);
         }
         GetMyPageRes getMyPageRes = new GetMyPageRes(image,nickName,cntReservation, cntStoreLike, point,cntCoupon);
         return getMyPageRes;
     }
 
+    private PostLoginRes createJwt(String email, String pw) throws BaseException {
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(email+":user", pw);
+        Authentication authentication;
+        try {
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        }catch ( Exception exception){
+            throw new BaseException(WRONG_PASSWORD);
+        }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtService.createJwt(authentication);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        return new PostLoginRes(email, jwt);
+    }
 }
