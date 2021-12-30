@@ -53,4 +53,10 @@
         FROM Partner
         WHERE partnerStatus=#{status} And partnerEmail=#{email}
     </select>
+
+    <select id="findStoreIdx" resultType="Long">
+        SELECT storeIdx
+        FROM Partner
+        WHERE partnerStatus=0 And partnerIdx=#{partnerIdx}
+    </select>
 </mapper>

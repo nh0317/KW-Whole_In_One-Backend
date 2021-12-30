@@ -16,4 +16,6 @@ public interface PartnerMapper {
     List<PartnerInfo> findByStatus(@Param("status") Integer status);
     List<PartnerInfo> findByEmail(@Param("email") String email);
     List<PartnerInfo> findByEmailAndStatus(@Param("email") String email, @Param("status") Integer status);
+
+    Long findStoreIdx(@Param("partnerIdx")Long partnerIdx);
 }

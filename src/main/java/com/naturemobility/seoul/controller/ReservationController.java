@@ -4,7 +4,6 @@ import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
 import com.naturemobility.seoul.domain.reservations.GetRezRes;
 import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
-import com.naturemobility.seoul.domain.visited.GetVisitedByUserIdx;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,11 @@ public class ReservationController {
      */
     @GetMapping("{reservationIdx}")
     public BaseResponse<GetRezRes> getReservation(@PathVariable("reservationIdx") Long reservationIdx) {
+        try {
+            Long userIdx = checkUserService.getUserIdx();
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
         try {
             GetRezRes reservation = reservationsService.findByRezIdx(reservationIdx);
             return new BaseResponse<>(SUCCESS, reservation);
