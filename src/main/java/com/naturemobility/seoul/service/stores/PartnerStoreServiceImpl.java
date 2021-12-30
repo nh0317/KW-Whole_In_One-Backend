@@ -51,7 +51,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
             storeInfo.setStoreTime(postStoreReq.getStoreTime());
             storeInfo.setStoreImage(postStoreReq.getMainStoreImage());
             storeInfo.setBatCount(postStoreReq.getBatCount());
-            storeInfo.setLeftHandsatus(postStoreReq.getLeftHandsatus());
+            storeInfo.setLefthandStatus(postStoreReq.getLefthandStatus());
             storeInfo.setParkingStatus(postStoreReq.getParkingStatus());
             storeInfo.setGroupSeatStatus(postStoreReq.getGroupSeatStatus());
             storeInfo.setFloorScreenStatus(postStoreReq.getFloorScreenStatus());
@@ -110,7 +110,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
 
             commonStoreRes = new CommonStoreRes(storeInfo.getStoreName(), storeInfo.getStoreInfo(), storeInfo.getStorePhoneNumber(),
                     postStoreReq.getStoreBrand(), storeInfo.getStoreLocation(), storeInfo.getStoreImage(), postStoreReq.getStoreImage(),
-                    storeInfo.getStoreTime(), storeInfo.getBatCount(), storeInfo.getLeftHandsatus(), storeInfo.getParkingStatus(),
+                    storeInfo.getStoreTime(), storeInfo.getBatCount(), storeInfo.getLefthandStatus(), storeInfo.getParkingStatus(),
                     storeInfo.getGroupSeatStatus(), storeInfo.getFloorScreenStatus(), storeInfo.getStorageStatus(),
                     storeInfo.getLessonStatus(), storeInfo.getReserveStatus(), storeInfo.getCouponStatus());
         }catch (Exception e){
@@ -132,7 +132,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
             throw new BaseException(RESPONSE_ERROR);
         }
         if(storeIdx==null){
-            storeInfo.setLeftHandsatus(FALSE);
+            storeInfo.setLefthandStatus(FALSE);
             storeInfo.setParkingStatus(FALSE);
             storeInfo.setGroupSeatStatus(FALSE);
             storeInfo.setFloorScreenStatus(FALSE);
@@ -201,7 +201,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
 
         CommonStoreRes commonStoreRes = new CommonStoreRes(storeInfo.getStoreName(), storeInfo.getStoreInfo(), storeInfo.getStorePhoneNumber(),
                 storeBrand, storeInfo.getStoreLocation(), storeInfo.getStoreImage(),storeImages,
-                storeInfo.getStoreTime(), storeInfo.getBatCount(), storeInfo.getLeftHandsatus(), storeInfo.getParkingStatus(),
+                storeInfo.getStoreTime(), storeInfo.getBatCount(), storeInfo.getLefthandStatus(), storeInfo.getParkingStatus(),
                 storeInfo.getGroupSeatStatus(), storeInfo.getFloorScreenStatus(), storeInfo.getStorageStatus(),
                 storeInfo.getLessonStatus(), storeInfo.getReserveStatus(), storeInfo.getCouponStatus());
         return commonStoreRes;

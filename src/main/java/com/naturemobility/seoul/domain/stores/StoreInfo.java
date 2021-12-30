@@ -46,7 +46,7 @@ public class StoreInfo extends DTOCommon {
     private String batCount;
 
     // 왼손타석 여부 0: 없음 1:가능
-    private Boolean leftHandsatus;
+    private Boolean lefthandStatus;
 
     // 주차시설 여부 0: 없음 1:가능
     private Boolean parkingStatus;

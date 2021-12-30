@@ -18,7 +18,7 @@ public class CommonStoreRes {
     private List<String> storeImage;
     private String storeTime;
     private String batCount;
-    private Boolean leftHandsatus;
+    private Boolean lefthandStatus;
     private Boolean parkingStatus;
     private Boolean groupSeatStatus;
     private Boolean floorScreenStatus;

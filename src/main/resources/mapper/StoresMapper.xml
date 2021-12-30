@@ -125,7 +125,7 @@
 
         FROM Stores
         WHERE storeBrand IN (#{brand})
-          AND lefthandStaus = #{lefthandStatus}
+          AND lefthandStatus = #{lefthandStatus}
           AND parkingStatus = #{parkingStatus}
           AND groupseatStatus = #{groupseatStatus}
           AND floorscreenStatus = #{floorscreenStatus}
@@ -170,7 +170,7 @@
         <foreach collection="brand" item="brand" index="index" separator=",">
             ${brand}
         </foreach>)
-        AND lefthandStaus = #{lefthandStatus}
+        AND lefthandStatus = #{lefthandStatus}
         AND parkingStatus = #{parkingStatus}
         AND groupseatStatus = #{groupseatStatus}
         AND floorscreenStatus = #{floorscreenStatus}
