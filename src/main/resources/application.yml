@@ -36,7 +36,12 @@ spring:
     hikari:
       connection-test-query : SELECT NOW() FROM dual
 
-  # mybatis
+  application:
+    name: wholeinone
+#    config:
+#      import: optional:configserver:http://localhost:8082
+
+# mybatis
 mybatis:
   configuration:
     cache-enabled : false
@@ -51,7 +56,7 @@ logging:
     com.naturemobility.seoul : debug
     com.weep.naturemobility.seoul.controller : debug
 
-springfox:
-  documentation:
-    swagger:
-      use-model-v3 : false
+#springfox:
+#  documentation:
+#    swagger:
+#      use-model-v3 : false

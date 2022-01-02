@@ -1,0 +1,5 @@
+spring:
+  cloud:
+    config:
+      uri: http://seoul.naturemobility.com:18082
+      name: wholeinone
