@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.jwt;
 
+import com.naturemobility.seoul.config.SecretPropertyConfig;
 import com.naturemobility.seoul.config.secret.Secret;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -7,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtService implements InitializingBean {
+    @Autowired
+    SecretPropertyConfig secretPropertyConfig;
+
     private final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     private static final String AUTHORITIES_KEY = "auth";
@@ -30,7 +35,7 @@ public class JwtService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        byte[] keyBytes = Decoders.BASE64.decode(Secret.USER_INFO_PASSWORD_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretPropertyConfig.getUserInfoPasswordKey());
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -40,7 +45,7 @@ public class JwtService implements InitializingBean {
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        Date validity = new Date(now + Secret.TOKEN_VALIDITY_IN_SECONDS * 1000);
+        Date validity = new Date(now + Long.valueOf(secretPropertyConfig.getTokenValidityInSeconds()).longValue() * 1000);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
