@@ -221,6 +221,8 @@ public class UsersServiceImpl implements UsersService {
         String nickname = userInfo.getUserNickname();
         String name = userInfo.getUserName();
         String image = userInfo.getUserImage();
+        if (image == null)
+            image = "https://i.ibb.co/f1G246p/default-profile.jpg";
         return new GetUserRes(idx, email, nickname, name, image);
     }
 
@@ -326,6 +328,9 @@ public class UsersServiceImpl implements UsersService {
             cntReservation = usersMapper.cntReservation(userIdx).orElseGet(()->0);
             cntCoupon = usersMapper.cntCoupon(userIdx).orElseGet(()->0);
             cntStoreLike = usersMapper.cntStoreLike(userIdx).orElseGet(()->0);
+        }
+        if(image == null){
+            image ="https://i.ibb.co/f1G246p/default-profile.jpg";
         }
         GetMyPageRes getMyPageRes = new GetMyPageRes(image,nickName,cntReservation, cntStoreLike, point,cntCoupon);
         return getMyPageRes;

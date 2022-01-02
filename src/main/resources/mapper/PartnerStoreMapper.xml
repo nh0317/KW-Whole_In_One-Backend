@@ -12,7 +12,7 @@
                             storeImage,
                             storeTime,
                             batCount,
-                            leftHandsatus,
+                            lefthandStatus,
                             parkingStatus,
                             groupSeatStatus,
                             floorScreenStatus,
@@ -30,7 +30,7 @@
                 #{storeImage},
                 #{storeTime},
                 #{batCount},
-                #{leftHandsatus},
+                #{lefthandStatus},
                 #{parkingStatus},
                 #{groupSeatStatus},
                 #{floorScreenStatus},
@@ -52,21 +52,20 @@
             storeImage=#{storeImage},
             storeTime=#{storeTime},
             batCount=#{batCount},
-            leftHandsatus=#{leftHandsatus},
+            lefthandStatus=#{lefthandStatus},
             parkingStatus=#{parkingStatus},
             groupSeatStatus=#{groupSeatStatus},
             floorScreenStatus=#{floorScreenStatus},
             storageStatus= #{storageStatus},
             lessonStatus=#{lessonStatus},
             reserveStatus=#{reserveStatus},
-            couponStatus=#{couponStatus})
+            couponStatus=#{couponStatus}
         WHERE storeIdx=#{storeIdx}
     </update>
 
     <select id="findByStoreIdx" resultType="StoreInfo">
         SELECT *
-        FROM Stores
+        FROM Stores s LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
         WHERE storeIdx=#{storeIdx}
     </select>
-    
 </mapper>
