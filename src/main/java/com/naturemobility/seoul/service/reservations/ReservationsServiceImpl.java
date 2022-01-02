@@ -19,8 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.naturemobility.seoul.config.BaseResponseStatus.NOT_FOUND_DATA;
-import static com.naturemobility.seoul.config.BaseResponseStatus.RESPONSE_ERROR;
+import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 @Service
 @Slf4j
@@ -100,7 +99,7 @@ public class ReservationsServiceImpl implements ReservationsService {
             reservationMapper.postReservation(postRezInfo);
         } catch (Exception ignored) {
             ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
+            throw new BaseException(REQUEST_ERROR);
         }
         return;
     }
