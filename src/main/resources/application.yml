@@ -35,8 +35,11 @@ spring:
   datasource:
     hikari:
       connection-test-query : SELECT NOW() FROM dual
+  output:
+    ansi:
+      enabled: always
 
-  # mybatis
+# mybatis
 mybatis:
   configuration:
     cache-enabled : false
