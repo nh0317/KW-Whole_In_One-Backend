@@ -38,6 +38,10 @@ spring:
   output:
     ansi:
       enabled: always
+  application:
+    name: wholeinone
+#    config:
+#      import: optional:configserver:http://localhost:8082
 
 # mybatis
 mybatis:
@@ -54,7 +58,8 @@ logging:
     com.naturemobility.seoul : debug
     com.weep.naturemobility.seoul.controller : debug
 
-springfox:
-  documentation:
-    swagger:
-      use-model-v3 : false
+#springfox:
+#  documentation:
+#    swagger:
+#      use-model-v3 : false
+

@@ -9,24 +9,24 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
 @Configuration
-@Profile("!default")
+@Profile("default")
 @RefreshScope
-//@PropertySources({
-//        @PropertySource( value = "classpath:/properties/config.yaml", ignoreResourceNotFound = true )//db 설정 파일 경로
-////        @PropertySource( value = "file:${user.home}/env/dev-config.properties", ignoreResourceNotFound = true) // 배포시 배포 환경의 디렉토리 주소
-//})
+@PropertySources({
+        @PropertySource( value = "classpath:/properties/config.yaml", ignoreResourceNotFound = true )//db 설정 파일 경로
+//        @PropertySource( value = "file:${user.home}/env/dev-config.properties", ignoreResourceNotFound = true) // 배포시 배포 환경의 디렉토리 주소
+})
+
 @Getter
-public class GlobalPropertyConfig {
-    @Value("${spring.datasource.hikari.driver-class-name}")
+public class DefaultGlobalPropertyConfig {
+    @Value("${driver-class-name}")
     private String driverClassName;
 
-    @Value("${spring.datasource.hikari.jdbc-url}")
+    @Value("${jdbc-url}")
     private String url;
 
-    @Value("${spring.datasource.hikari.username}")
+    @Value("${username}")
     private String username;
 
-    @Value("${spring.datasource.hikari.password}")
+    @Value("${password}")
     private String password;
-
 }

@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.config;
 
+
 import com.zaxxer.hikari.HikariConfig;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -18,15 +19,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
-@Profile("!default")
 @Configuration
 @EnableTransactionManagement
-public class DBConfig {
+@Profile("default")
+public class DefaultDBConfig {
     @Autowired
-    GlobalPropertyConfig globalPropertyConfig;
+    DefaultGlobalPropertyConfig defaultGlobalPropertyConfig;
 
     @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.hikari") //다음의 prefix로 시작하는 설정을 이용해서 hikariCP의 설정 파일을 만듦
+    @ConfigurationProperties(prefix = "dev.spring.datasource.hikari") //다음의 prefix로 시작하는 설정을 이용해서 hikariCP의 설정 파일을 만듦
     public HikariConfig hikariConfig() {
         return new HikariConfig();
     }
@@ -36,10 +37,10 @@ public class DBConfig {
     public DataSource customDataSource() { // 위에서 만든 설정 파일을 이용해서 디비와 연결하는 데이터 소스를 생성
         return DataSourceBuilder
                 .create()
-                .url(globalPropertyConfig.getUrl())
-                .driverClassName(globalPropertyConfig.getDriverClassName())
-                .username(globalPropertyConfig.getUsername())
-                .password(globalPropertyConfig.getPassword())
+                .url(defaultGlobalPropertyConfig.getUrl())
+                .driverClassName(defaultGlobalPropertyConfig.getDriverClassName())
+                .username(defaultGlobalPropertyConfig.getUsername())
+                .password(defaultGlobalPropertyConfig.getPassword())
                 .build();
     }
 
@@ -57,7 +58,7 @@ public class DBConfig {
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "mybatis.configuration")
+    @ConfigurationProperties(prefix = "dev.mybatis.configuration")
     public org.apache.ibatis.session.Configuration mybatisConfig() {
         return new org.apache.ibatis.session.Configuration();
     }

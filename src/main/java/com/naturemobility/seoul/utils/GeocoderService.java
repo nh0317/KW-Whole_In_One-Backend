@@ -2,33 +2,31 @@ package com.naturemobility.seoul.utils;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponseStatus;
-import com.naturemobility.seoul.domain.stores.geocoding.GeoAddress;
+import com.naturemobility.seoul.config.SecretPropertyConfig;
 import com.naturemobility.seoul.domain.stores.geocoding.GetGeoRes;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
 @Service
 @Slf4j
 public class GeocoderService {
+    @Autowired
+    SecretPropertyConfig secretPropertyConfig;
     public Map<String, Double> getGeoDataByAddress(String address) throws BaseException {
         RestTemplate restTemplate = new RestTemplate();
-
         /* 헤더정보세팅 */
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("X-NCP-APIGW-API-KEY-ID", "dfiszxzp6x");
-        httpHeaders.add("X-NCP-APIGW-API-KEY", "XqDrSro0ezluHijuiMl7aN4k9Dq6e0HKop2apgsp");
+        httpHeaders.add("X-NCP-APIGW-API-KEY-ID", secretPropertyConfig.getNaverId());
+        httpHeaders.add("X-NCP-APIGW-API-KEY", secretPropertyConfig.getNaverSecret());
 
         String url = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query="+address;
         ResponseEntity<GetGeoRes> result;
