@@ -1,8 +1,6 @@
 package com.naturemobility.seoul.service.reservations;
-
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.domain.reservations.*;
-
 import java.util.List;
 
 public interface ReservationsService {

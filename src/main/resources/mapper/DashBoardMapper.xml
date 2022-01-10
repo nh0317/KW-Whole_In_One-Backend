@@ -3,13 +3,28 @@
 <mapper namespace="com.naturemobility.seoul.mapper.DashBoardMapper">
 
     <select id="getStoreIdx" resultType="Long">
-        SELECT storeIdx From Partner WHERE partnerIdx = #{partnerIdx}
+        SELECT storeIdx
+        From Partner
+        WHERE partnerIdx = #{partnerIdx}
     </select>
 
     <select id="getTodayRes" resultType="GetTodayRes">
-        SELECT COUNT(reservationIdx)AS reservationCount,
-               SUM(payPrice)AS todaySales FROM Reservations
-        WHERE DATE_FORMAT(reservationTime,'%Y-%m-%d') = CURDATE() AND storeIdx=#{storeIdx};
+        SELECT COUNT(reservationIdx) AS reservationCount,
+               SUM(payPrice)         AS todaySales
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
+          AND storeIdx = #{storeIdx};
+    </select>
+
+    <select id="getTodayRezList" resultType="GetRezListRes">
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservationTime,
+               selectedHall,
+               personCount,
+               numberOfGame,
+               useTime
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
+          AND storeIdx = #{storeIdx};
     </select>
 
 </mapper>
