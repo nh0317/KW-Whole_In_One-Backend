@@ -52,4 +52,21 @@ public class DashBoardController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 월 매출, 예약 현황 조회
+     * [GET] /month-sales
+     * @return BaseResponse<GetMonthRes>
+     */
+    @GetMapping("/month-sales")
+    public BaseResponse<GetMonthRes> getMonthSales() {
+        Long partnerIdx=0L;
+        try {
+            partnerIdx = checkUserService.getPartnerIdx();
+            GetMonthRes monthRes = dashBoardService.getMonthRes(partnerIdx);
+            return new BaseResponse<>(SUCCESS,monthRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }
