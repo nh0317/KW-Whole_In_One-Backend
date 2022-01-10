@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.service.dashboard;
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.domain.dashboard.GetCalendarRes;
 import com.naturemobility.seoul.domain.dashboard.GetMonthRes;
 import com.naturemobility.seoul.domain.dashboard.GetRezListRes;
 import com.naturemobility.seoul.domain.dashboard.GetTodayRes;
@@ -54,5 +55,18 @@ public class DashBoardServiceImpl implements DashBoardService {
             throw new BaseException(RESPONSE_ERROR);
         }
         return monthRes;
+    }
+
+    @Override
+    public List<GetCalendarRes> getCalendarList(Long partnerIdx) throws BaseException {
+        List<GetCalendarRes> calendarList;
+        try {
+            Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
+            calendarList = dashBoardMapper.getCalendarList(storeIdx);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return calendarList;
     }
 }

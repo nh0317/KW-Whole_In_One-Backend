@@ -35,4 +35,12 @@
           AND storeIdx = #{storeIdx};
     </select>
 
+    <select id="getCalendarList" resultType="GetCalendarRes">
+        SELECT DISTINCT DATE_FORMAT(reservationTime, '%Y-%m-%d') AS date,
+            (SELECT COUNT(reservationIdx) FROM Reservations WHERE DATE_FORMAT(reservationTime,'%Y-%m-%d') = date
+            AND storeIdx = #{storeIdx}) AS count
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') AND storeIdx = #{storeIdx};
+    </select>
+
 </mapper>

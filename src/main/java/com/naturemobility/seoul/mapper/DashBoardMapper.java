@@ -13,4 +13,5 @@ public interface DashBoardMapper
     GetTodayRes getTodayRes(Long storeIdx);
     GetMonthRes getMonthRes(Long storeIdx);
     List<GetRezListRes> getTodayRezList(Long storeIdx);
+    List<GetCalendarRes> getCalendarList(Long storeIdx);
 }

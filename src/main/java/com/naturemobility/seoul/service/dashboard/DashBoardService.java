@@ -7,4 +7,5 @@ public interface DashBoardService {
     public GetTodayRes getTodayRes(Long partnerIdx) throws BaseException;
     public List<GetRezListRes> getTodayRezList(Long partnerIdx) throws BaseException;
     public GetMonthRes getMonthRes(Long partnerIdx) throws BaseException;
+    public List<GetCalendarRes> getCalendarList(Long partnerIdx) throws BaseException;
 }
