@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.DashBoardMapper">
+
+    <select id="getStoreIdx" resultType="Long">
+        SELECT storeIdx From Partner WHERE partnerIdx = #{partnerIdx}
+    </select>
+
+    <select id="getTodayRes" resultType="GetTodayRes">
+        SELECT COUNT(reservationIdx)AS reservationCount,
+               SUM(payPrice)AS todaySales FROM Reservations
+        WHERE DATE_FORMAT(reservationTime,'%Y-%m-%d') = CURDATE() AND storeIdx=#{storeIdx};
+    </select>
+
+</mapper>
