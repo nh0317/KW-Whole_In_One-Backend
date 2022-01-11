@@ -94,7 +94,7 @@ public class ReservationsServiceImpl implements ReservationsService {
         Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
         PostRezInfo postRezInfo = new PostRezInfo(userIdx,postRezReq.getStoreIdx(),postRezReq.getReservationTime(),postRezReq.getUseTime(),
                 postRezReq.getNumberOfGame(),postRezReq.getSelectedHall(),postRezReq.getRequest(),postRezReq.getPersonCount(),
-                postRezReq.getPrice(),postRezReq.getDiscountPrice(),payPrice);
+                postRezReq.getPrice(),postRezReq.getDiscountPrice(),payPrice,postRezReq.getEndTime());
         try {
             reservationMapper.postReservation(postRezInfo);
         } catch (Exception ignored) {

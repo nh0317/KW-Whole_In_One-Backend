@@ -18,9 +18,10 @@ public class PostRezInfo {
     private Integer price;
     private Integer discountPrice;
     private Integer payPrice;
+    private String endTime;
 
     public PostRezInfo(Long userIdx,Integer storeIdx,String reservationTime,Integer useTime,Integer numberOfGame,Integer selectedHall,String request,
-                       Integer personCount,Integer price,Integer discountPrice,Integer payPrice) {
+                       Integer personCount,Integer price,Integer discountPrice,Integer payPrice,String endTime) {
         this.userIdx = userIdx;
         this.storeIdx = storeIdx;
         this.reservationTime = reservationTime;
@@ -32,5 +33,6 @@ public class PostRezInfo {
         this. discountPrice = discountPrice;
         this.payPrice = payPrice;
         this.selectedHall = selectedHall;
+        this.endTime = endTime;
     }
 }

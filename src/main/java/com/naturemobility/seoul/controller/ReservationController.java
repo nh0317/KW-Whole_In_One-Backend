@@ -76,6 +76,7 @@ public class ReservationController {
      *     "storeIdx":1,
      *     "reservationTime":"2022-01-12 14:00",
      *     "useTime":30,
+     *     "endTime":"2022-01-12 14:30"
      *     "numberOfGame":4,
      *     "selectedHall":2,
      *     "request":"hello",

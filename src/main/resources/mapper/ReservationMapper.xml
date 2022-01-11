@@ -51,9 +51,9 @@
 
     <insert id="postReservation" parameterType="PostRezInfo">
         INSERT INTO Reservations(storeIdx, userIdx, reservationTime, useTime, numberOfGame, selectedHall, request,
-                                 personCount, reservePrice, discountPrice, payPrice)
+                                 personCount, reservePrice, discountPrice, payPrice, endTime)
         VALUES (#{storeIdx}, #{userIdx}, #{reservationTime}, #{useTime}, #{numberOfGame}, #{selectedHall}, #{request},
-                #{personCount}, #{price}, #{discountPrice}, #{payPrice});
+                #{personCount}, #{price}, #{discountPrice}, #{payPrice}, #{endTime});
     </insert>
 
     <select id="getReservationTime" resultType="GetRezTime">
