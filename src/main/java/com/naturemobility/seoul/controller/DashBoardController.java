@@ -86,4 +86,21 @@ public class DashBoardController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 특정 날짜 예약 현황 조회
+     * [GET] /reservations/day
+     * @return BaseResponse<List<GetRezListRes>>
+     */
+    @GetMapping("/reservations/day")
+    public BaseResponse<List<GetRezListRes>> getSpecificReservations(@RequestParam("reservationDay") String reservationDay) {
+        Long partnerIdx=0L;
+        try {
+            partnerIdx = checkUserService.getPartnerIdx();
+            List<GetRezListRes> specificRezList = dashBoardService.getSpecificRezList(partnerIdx,reservationDay);
+            return new BaseResponse<>(SUCCESS,specificRezList);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }

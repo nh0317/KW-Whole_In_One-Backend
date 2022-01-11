@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Optional;
 
-
 @Mapper
 public interface DashBoardMapper
 {
@@ -14,4 +13,5 @@ public interface DashBoardMapper
     GetMonthRes getMonthRes(Long storeIdx);
     List<GetRezListRes> getTodayRezList(Long storeIdx);
     List<GetCalendarRes> getCalendarList(Long storeIdx);
+    List<GetRezListRes> getSpecificRezList(@Param("reservationDay") String reservationDay,@Param("storeIdx")Long storeIdx);
 }

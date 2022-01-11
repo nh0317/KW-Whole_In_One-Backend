@@ -43,4 +43,15 @@
         WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') AND storeIdx = #{storeIdx};
     </select>
 
+    <select id="getSpecificRezList" resultType="GetRezListRes">
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservationTime,
+               selectedHall,
+               personCount,
+               numberOfGame,
+               useTime
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}
+          AND storeIdx = #{storeIdx};
+    </select>
+
 </mapper>

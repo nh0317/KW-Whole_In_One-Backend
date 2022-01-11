@@ -69,4 +69,17 @@ public class DashBoardServiceImpl implements DashBoardService {
         }
         return calendarList;
     }
+
+    @Override
+    public List<GetRezListRes> getSpecificRezList(Long partnerIdx, String reservationDay) throws BaseException {
+        List<GetRezListRes> specificRezList;
+        try {
+            Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
+            specificRezList = dashBoardMapper.getSpecificRezList(reservationDay,storeIdx);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+            throw new BaseException(RESPONSE_ERROR);
+        }
+        return specificRezList;
+    }
 }
