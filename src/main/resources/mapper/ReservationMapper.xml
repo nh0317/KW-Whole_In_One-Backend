@@ -57,7 +57,8 @@
     </insert>
 
     <select id="getReservationTime" resultType="GetRezTime">
-        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservedTime
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservedTime,
+               DATE_FORMAT(endTime, '%H:%i') AS endTime
         FROM Reservations
         WHERE storeIdx = #{storeIdx}
           AND DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}

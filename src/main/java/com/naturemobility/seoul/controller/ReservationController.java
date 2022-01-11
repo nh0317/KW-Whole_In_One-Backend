@@ -6,8 +6,6 @@ import com.naturemobility.seoul.domain.reservations.GetRezRes;
 import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
 import com.naturemobility.seoul.domain.reservations.GetRezTime;
 import com.naturemobility.seoul.domain.reservations.PostRezReq;
-import com.naturemobility.seoul.domain.stores.GetBrandRes;
-import com.naturemobility.seoul.domain.visited.GetVisitedByUserIdx;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import org.apache.ibatis.annotations.Param;

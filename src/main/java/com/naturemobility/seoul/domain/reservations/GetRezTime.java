@@ -6,5 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class GetRezTime {
-    final String reservationTIme; //yyyy.mm.dd 오전 hh:mm
+    final String reservationTime; //yyyy.mm.dd 오전 hh:mm
+    final String endTime;
 }
