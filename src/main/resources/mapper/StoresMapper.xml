@@ -49,17 +49,7 @@
 
     <select id="retrieveStoreInfoByMap" resultType="GetStoreResByMap">
         SELECT storeIdx,storeImage,
-               (CASE storeBrand
-                    WHEN 0 then '미 설정'
-                    WHEN 1 then '골프존'
-                    WHEN 2 then '골프존파크'
-                    WHEN 3 then '레드골프'
-                    WHEN 4 then '시티존'
-                    WHEN 5 then '오케이온'
-                    WHEN 6 then '프렌즈스크린T'
-                    WHEN 7 then '프렌즈스크린G'
-                    WHEN 8 then 'SG골프'
-                   END)                                   AS storeBrand,
+               brandName AS storeBrand,
                storeName,
                storeLatitude,
                storeLongitude,
@@ -72,6 +62,7 @@
                 WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
 
         FROM Stores
+                 INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
         ORDER BY CASE
                      WHEN @orderRule = 1 THEN distanceFromUser
                      END ASC,
