@@ -124,7 +124,7 @@ public class StoresController {
      *          floorscreenStatus 0,1
      *          storageStatus 0,1
      *          lessonStatus 0,1
-     *          brand [1:골프존, 2:골프존파크, 3:레드골프, 4:시티존, 5:오케이온, 6:프렌즈스크린, 7:프렌즈스크린G, 8:SG골프]
+     *          brand [1:골프존, 2:골프존파크, 3:레드골프, 4:시티존, 5:오케이온, 6:프렌즈스크린, 7:프렌즈스크린G, 8:SG골프 9:프렌즈 스크린T]
      *          distance [1~8 까지의 숫자 (KM 단위)]
      *
      *
