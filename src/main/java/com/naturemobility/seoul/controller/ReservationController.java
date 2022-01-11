@@ -99,14 +99,15 @@ public class ReservationController {
 
     /**
      * 예약 시간 조회
-     * [post] /reservation
-     * @return BaseResponse<GetRezTime>
+     * [GET] /reservation-time?storeIdx=1&reservationDay="2021-01-09"&hallNumber=2
+     * @return BaseResponse<List<GetRezTime>>
      */
     @ResponseBody
     @GetMapping("/reserved-time")
-    public BaseResponse<List<GetRezTime>> getReservationTime(@RequestParam("storeIdx") Long storeIdx,@RequestParam("reservationDay") String reservationDay) {
+    public BaseResponse<List<GetRezTime>> getReservationTime(@RequestParam("storeIdx") Long storeIdx,@RequestParam("reservationDay") String reservationDay,
+                                                             @RequestParam("hallNumber") Long hallNumber) {
         try {
-            List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay);
+            List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,hallNumber);
             return new BaseResponse<>(SUCCESS,getRezTime);
         } catch (BaseException exception) {
             return new BaseResponse(exception.getStatus());

@@ -105,10 +105,10 @@ public class ReservationsServiceImpl implements ReservationsService {
     }
 
     @Override
-    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay) throws BaseException {
+    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay,Long hallNumber) throws BaseException {
         List<GetRezTime> getRezTime;
         try {
-            getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay);
+            getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay,hallNumber);
         } catch (Exception ignored) {
             ignored.printStackTrace();
             throw new BaseException(RESPONSE_ERROR);

@@ -10,5 +10,5 @@ public interface ReservationsService {
     public Long getStoreIdx(Long reservationIdx) throws BaseException;
 
     public void postReservation(PostRezReq postRezReq,Long userIdx) throws BaseException;
-    public List<GetRezTime> getReservationTime(Long storeIdx,String reservationDay) throws BaseException;
+    public List<GetRezTime> getReservationTime(Long storeIdx,String reservationDay,Long hallNumber) throws BaseException;
 }
