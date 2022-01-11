@@ -28,8 +28,13 @@
                storePhoneNumber,
                (SELECT Count(reviewIdx) FROM Reviews)     AS reviewCount,
                storeLocation,
-               storeTime
-
+               storeTime,
+               batCount,
+               lefthandStatus,
+               parkingStatus,
+               groupseatStatus,
+               floorscreenStatus,
+               lessonStatus
         FROM Stores
                  INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
         WHERE storeIdx = #{storeIdx}
