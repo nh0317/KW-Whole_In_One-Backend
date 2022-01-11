@@ -7,23 +7,14 @@
         SELECT storeIdx,
                storeImage,
                storeName,
-               (CASE storeBrand
-                    WHEN 0 then '미 설정'
-                    WHEN 1 then '골프존'
-                    WHEN 2 then '골프존파크'
-                    WHEN 3 then '레드골프'
-                    WHEN 4 then '시티존'
-                    WHEN 5 then '오케이온'
-                    WHEN 6 then '프렌즈스크린T'
-                    WHEN 7 then '프렌즈스크린G'
-                    WHEN 8 then 'SG골프'
-                   END) AS storeBrand,
+               brandName AS storeBrand,
                storeLocation,
                round((6371 *
                       acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
                           - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
-                     1) as distanceFromUser
+                     1)  as distanceFromUser
         FROM Stores
+                 INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
         WHERE storeName LIKE CONCAT('%', #{storeName}, '%');
     </select>
 
