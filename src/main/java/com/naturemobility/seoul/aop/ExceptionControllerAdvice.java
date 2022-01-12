@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import static com.naturemobility.seoul.config.BaseResponseStatus.REQUEST_ERROR;
 import static com.naturemobility.seoul.config.BaseResponseStatus.RESPONSE_ERROR;
 
 @RestControllerAdvice
@@ -22,9 +23,8 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.RESPONSE_ERROR;
 public class ExceptionControllerAdvice {
     @ExceptionHandler(BaseException.class)
     public BaseResponse<Object> baseExceptionHandler(BaseException exception, HttpServletRequest req){
-        if(exception.getStatus().equals(RESPONSE_ERROR)){
+        if(exception.getStatus().equals(RESPONSE_ERROR) || exception.getStatus().equals(REQUEST_ERROR)){
             printErrorLog(req, exception.getStackTrace());
-
         }else{
             log.warn("Message : {}", exception.getStatus().getMessage());
             log.warn("URI : {} Query : {}",req.getRequestURI(), req.getQueryString());
@@ -40,7 +40,7 @@ public class ExceptionControllerAdvice {
     private void printErrorLog(HttpServletRequest req, StackTraceElement[] stackTrace) {
         String errorStack = "";
         errorStack += "URI : " + req.getRequestURI() + " Query : " + req.getQueryString()+"\n";
-        if (!req.getContentType().startsWith("multipart/form-data")) {
+        if (req.getContentType()!=null && !req.getContentType().startsWith("multipart/form-data")) {
             try {
                 String body = ReadReqBody.getBody(req);
 //                if (!body.contains("password"))

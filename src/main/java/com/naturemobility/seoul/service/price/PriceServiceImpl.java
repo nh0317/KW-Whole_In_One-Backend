@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static com.naturemobility.seoul.config.BaseResponseStatus.RESPONSE_ERROR;
+import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 @Service
 @Slf4j
@@ -36,9 +36,8 @@ public class PriceServiceImpl implements PriceService{
     @Override
     public PostWeekRes setWeek(PostWeekReq postWeek, Long partnerIdx) throws BaseException {
         Boolean isHoliday = postWeek.getIsHoliday();
-        final List<String> weeks = new ArrayList<>(Arrays.asList("월", "화", "수", "목", "금", "토", "일"));
         // 사장님의 매장을 찾는다.
-        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
+        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         //요청 온 요일을 평일 또는 주말로 설정
         setWeek(postWeek.getWeeks(),storeIdx, isHoliday);
         PostWeekRes postWeekRes = new PostWeekRes(postWeek.getWeeks(), isHoliday);
@@ -47,7 +46,7 @@ public class PriceServiceImpl implements PriceService{
     @Override
     public PostPriceRes registerPrice(PostPriceReq postPriceReq, Long partnerIdx, Long storePriceIdx) throws BaseException {
         // 사장님의 가게를 찾는다.
-        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
+        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         // 해당 가게에 가격을 등록한다.
         Long storeWeekPriceIdx = setPrice(postPriceReq, storeIdx, partnerIdx,storePriceIdx);
         return new PostPriceRes(storeWeekPriceIdx, postPriceReq.getName(), postPriceReq.getPrice(),
@@ -56,7 +55,7 @@ public class PriceServiceImpl implements PriceService{
     }
     @Override
     public List<GetPriceRes> getPrice(Long partnerIdx, Boolean isHoliday) throws BaseException{
-        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         List<GetPriceRes> priceInfos = weekPriceMapper.findWeekPriceByStoreIdx(isHoliday,storeIdx);
         return priceInfos;
     }
@@ -69,50 +68,60 @@ public class PriceServiceImpl implements PriceService{
 
     @Override
     public List<String>getWeek(Long partnerIdx, Boolean isHoliday) throws BaseException {
-        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
+        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         String week = weekPriceMapper.findWeekByStoreIdx(isHoliday, storeIdx)
-                .orElseThrow(() -> new BaseException(RESPONSE_ERROR));
-        List<String> weeks = Arrays.stream(week.split(",")).collect(Collectors.toList());
+                .orElseGet(()-> null);
+        List<String> weeks=new ArrayList<>();
+        if(week!=null)
+            weeks = Arrays.stream(week.split(",")).collect(Collectors.toList());
         return weeks;
     }
 
     @Override
     public void deletePrice(Long partnerIdx, Long storePriceIdx) throws BaseException {
-        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
+        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         Long priceSchemeIdx = weekPriceMapper.findPriceSchemeByStoreIdx(storeIdx, storePriceIdx)
-                .orElseThrow(()->new BaseException(RESPONSE_ERROR));
+                .orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         weekPriceMapper.deletePriceScheme(priceSchemeIdx);
     }
 
     @Override
-    public Integer getCurrentPrice(GetCurPriceReq getCurPriceReq, Long storeIdx) throws BaseException {
+    public Integer getCurrentPrice(GetCurPriceReq getCurPriceReq, Long storeIdx) throws BaseException{
         // 특정 기간의 가격에 포함되는 경우
-        LocalDate localDate = LocalDate.parse(getCurPriceReq.getDate(),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.KOREA));
+        LocalDate localDate;
+        try {
+            localDate = LocalDate.parse(getCurPriceReq.getDate(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.KOREA));
+        }catch (Exception e){
+            throw new BaseException(REQUEST_ERROR);
+        }
         Integer currentPrice = weekPriceMapper.findCurrentPrice(storeIdx,
                         getCurPriceReq.getHole(), localDate, getCurPriceReq.getTime())
                         .orElseGet(()->{
-            //
             // 평일/주말 가격 탐색
             String currentWeek=localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN).replace("요일", "");
             String holiday="";
             //TODO: 공휴일 판단 로직 추가
 
             // 공휴일이 아닌 경우
-            try {
-                //매장의 주말 탐색
-                holiday= weekPriceMapper.findWeekByStoreIdx(true, storeIdx)
-                        .orElseThrow(()->new BaseException(RESPONSE_ERROR));
-                // 매장의 주말/평일 가격 반환(등록된 시간이 없는 경우 0)
-                Integer price = weekPriceMapper.findCurrentWeekPrice(storeIdx, getCurPriceReq.getHole(),
-                                getCurPriceReq.getTime(),holiday.contains(currentWeek))
-                        .orElseGet(()->0);
-                log.info("현재 가격 : {} ", price);
-                Integer hour = Integer.parseInt(getCurPriceReq.getTime().split(":")[0])
-                        + (Integer.parseInt(getCurPriceReq.getTime().split(":")[1])/60);
-                return price * getCurPriceReq.getCount() * hour;
-            } catch (BaseException e) {}
-            return 0;
+            //매장의 주말 탐색
+            holiday= weekPriceMapper.findWeekByStoreIdx(true, storeIdx)
+                    .orElseGet(()->null);
+            // 매장의 주말/평일 가격 반환(등록된 시간이 없는 경우 0)
+            Integer price = 0;
+            if (holiday!=null) {
+                price = weekPriceMapper.findCurrentWeekPrice(storeIdx, getCurPriceReq.getHole(),
+                                getCurPriceReq.getTime(), holiday.contains(currentWeek))
+                        .orElseGet(() -> 0);
+            }else{
+                price = weekPriceMapper.findCurrentWeekPrice(storeIdx, getCurPriceReq.getHole(),
+                                getCurPriceReq.getTime(), false)
+                        .orElseGet(() -> 0);
+            }
+            log.info("현재 가격 : {} ", price);
+            Integer hour = Integer.parseInt(getCurPriceReq.getTime().split(":")[0])
+                    + (Integer.parseInt(getCurPriceReq.getTime().split(":")[1])/60);
+            return price * getCurPriceReq.getCount() * hour;
         });
         return currentPrice;
     }
