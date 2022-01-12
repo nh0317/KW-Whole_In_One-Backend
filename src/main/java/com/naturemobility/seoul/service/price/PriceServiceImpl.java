@@ -41,7 +41,7 @@ public class PriceServiceImpl implements PriceService{
         Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
         //요청 온 요일을 평일 또는 주말로 설정
         setWeek(postWeek.getWeeks(),storeIdx, isHoliday);
-        PostWeekRes postWeekRes = new PostWeekRes(weeks, isHoliday);
+        PostWeekRes postWeekRes = new PostWeekRes(postWeek.getWeeks(), isHoliday);
         return postWeekRes;
     }
     @Override
@@ -111,9 +111,7 @@ public class PriceServiceImpl implements PriceService{
                 Integer hour = Integer.parseInt(getCurPriceReq.getTime().split(":")[0])
                         + (Integer.parseInt(getCurPriceReq.getTime().split(":")[1])/60);
                 return price * getCurPriceReq.getCount() * hour;
-            } catch (BaseException e) {
-                e.printStackTrace();
-            }
+            } catch (BaseException e) {}
             return 0;
         });
         return currentPrice;
@@ -121,37 +119,27 @@ public class PriceServiceImpl implements PriceService{
 
     //요일 등록
     private void setWeek(List<String>weeks, Long storeIdx, Boolean isHoliday) throws BaseException {
-        try {
-            HolidayWeekInfo holidayWeekInfo = new HolidayWeekInfo(storeIdx, isHoliday, StringUtils.join(weeks, ','));
-            weekPriceMapper.saveHolidayWeek(holidayWeekInfo);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        HolidayWeekInfo holidayWeekInfo = new HolidayWeekInfo(storeIdx, isHoliday, StringUtils.join(weeks, ','));
+        weekPriceMapper.saveHolidayWeek(holidayWeekInfo);
     }
     //가격 등록
     private Long setPrice(PostPriceReq postPriceReq, Long storeIdx, Long partnerIdx,Long storePriceIdx) throws BaseException {
-        try {
-            PriceSchemeInfo priceSchemeInfo = new PriceSchemeInfo(storeIdx, postPriceReq.getName(), partnerIdx);
-            if (storePriceIdx == null) {
-                // 가격을 새로 등록하는 경우
-                // 가격 스키마를 추가
-                weekPriceMapper.savePriceScheme(priceSchemeInfo);
-            } else {
-                // 가격을 수정하는 경우
-                // 기존 가격 스키마를 찾는다.
-                priceSchemeInfo.setPriceSchemeIdx(weekPriceMapper.findPriceSchemeByStoreIdx(storeIdx, storePriceIdx)
-                        .orElseThrow(() -> new BaseException(RESPONSE_ERROR)));
-            }
-            //가격 저장
-            StorePriceInfo storePriceInfo = new StorePriceInfo(priceSchemeInfo.getPriceSchemeIdx(), postPriceReq.getPrice(),
-                    postPriceReq.getStartTime(), postPriceReq.getEndTime(), postPriceReq.getHole(), postPriceReq.getIsHoliday(),
-                    storePriceIdx, postPriceReq.getStartDate(), postPriceReq.getEndDate());
-            weekPriceMapper.savePrice(storePriceInfo);
-            return storePriceInfo.getStorePriceIdx();
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
+        PriceSchemeInfo priceSchemeInfo = new PriceSchemeInfo(storeIdx, postPriceReq.getName(), partnerIdx);
+        if (storePriceIdx == null) {
+            // 가격을 새로 등록하는 경우
+            // 가격 스키마를 추가
+            weekPriceMapper.savePriceScheme(priceSchemeInfo);
+        } else {
+            // 가격을 수정하는 경우
+            // 기존 가격 스키마를 찾는다.
+            priceSchemeInfo.setPriceSchemeIdx(weekPriceMapper.findPriceSchemeByStoreIdx(storeIdx, storePriceIdx)
+                    .orElseThrow(() -> new BaseException(RESPONSE_ERROR)));
         }
+        //가격 저장
+        StorePriceInfo storePriceInfo = new StorePriceInfo(priceSchemeInfo.getPriceSchemeIdx(), postPriceReq.getPrice(),
+                postPriceReq.getStartTime(), postPriceReq.getEndTime(), postPriceReq.getHole(), postPriceReq.getIsHoliday(),
+                storePriceIdx, postPriceReq.getStartDate(), postPriceReq.getEndDate());
+        weekPriceMapper.savePrice(storePriceInfo);
+        return storePriceInfo.getStorePriceIdx();
     }
 }
