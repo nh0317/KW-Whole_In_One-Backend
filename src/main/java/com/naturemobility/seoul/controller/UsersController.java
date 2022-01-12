@@ -188,7 +188,7 @@ public class UsersController {
      */
     @ResponseBody
     @PostMapping(value="login" )
-    public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq postLoginReq) {
+    public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq postLoginReq) throws BaseException {
         log.info("아이디 : "+postLoginReq.getId());
         log.info("패스워드 : "+postLoginReq.getPassword());
         // 1. Body Parameter Validation
@@ -199,12 +199,8 @@ public class UsersController {
         }
 
         // 2. Login
-        try {
-            PostLoginRes postLoginRes = usersService.login(postLoginReq);
-            return new BaseResponse<>(SUCCESS, postLoginRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        PostLoginRes postLoginRes = usersService.login(postLoginReq);
+        return new BaseResponse<>(SUCCESS, postLoginRes);
     }
 
     /**

@@ -34,19 +34,14 @@ public class PriceServiceImpl implements PriceService{
     PartnerMapper partnerMapper;
 
     @Override
-    public List<PostWeekRes> setWeek(PostWeekReq postWeek, Long partnerIdx) throws BaseException {
+    public PostWeekRes setWeek(PostWeekReq postWeek, Long partnerIdx) throws BaseException {
         Boolean isHoliday = postWeek.getIsHoliday();
         final List<String> weeks = new ArrayList<>(Arrays.asList("월", "화", "수", "목", "금", "토", "일"));
         // 사장님의 매장을 찾는다.
         Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
         //요청 온 요일을 평일 또는 주말로 설정
-        setWeek(postWeek.getWeeks(),storeIdx, partnerIdx, isHoliday);
-        // 요청이 오지 않은 요일을 주말 또는 평일로 설정
-        // ex 요청이 월화수목금=평일이면 토일을 주말로 설정
-        weeks.removeAll(postWeek.getWeeks());
-        setWeek(weeks,storeIdx,partnerIdx,!isHoliday);
-        List<PostWeekRes> postWeekRes = Arrays.asList(new PostWeekRes(postWeek.getWeeks(), isHoliday),
-                                                        new PostWeekRes(weeks, !isHoliday));
+        setWeek(postWeek.getWeeks(),storeIdx, isHoliday);
+        PostWeekRes postWeekRes = new PostWeekRes(weeks, isHoliday);
         return postWeekRes;
     }
     @Override
@@ -67,8 +62,7 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
-    public List<GetPriceRes> getPeriodPrice(Boolean isHoilday,Long partnerIdx) throws BaseException {
-        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
+    public List<GetPriceRes> getPeriodPrice(Boolean isHoilday,Long storeIdx) throws BaseException {
         List<GetPriceRes> priceInfos = weekPriceMapper.findPeriodPriceByStoreIdx(isHoilday,storeIdx);
         return priceInfos;
     }
@@ -91,11 +85,13 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
-    public Integer getCurrentPrice(String date, String time, Integer hole, Long partnerIdx) throws BaseException {
-        Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(RESPONSE_ERROR));
+    public Integer getCurrentPrice(GetCurPriceReq getCurPriceReq, Long storeIdx) throws BaseException {
         // 특정 기간의 가격에 포함되는 경우
-        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.KOREA));
-        Integer currentPrice = weekPriceMapper.findCurrentPrice(storeIdx, hole, localDate, time).orElseGet(()->{
+        LocalDate localDate = LocalDate.parse(getCurPriceReq.getDate(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.KOREA));
+        Integer currentPrice = weekPriceMapper.findCurrentPrice(storeIdx,
+                        getCurPriceReq.getHole(), localDate, getCurPriceReq.getTime())
+                        .orElseGet(()->{
             //
             // 평일/주말 가격 탐색
             String currentWeek=localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN).replace("요일", "");
@@ -108,8 +104,13 @@ public class PriceServiceImpl implements PriceService{
                 holiday= weekPriceMapper.findWeekByStoreIdx(true, storeIdx)
                         .orElseThrow(()->new BaseException(RESPONSE_ERROR));
                 // 매장의 주말/평일 가격 반환(등록된 시간이 없는 경우 0)
-                return weekPriceMapper.findCurrentWeekPrice(storeIdx,hole,time,holiday.contains(currentWeek))
+                Integer price = weekPriceMapper.findCurrentWeekPrice(storeIdx, getCurPriceReq.getHole(),
+                                getCurPriceReq.getTime(),holiday.contains(currentWeek))
                         .orElseGet(()->0);
+                log.info("현재 가격 : {} ", price);
+                Integer hour = Integer.parseInt(getCurPriceReq.getTime().split(":")[0])
+                        + (Integer.parseInt(getCurPriceReq.getTime().split(":")[1])/60);
+                return price * getCurPriceReq.getCount() * hour;
             } catch (BaseException e) {
                 e.printStackTrace();
             }
@@ -119,7 +120,7 @@ public class PriceServiceImpl implements PriceService{
     }
 
     //요일 등록
-    private void setWeek(List<String>weeks, Long storeIdx, Long partnerIdx, Boolean isHoliday) throws BaseException {
+    private void setWeek(List<String>weeks, Long storeIdx, Boolean isHoliday) throws BaseException {
         try {
             HolidayWeekInfo holidayWeekInfo = new HolidayWeekInfo(storeIdx, isHoliday, StringUtils.join(weeks, ','));
             weekPriceMapper.saveHolidayWeek(holidayWeekInfo);
