@@ -58,6 +58,14 @@ dependencies {
 	//actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+	//slack 설정
+	implementation 'com.github.maricn:logback-slack-appender:1.4.0'
+
+	//profile 마다 다른 logback 설정
+	implementation 'org.codehaus.janino:janino:3.1.6'
+
+
+
 	//Swagger
 //	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }
