@@ -132,19 +132,6 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
         else{
             try{
                 storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx).orElseThrow(() -> new BaseException(RESPONSE_ERROR));
-//                String[] strs =storeInfo.getStoreTime().split("~");
-//                String date_time = strs[0].trim();
-//                DateTimeFormatter dateParser = DateTimeFormatter.ofPattern("HH:mm");
-//                try {
-//                    LocalTime open = LocalTime.parse(date_time,dateParser);
-//                    LocalTime current = LocalTime.now();
-//                    log.info("{}",open);
-//                    log.info("{}",current);
-//
-//                    log.info("{}",open.isBefore(current));
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
                 storeImages = storeImageFileMapper.findByStoreIdx(storeIdx);
             }catch (Exception e){
                 e.printStackTrace();

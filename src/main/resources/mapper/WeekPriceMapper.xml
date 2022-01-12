@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.WeekPriceMapper">
+    <insert id="savePrice" useGeneratedKeys="true" keyProperty="storePriceIdx" parameterType="StorePriceInfo">
+        INSERT INTO StorePrice (storePriceIdx,priceSchemeIdx, price, startTime, endTime, startDate, endDate, hole, isHoliday)
+        VALUES (#{storePriceIdx},#{priceSchemeIdx}, #{price}, #{startTime}, #{endTime}, #{startDate}, #{endDate}, #{hole}, #{isHoliday})
+            ON DUPLICATE KEY UPDATE
+                 storePriceIdx=#{storePriceIdx},
+                 priceSchemeIdx=#{priceSchemeIdx},
+                 price=#{price},
+                 startTime=#{startTime},
+                 endTime=#{endTime},
+                 startDate=#{startDate},
+                 endDate=#{endDate},
+                 hole=#{hole},
+                 isHoliday=#{isHoliday}
+    </insert>
+    <insert id="savePriceScheme" useGeneratedKeys="true" keyProperty="priceSchemeIdx" parameterType="PriceSchemeInfo">
+        INSERT INTO PriceScheme (priceSchemeIdx,storeIdx, name, modiBy)
+        VALUES (#{priceSchemeIdx},#{storeIdx}, #{name}, #{modiBy})
+            ON DUPLICATE KEY UPDATE
+                                 storeIdx=#{storeIdx},
+                                 name=#{name},
+                                 modiBy=#{modiBy}
+    </insert>
+    <insert id="saveHolidayWeek" parameterType="HolidayWeekInfo">
+        INSERT INTO HolidayWeek (storeIdx, isHoliday, week)
+        VALUES (#{storeIdx}, #{isHoliday}, #{week})
+            ON DUPLICATE KEY UPDATE
+                 storeIdx=#{storeIdx},
+                 isHoliday=#{isHoliday},
+                 week=#{week}
+    </insert>
+    <select id="findWeekByStoreIdx" resultType="String">
+        SELECT hw.week
+        FROM HolidayWeek hw join Stores s on hw.storeIdx=s.storeIdx
+        WHERE hw.isHoliday=#{isHoliday} and s.storeIdx =#{storeIdx}
+    </select>
+    <select id="findWeekPriceByStoreIdx" resultType="GetPriceRes">
+        SELECT sp.storePriceIdx, ps.name, sp.price, sp.startTime,sp.endTime,sp.hole,sp.isHoliday
+        FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
+        <choose>
+            <when test="isHoliday!=null">
+                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx} and sp.startDate is null and ps.deletedAt is null
+                ORDER BY sp.startTime
+            </when>
+            <otherwise>
+                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is null and ps.deletedAt is null
+                ORDER BY sp.isHoliday, sp.startTime
+            </otherwise>
+        </choose>
+    </select>
+    <select id="findPeriodPriceByStoreIdx" resultType="GetPriceRes">
+        SELECT sp.storePriceIdx, ps.name, sp.price, sp.startTime, sp.endTime, sp.startDate, sp.endDate, sp.hole,sp.isHoliday
+        FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
+        <choose>
+            <when test="isHoliday!=null">
+                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null
+                ORDER BY sp.startTime
+            </when>
+            <otherwise>
+                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null
+                ORDER BY sp.isHoliday, sp.startTime
+            </otherwise>
+        </choose>
+    </select>
+    <select id="findPriceSchemeByStoreIdx" resultType="Long">
+        SELECT sp.storePriceIdx
+        FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
+        WHERE ps.storeIdx =#{storeIdx} and storePriceIdx=#{storePriceIdx} and ps.deletedAt is null
+    </select>
+    <update id="deletePriceScheme">
+        UPDATE PriceScheme
+            SET deletedAt=CURRENT_TIMESTAMP
+        WHERE priceSchemeIdx=#{priceSchemeIdx}
+    </update>
+    <select id="findCurrentPrice" resultType="Integer">
+        SELECT sp.price
+        FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
+        WHERE ps.storeIdx =#{storeIdx} and ps.deletedAt is null and sp.hole=#{hole} and sp.startDate is not null
+          and (#{currentDate} between DATE_FORMAT(sp.startDate, '%m:%d') and DATE_FORMAT(sp.endDate, '%m:%d'))
+          and (TIME_FORMAT(#{currentTime}, '%H:%i') between TIME_FORMAT(sp.startTime, '%H:%i') and TIME_FORMAT(sp.endTime, '%H:%i'))
+    </select>
+    <select id="findCurrentWeekPrice" resultType="Integer">
+        SELECT sp.price
+        FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
+        WHERE ps.storeIdx =#{storeIdx} and sp.isHoliday=#{isHoliday} and ps.deletedAt is null
+          and sp.hole=#{hole} and sp.startDate is null
+          and (TIME_FORMAT(#{currentTime}, '%H:%i') between TIME_FORMAT(sp.startTime, '%H:%i') and TIME_FORMAT(sp.endTime, '%H:%i'))
+    </select>
+</mapper>
