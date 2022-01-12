@@ -10,6 +10,7 @@ public class PostRezReq {
     private Integer storeIdx;
     private String reservationTime;
     private Integer useTime;
+    private String endTime;
     private Integer numberOfGame;
     private Integer selectedHall;
     private String request;

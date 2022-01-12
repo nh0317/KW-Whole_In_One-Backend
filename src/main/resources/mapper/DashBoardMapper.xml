@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.DashBoardMapper">
+
+    <select id="getStoreIdx" resultType="Long">
+        SELECT storeIdx
+        From Partner
+        WHERE partnerIdx = #{partnerIdx}
+    </select>
+
+    <select id="getTodayRes" resultType="GetTodayRes">
+        SELECT COUNT(reservationIdx) AS reservationCount,
+               SUM(payPrice)         AS todaySales
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
+          AND storeIdx = #{storeIdx};
+    </select>
+
+    <select id="getMonthRes" resultType="GetMonthRes">
+        SELECT COUNT(reservationIdx) AS monthReservatioCount,
+               SUM(payPrice)         AS monthSales
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+          AND #{storeIdx};
+    </select>
+
+    <select id="getTodayRezList" resultType="GetRezListRes">
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservationTime,
+               selectedHall,
+               personCount,
+               numberOfGame,
+               useTime
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
+          AND storeIdx = #{storeIdx};
+    </select>
+
+    <select id="getCalendarList" resultType="GetCalendarRes">
+        SELECT DISTINCT DATE_FORMAT(reservationTime, '%Y-%m-%d') AS date,
+            (SELECT COUNT(reservationIdx) FROM Reservations WHERE DATE_FORMAT(reservationTime,'%Y-%m-%d') = date
+            AND storeIdx = #{storeIdx}) AS count
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') AND storeIdx = #{storeIdx};
+    </select>
+
+    <select id="getSpecificRezList" resultType="GetRezListRes">
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservationTime,
+               selectedHall,
+               personCount,
+               numberOfGame,
+               useTime
+        FROM Reservations
+        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}
+          AND storeIdx = #{storeIdx};
+    </select>
+
+</mapper>

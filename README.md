@@ -87,6 +87,18 @@ spring:
 보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
+### Price API
+* 주말/평일 등록 API
+* 주말/평일 조회 API 
+* 가격 등록 및 수정 API 
+* 주말/평일 가격 조회 API 
+* 특정 기간 가격 조회 API 
+* 특정 날짜 및 시간의 가격 조회 API 
+* 가격 삭제 API 
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
+
 ### Stores API
 * 골프장 검색
 * 골프장 조회 (storeIdx로 조회)

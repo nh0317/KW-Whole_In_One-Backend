@@ -50,16 +50,19 @@
     </delete>
 
     <insert id="postReservation" parameterType="PostRezInfo">
-        INSERT INTO Reservations(storeIdx, userIdx,reservationTime,useTime,numberOfGame,selectedHall,request,
-                                 personCount,reservePrice,discountPrice,payPrice)
-        VALUES (#{storeIdx},#{userIdx},#{reservationTime},#{useTime},#{numberOfGame},#{selectedHall},#{request},#{personCount},#{price},#{discountPrice},#{payPrice});
+        INSERT INTO Reservations(storeIdx, userIdx, reservationTime, useTime, numberOfGame, selectedHall, request,
+                                 personCount, reservePrice, discountPrice, payPrice, endTime)
+        VALUES (#{storeIdx}, #{userIdx}, #{reservationTime}, #{useTime}, #{numberOfGame}, #{selectedHall}, #{request},
+                #{personCount}, #{price}, #{discountPrice}, #{payPrice}, #{endTime});
     </insert>
 
     <select id="getReservationTime" resultType="GetRezTime">
-        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservedTime
+        SELECT DATE_FORMAT(reservationTime, '%H:%i') AS reservedTime,
+               DATE_FORMAT(endTime, '%H:%i') AS endTime
         FROM Reservations
         WHERE storeIdx = #{storeIdx}
           AND DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}
+          AND selectedHall = #{hallNumber}
     </select>
 
 </mapper>

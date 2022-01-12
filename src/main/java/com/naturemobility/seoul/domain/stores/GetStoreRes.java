@@ -16,5 +16,12 @@ public class GetStoreRes {
     private final Integer reviewCount;
     private final String storeLocation;
     private final String storeTime;
+
+    private final Integer batCount;
+    private final Integer lefthandStatus;
+    private final Integer parkingStatus;
+    private final Integer groupseatStatus;
+    private final Integer floorscreenStatus;
+    private final Integer lessonStatus;
     //private final String storePrice; -DB 업데이트후 추가 예정
 }

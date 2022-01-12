@@ -6,8 +6,6 @@ import com.naturemobility.seoul.domain.reservations.GetRezRes;
 import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
 import com.naturemobility.seoul.domain.reservations.GetRezTime;
 import com.naturemobility.seoul.domain.reservations.PostRezReq;
-import com.naturemobility.seoul.domain.stores.GetBrandRes;
-import com.naturemobility.seoul.domain.visited.GetVisitedByUserIdx;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import org.apache.ibatis.annotations.Param;
@@ -76,6 +74,7 @@ public class ReservationController {
      *     "storeIdx":1,
      *     "reservationTime":"2022-01-12 14:00",
      *     "useTime":30,
+     *     "endTime":"2022-01-12 14:30"
      *     "numberOfGame":4,
      *     "selectedHall":2,
      *     "request":"hello",
@@ -99,14 +98,15 @@ public class ReservationController {
 
     /**
      * 예약 시간 조회
-     * [post] /reservation
-     * @return BaseResponse<GetRezTime>
+     * [GET] /reservation-time?storeIdx=1&reservationDay="2021-01-09"&hallNumber=2
+     * @return BaseResponse<List<GetRezTime>>
      */
     @ResponseBody
     @GetMapping("/reserved-time")
-    public BaseResponse<List<GetRezTime>> getReservationTime(@RequestParam("storeIdx") Long storeIdx,@RequestParam("reservationDay") String reservationDay) {
+    public BaseResponse<List<GetRezTime>> getReservationTime(@RequestParam("storeIdx") Long storeIdx,@RequestParam("reservationDay") String reservationDay,
+                                                             @RequestParam("hallNumber") Long hallNumber) {
         try {
-            List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay);
+            List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,hallNumber);
             return new BaseResponse<>(SUCCESS,getRezTime);
         } catch (BaseException exception) {
             return new BaseResponse(exception.getStatus());

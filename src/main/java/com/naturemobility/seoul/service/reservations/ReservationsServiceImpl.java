@@ -94,7 +94,7 @@ public class ReservationsServiceImpl implements ReservationsService {
         Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
         PostRezInfo postRezInfo = new PostRezInfo(userIdx,postRezReq.getStoreIdx(),postRezReq.getReservationTime(),postRezReq.getUseTime(),
                 postRezReq.getNumberOfGame(),postRezReq.getSelectedHall(),postRezReq.getRequest(),postRezReq.getPersonCount(),
-                postRezReq.getPrice(),postRezReq.getDiscountPrice(),payPrice);
+                postRezReq.getPrice(),postRezReq.getDiscountPrice(),payPrice,postRezReq.getEndTime());
         try {
             reservationMapper.postReservation(postRezInfo);
         } catch (Exception ignored) {
@@ -105,10 +105,10 @@ public class ReservationsServiceImpl implements ReservationsService {
     }
 
     @Override
-    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay) throws BaseException {
+    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay,Long hallNumber) throws BaseException {
         List<GetRezTime> getRezTime;
         try {
-            getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay);
+            getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay,hallNumber);
         } catch (Exception ignored) {
             ignored.printStackTrace();
             throw new BaseException(RESPONSE_ERROR);
