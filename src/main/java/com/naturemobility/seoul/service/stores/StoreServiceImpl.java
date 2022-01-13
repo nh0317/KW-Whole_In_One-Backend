@@ -29,75 +29,40 @@ public class StoreServiceImpl implements StoreService {
     public List<SearchStoreRes> retrieveStoreList(String storeName, Double userLatitude, Double userLongitude) throws BaseException {
         List<SearchStoreRes> storeInfoList;
         //storeInfoList = null;
-        try {
-
-            storeInfoList = storesMapper.findBySearch(storeName, userLatitude, userLongitude);
-
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-            //ignored.printStackTrace();
-        }
+        storeInfoList = storesMapper.findBySearch(storeName, userLatitude, userLongitude);
         return storeInfoList;
     }
 
     @Override
     public GetStoreRes retrieveStoreInfoByStoreIdx(Long storeIdx) throws BaseException {
         GetStoreRes storeInfo;
-        try {
-
-            storeInfo = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
-
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-            //ignored.printStackTrace();
-        }
+        storeInfo = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
         return storeInfo;
     }
 
     @Override
     public Integer checkStoreIdx(Long storeIdx) throws BaseException {
         Integer storeIdxCheck;
-        try {
-
-            storeIdxCheck = storesMapper.checkStoreIdx(storeIdx);
-
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-            //ignored.printStackTrace();
-        }
+        storeIdxCheck = storesMapper.checkStoreIdx(storeIdx);
         return storeIdxCheck;
     }
 
     @Override
     public List<GetStoreResByMap> retrieveStoreInfoByMap(Double userLatitude, Double userLongitude, Integer orderRule) throws BaseException {
         List<GetStoreResByMap> storeInfoList;
-        try {
-
-            storesMapper.setOrderRule(orderRule);
-            storeInfoList = storesMapper.retrieveStoreInfoByMap(userLatitude,userLongitude);
-
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-            //ignored.printStackTrace();
-        }
+        storesMapper.setOrderRule(orderRule);
+        storeInfoList = storesMapper.retrieveStoreInfoByMap(userLatitude,userLongitude);
         return storeInfoList;
     }
 
     @Override
     public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter(StoreInfoReqByMap storeInfoReqByMap) throws BaseException {
         List<GetStoreResByMap> storeInfoList;
-        try {
-
-            storesMapper.setOrderRule(storeInfoReqByMap.getOrderRule());
-            storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap.getUserLatitude(), storeInfoReqByMap.getUserLongitude(), storeInfoReqByMap.getBrand()
-                    , storeInfoReqByMap.getDistance(), storeInfoReqByMap.getFloorscreenStatus(), storeInfoReqByMap.getStorageStatus(), storeInfoReqByMap.getParkingStatus(), storeInfoReqByMap.getLessonStatus(),
-                    storeInfoReqByMap.getGroupseatStatus(),storeInfoReqByMap.getLefthandStatus()
-                    );
-
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        storesMapper.setOrderRule(storeInfoReqByMap.getOrderRule());
+        storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap.getUserLatitude(), storeInfoReqByMap.getUserLongitude(), storeInfoReqByMap.getBrand()
+                , storeInfoReqByMap.getDistance(), storeInfoReqByMap.getFloorscreenStatus(), storeInfoReqByMap.getStorageStatus(), storeInfoReqByMap.getParkingStatus(), storeInfoReqByMap.getLessonStatus(),
+                storeInfoReqByMap.getGroupseatStatus(),storeInfoReqByMap.getLefthandStatus()
+                );
         return storeInfoList;
     }
 
@@ -106,30 +71,16 @@ public class StoreServiceImpl implements StoreService {
                                                                     Integer lefthandStatus, Integer parkingStauts, Integer groupseatStatus, Integer floorscreenStatus,
                                                                     Integer storageStatus, Integer lessonStatus, Integer distance) throws BaseException {
         List<GetStoreResByMap> storeInfoList;
-        try {
-
-            storesMapper.setOrderRule(orderRule);
-            storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude,brand, lefthandStatus, parkingStauts,
-                    groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
-
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        storesMapper.setOrderRule(orderRule);
+        storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude,brand, lefthandStatus, parkingStauts,
+                groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
         return storeInfoList;
     }
 
     @Override
     public List<GetBrandRes> retrieveBrandInfo() throws BaseException {
         List<GetBrandRes> brandInfoList;
-        try {
-
-            brandInfoList = storesMapper.retrieveBrandInfo();
-
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        brandInfoList = storesMapper.retrieveBrandInfo();
         return brandInfoList;
     }
 }

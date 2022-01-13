@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class ServiceExceptionAspect {
-    //TODO:utils 의 함수도 포함
     @Around("execution(* com.naturemobility.seoul.service.*.*(..)) || execution(* com.naturemobility.seoul.utils.*.*(..))")
     public Object serviceExceptionHandler(ProceedingJoinPoint proceedingJoinPoint) throws BaseException {
         try{

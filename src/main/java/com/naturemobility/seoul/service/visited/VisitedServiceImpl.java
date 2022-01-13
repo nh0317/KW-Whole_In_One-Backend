@@ -36,15 +36,10 @@ public class VisitedServiceImpl implements VisitedService {
         if (userIdx==0) //로그인 하지 않은 경우 예외 처리
             return;
 
-        try{
-            if(visitedMapper.findByStoreIdxAndUserIdx(visitedInfo).isPresent()) {
-                visitedMapper.update(visitedInfo);
-            }else{
-                visitedMapper.save(visitedInfo);
-            }
-        }catch (Exception exception){
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        if(visitedMapper.findByStoreIdxAndUserIdx(visitedInfo).isPresent())
+            visitedMapper.update(visitedInfo);
+        else
+            visitedMapper.save(visitedInfo);
     }
 
     /**
@@ -59,17 +54,13 @@ public class VisitedServiceImpl implements VisitedService {
         List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
         Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
         if(totalVisited != null && totalVisited >0) {
-            try {
-                if(page!=null && page > 1){
-                    visitedInfo.setPage(page);
-                }
-                PageInfo pageInfo = new PageInfo(visitedInfo);
-                pageInfo.SetTotalData(totalVisited);
-                visitedInfo.setPageInfo(pageInfo);
-                visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
-            } catch (Exception exception) {
-                throw new BaseException(RESPONSE_ERROR);
+            if(page!=null && page > 1){
+                visitedInfo.setPage(page);
             }
+            PageInfo pageInfo = new PageInfo(visitedInfo);
+            pageInfo.SetTotalData(totalVisited);
+            visitedInfo.setPageInfo(pageInfo);
+            visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
         } else throw new BaseException(RESPONSE_ERROR);
         return visiteds;
     }

@@ -37,17 +37,12 @@ public class StoresController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<List<SearchStoreRes>> getStores(@RequestParam String storeName, Double userLatitude, Double userLongitude) {
+    public BaseResponse<List<SearchStoreRes>> getStores(@RequestParam String storeName, Double userLatitude, Double userLongitude)   throws BaseException{
         if (storeName == null || userLatitude==null || userLatitude==null){
             return new BaseResponse<>(REQUEST_ERROR);
         }
-
-        try {
-            List<SearchStoreRes> getStoreList = storeService.retrieveStoreList(storeName,userLatitude,userLongitude);
-            return new BaseResponse<>(SUCCESS,getStoreList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        List<SearchStoreRes> getStoreList = storeService.retrieveStoreList(storeName,userLatitude,userLongitude);
+        return new BaseResponse<>(SUCCESS,getStoreList);
     }
 
     /**
@@ -58,31 +53,22 @@ public class StoresController {
      */
     @ResponseBody
     @GetMapping("/{storeIdx}")
-    public BaseResponse<GetStoreRes> getStoresByStoreIdx(@PathVariable Long storeIdx) {
+    public BaseResponse<GetStoreRes> getStoresByStoreIdx(@PathVariable Long storeIdx) throws BaseException {
         if (storeIdx == null) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
 
         //방문한 매장 표시
-        try{
-            Long userIdx = checkUserService.getUserIdx();
-            visitedService.setVistiedStore(storeIdx,userIdx);
-        }catch (BaseException exception){
-            if(exception.getStatus()!=NEED_LOGIN)
-                return new BaseResponse<>(RESPONSE_ERROR);
+        Long userIdx = checkUserService.getUserIdx();
+        visitedService.setVistiedStore(storeIdx,userIdx);
+
+        Integer checkStoreIdx = storeService.checkStoreIdx(storeIdx);
+        if (checkStoreIdx == 0) {
+            return new BaseResponse<>(REQUEST_ERROR); //존재하지 않는 storeIdx 예외처리
         }
 
-        try {
-            Integer checkStoreIdx = storeService.checkStoreIdx(storeIdx);
-            if (checkStoreIdx == 0) {
-                return new BaseResponse<>(REQUEST_ERROR); //존재하지 않는 storeIdx 예외처리
-            }
-
-            GetStoreRes getStoreList = storeService.retrieveStoreInfoByStoreIdx(storeIdx);
-            return new BaseResponse<>(SUCCESS, getStoreList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        GetStoreRes getStoreList = storeService.retrieveStoreInfoByStoreIdx(storeIdx);
+        return new BaseResponse<>(SUCCESS, getStoreList);
     }
 
     /**
@@ -94,7 +80,7 @@ public class StoresController {
      */
     @ResponseBody
     @GetMapping("/map")
-    public BaseResponse<List<GetStoreResByMap>> getStoresByMap(@RequestParam Double userLatitude, Double userLongitude, Integer orderRule) {
+    public BaseResponse<List<GetStoreResByMap>> getStoresByMap(@RequestParam Double userLatitude, Double userLongitude, Integer orderRule) throws BaseException {
         if (userLatitude == null || userLongitude == null || orderRule == null) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
@@ -104,12 +90,8 @@ public class StoresController {
             return new BaseResponse<>(REQUEST_ERROR);
         }
 
-        try {
-            List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMap(userLatitude,userLongitude,orderRule);
-            return new BaseResponse<>(SUCCESS, storeResByMap);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMap(userLatitude,userLongitude,orderRule);
+        return new BaseResponse<>(SUCCESS, storeResByMap);
     }
 
     /**
@@ -132,7 +114,7 @@ public class StoresController {
      */
     @ResponseBody
     @GetMapping("/map/filter2")
-    public BaseResponse<List<GetStoreResByMap>> getStoresByMapWithFilter(@RequestParam StoreInfoReqByMap storeInfoReqByMap) {
+    public BaseResponse<List<GetStoreResByMap>> getStoresByMapWithFilter(@RequestParam StoreInfoReqByMap storeInfoReqByMap)  throws BaseException {
         if (storeInfoReqByMap.getLefthandStatus() == null || storeInfoReqByMap.getParkingStatus() == null || storeInfoReqByMap.getGroupseatStatus() == null ||
                 storeInfoReqByMap.getStorageStatus() == null || storeInfoReqByMap.getLessonStatus() == null || storeInfoReqByMap.getStorageStatus() == null ||
                 storeInfoReqByMap.getBrand() == null || storeInfoReqByMap.getDistance() == null) {
@@ -143,13 +125,8 @@ public class StoresController {
         if (storeInfoReqByMap.getOrderRule() != 1 && storeInfoReqByMap.getOrderRule() != 2) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
-
-        try {
-            List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap);
-            return new BaseResponse<>(SUCCESS, storeResByMap);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap);
+        return new BaseResponse<>(SUCCESS, storeResByMap);
     }
 
     @ResponseBody
@@ -157,19 +134,15 @@ public class StoresController {
     public BaseResponse<List<GetStoreResByMap>> getStoresByMapWithFilter2(@RequestParam Double userLatitude, @RequestParam Double userLongitude, @RequestParam Integer orderRule,
                                                                           @RequestParam Integer[] brand, @RequestParam Integer lefthandStatus, @RequestParam Integer parkingStatus,
                                                                           @RequestParam Integer groupseatStatus, @RequestParam Integer floorscreenStatus, @RequestParam Integer storageStatus,
-                                                                          @RequestParam Integer lessonStatus, @RequestParam Integer distance) {
+                                                                          @RequestParam Integer lessonStatus, @RequestParam Integer distance) throws BaseException {
         //orderRule 1-거리 가까운순, 2-리뷰 별점 순
         if (orderRule != 1 && orderRule != 2) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
 
-        try {
-            List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude, orderRule, brand, lefthandStatus, parkingStatus, groupseatStatus,
-                    floorscreenStatus, storageStatus, lessonStatus, distance);
-            return new BaseResponse<>(SUCCESS, storeResByMap);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude, orderRule, brand, lefthandStatus, parkingStatus, groupseatStatus,
+                floorscreenStatus, storageStatus, lessonStatus, distance);
+        return new BaseResponse<>(SUCCESS, storeResByMap);
     }
 
     /**
@@ -180,14 +153,9 @@ public class StoresController {
      */
     @ResponseBody
     @GetMapping("/brand")
-    public BaseResponse<List<GetBrandRes>> getStoresByMap() {
-
-        try {
-            List<GetBrandRes> brandRes = storeService.retrieveBrandInfo();
-            return new BaseResponse<>(SUCCESS, brandRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<List<GetBrandRes>> getStoresByMap()  throws BaseException{
+        List<GetBrandRes> brandRes = storeService.retrieveBrandInfo();
+        return new BaseResponse<>(SUCCESS, brandRes);
     }
 }
 

@@ -48,62 +48,56 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
     @Transactional
     public CommonStoreRes saveStore(PostStoreReq postStoreReq) throws BaseException {
         CommonStoreRes commonStoreRes;
-        try{
-            StoreInfo storeInfo = new StoreInfo();
-            storeInfo.setStoreName(postStoreReq.getStoreName());
-            storeInfo.setStoreInfo(postStoreReq.getStoreInfo());
-            storeInfo.setStorePhoneNumber(postStoreReq.getStorePhoneNumber());
-            storeInfo.setStoreLocation(postStoreReq.getStoreLocation());
-            storeInfo.setStoreTime(postStoreReq.getStoreTime());
-            storeInfo.setStoreImage(postStoreReq.getMainStoreImage());
-            storeInfo.setBatCount(postStoreReq.getBatCount());
-            storeInfo.setLefthandStatus(postStoreReq.getLefthandStatus());
-            storeInfo.setParkingStatus(postStoreReq.getParkingStatus());
-            storeInfo.setGroupSeatStatus(postStoreReq.getGroupSeatStatus());
-            storeInfo.setFloorScreenStatus(postStoreReq.getFloorScreenStatus());
-            storeInfo.setStorageStatus(postStoreReq.getStorageStatus());
-            storeInfo.setLessonStatus(postStoreReq.getLessonStatus());
-            storeInfo.setReserveStatus(postStoreReq.getReserveStatus());
-            storeInfo.setCouponStatus(postStoreReq.getCouponStatus());
-            //TODO: storeImage 테이블에 저장하는 로직 추가
-            if(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).isPresent()){
-                storeInfo.setStoreBrand(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).orElseThrow(() -> new BaseException(RESPONSE_ERROR)));
-            }
-            else if (postStoreReq.getStoreBrand()=="미 설정"|| postStoreReq.getStoreBrand()==null || postStoreReq.getStoreBrand()==""){
-                storeInfo.setStoreBrand(null);
-            }
-            else {
-                BrandInfo brandInfo = new BrandInfo();
-                brandInfo.setBrandName(postStoreReq.getStoreBrand());
-                brandMapper.save(brandInfo);
-                storeInfo.setStoreBrand(brandInfo.getBrandIdx());
-            }
-            Map<String, Double> coords = geocoderService.getGeoDataByAddress(postStoreReq.getStoreLocation());
-            if(coords==null){
-                throw new BaseException(RESPONSE_ERROR);
-            }
-            storeInfo.setStoreLatitude(coords.get("latitude"));
-            storeInfo.setStoreLongitude(coords.get("longitude"));
-
-            Long partnerIdx = checkUserService.getPartnerIdx();
-            if(partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
-                storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR)));
-                partnerStoreMapper.update(storeInfo);
-            }
-            else {
-                partnerStoreMapper.save(storeInfo);
-                partnerMapper.saveStoreIdx(partnerIdx, storeInfo.getStoreIdx());
-            }
-
-            commonStoreRes = new CommonStoreRes(storeInfo.getStoreName(), storeInfo.getStoreInfo(), storeInfo.getStorePhoneNumber(),
-                    postStoreReq.getStoreBrand(), storeInfo.getStoreLocation(), storeInfo.getStoreImage(), postStoreReq.getStoreImage(),
-                    storeInfo.getStoreTime(), storeInfo.getBatCount(), storeInfo.getLefthandStatus(), storeInfo.getParkingStatus(),
-                    storeInfo.getGroupSeatStatus(), storeInfo.getFloorScreenStatus(), storeInfo.getStorageStatus(),
-                    storeInfo.getLessonStatus(), storeInfo.getReserveStatus(), storeInfo.getCouponStatus());
-        }catch (Exception e){
-            e.printStackTrace();
+        StoreInfo storeInfo = new StoreInfo();
+        storeInfo.setStoreName(postStoreReq.getStoreName());
+        storeInfo.setStoreInfo(postStoreReq.getStoreInfo());
+        storeInfo.setStorePhoneNumber(postStoreReq.getStorePhoneNumber());
+        storeInfo.setStoreLocation(postStoreReq.getStoreLocation());
+        storeInfo.setStoreTime(postStoreReq.getStoreTime());
+        storeInfo.setStoreImage(postStoreReq.getMainStoreImage());
+        storeInfo.setBatCount(postStoreReq.getBatCount());
+        storeInfo.setLefthandStatus(postStoreReq.getLefthandStatus());
+        storeInfo.setParkingStatus(postStoreReq.getParkingStatus());
+        storeInfo.setGroupSeatStatus(postStoreReq.getGroupSeatStatus());
+        storeInfo.setFloorScreenStatus(postStoreReq.getFloorScreenStatus());
+        storeInfo.setStorageStatus(postStoreReq.getStorageStatus());
+        storeInfo.setLessonStatus(postStoreReq.getLessonStatus());
+        storeInfo.setReserveStatus(postStoreReq.getReserveStatus());
+        storeInfo.setCouponStatus(postStoreReq.getCouponStatus());
+        //TODO: storeImage 테이블에 저장하는 로직 추가
+        if(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).isPresent()){
+            storeInfo.setStoreBrand(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).orElseThrow(() -> new BaseException(RESPONSE_ERROR)));
+        }
+        else if (postStoreReq.getStoreBrand().equals("미설정")|| postStoreReq.getStoreBrand()==null || postStoreReq.getStoreBrand().equals(""))
+            storeInfo.setStoreBrand(null);
+        else {
+            BrandInfo brandInfo = new BrandInfo();
+            brandInfo.setBrandName(postStoreReq.getStoreBrand());
+            brandMapper.save(brandInfo);
+            storeInfo.setStoreBrand(brandInfo.getBrandIdx());
+        }
+        Map<String, Double> coords = geocoderService.getGeoDataByAddress(postStoreReq.getStoreLocation());
+        if(coords==null){
             throw new BaseException(RESPONSE_ERROR);
         }
+        storeInfo.setStoreLatitude(coords.get("latitude"));
+        storeInfo.setStoreLongitude(coords.get("longitude"));
+
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        if(partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
+            storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR)));
+            partnerStoreMapper.update(storeInfo);
+        }
+        else {
+            partnerStoreMapper.save(storeInfo);
+            partnerMapper.saveStoreIdx(partnerIdx, storeInfo.getStoreIdx());
+        }
+
+        commonStoreRes = new CommonStoreRes(storeInfo.getStoreName(), storeInfo.getStoreInfo(), storeInfo.getStorePhoneNumber(),
+                postStoreReq.getStoreBrand(), storeInfo.getStoreLocation(), storeInfo.getStoreImage(), postStoreReq.getStoreImage(),
+                storeInfo.getStoreTime(), storeInfo.getBatCount(), storeInfo.getLefthandStatus(), storeInfo.getParkingStatus(),
+                storeInfo.getGroupSeatStatus(), storeInfo.getFloorScreenStatus(), storeInfo.getStorageStatus(),
+                storeInfo.getLessonStatus(), storeInfo.getReserveStatus(), storeInfo.getCouponStatus());
 
         return commonStoreRes;
     }
@@ -113,12 +107,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
         StoreInfo storeInfo = new StoreInfo();
         List<String> storeImages=null;
         Long storeIdx=null;
-        try{
-            storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
         if(storeIdx==null){
             storeInfo.setLefthandStatus(FALSE);
             storeInfo.setParkingStatus(FALSE);
@@ -130,18 +119,12 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
             storeInfo.setCouponStatus(FALSE);
         }
         else{
-            try{
-                storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx).orElseThrow(() -> new BaseException(RESPONSE_ERROR));
-                storeImages = storeImageFileMapper.findByStoreIdx(storeIdx);
-            }catch (Exception e){
-                e.printStackTrace();
-                throw new BaseException(RESPONSE_ERROR);
-            }
+            storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx).orElseThrow(() -> new BaseException(RESPONSE_ERROR));
+            storeImages = storeImageFileMapper.findByStoreIdx(storeIdx);
         }
         if (storeInfo.getStoreImage()==null||storeInfo.getStoreImage().length()==0)
             storeInfo.setStoreInfo("https://i.ibb.co/9hL4Cxk/default-image.jpg");
 
-        //TODO:brand부분 수정
         String storeBrand="";
         if(storeInfo.getStoreBrand()==null)
             storeBrand = "미 설정";

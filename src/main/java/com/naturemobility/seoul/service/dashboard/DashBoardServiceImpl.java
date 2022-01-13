@@ -21,65 +21,40 @@ public class DashBoardServiceImpl implements DashBoardService {
     @Override
     public GetTodayRes getTodayRes(Long partnerIdx) throws BaseException {
         GetTodayRes todayRes;
-        try {
-            Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
-            todayRes = dashBoardMapper.getTodayRes(storeIdx);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
+        todayRes = dashBoardMapper.getTodayRes(storeIdx);
         return todayRes;
     }
 
     @Override
     public List<GetRezListRes> getTodayRezList(Long partnerIdx) throws BaseException {
         List<GetRezListRes> todayRezList;
-        try {
-            Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
-            todayRezList = dashBoardMapper.getTodayRezList(storeIdx);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
+        todayRezList = dashBoardMapper.getTodayRezList(storeIdx);
         return todayRezList;
     }
 
     @Override
     public GetMonthRes getMonthRes(Long partnerIdx) throws BaseException {
         GetMonthRes monthRes;
-        try {
-            Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
-            monthRes = dashBoardMapper.getMonthRes(storeIdx);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
+        monthRes = dashBoardMapper.getMonthRes(storeIdx);
         return monthRes;
     }
 
     @Override
     public List<GetCalendarRes> getCalendarList(Long partnerIdx) throws BaseException {
         List<GetCalendarRes> calendarList;
-        try {
-            Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
-            calendarList = dashBoardMapper.getCalendarList(storeIdx);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
+        calendarList = dashBoardMapper.getCalendarList(storeIdx);
         return calendarList;
     }
 
     @Override
     public List<GetRezListRes> getSpecificRezList(Long partnerIdx, String reservationDay) throws BaseException {
         List<GetRezListRes> specificRezList;
-        try {
-            Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
-            specificRezList = dashBoardMapper.getSpecificRezList(reservationDay,storeIdx);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
+        specificRezList = dashBoardMapper.getSpecificRezList(reservationDay,storeIdx);
         return specificRezList;
     }
 }

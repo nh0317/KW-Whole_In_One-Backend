@@ -25,15 +25,11 @@ public class DashBoardController {
      * @return BaseResponse<GetTodayRes>
      */
     @GetMapping("/today-sales")
-    public BaseResponse<GetTodayRes> getTodaySales() {
+    public BaseResponse<GetTodayRes> getTodaySales() throws BaseException {
         Long partnerIdx=0L;
-        try {
-            partnerIdx = checkUserService.getPartnerIdx();
-            GetTodayRes todayRes = dashBoardService.getTodayRes(partnerIdx);
-            return new BaseResponse<>(SUCCESS,todayRes);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+        partnerIdx = checkUserService.getPartnerIdx();
+        GetTodayRes todayRes = dashBoardService.getTodayRes(partnerIdx);
+        return new BaseResponse<>(SUCCESS,todayRes);
     }
 
     /**
@@ -42,15 +38,11 @@ public class DashBoardController {
      * @return BaseResponse<List<GetRezListRes>>
      */
     @GetMapping("/reservations")
-    public BaseResponse<List<GetRezListRes>> getTodayReservations() {
+    public BaseResponse<List<GetRezListRes>> getTodayReservations() throws BaseException {
         Long partnerIdx=0L;
-        try {
-            partnerIdx = checkUserService.getPartnerIdx();
-            List<GetRezListRes> todayRezList = dashBoardService.getTodayRezList(partnerIdx);
-            return new BaseResponse<>(SUCCESS,todayRezList);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+        partnerIdx = checkUserService.getPartnerIdx();
+        List<GetRezListRes> todayRezList = dashBoardService.getTodayRezList(partnerIdx);
+        return new BaseResponse<>(SUCCESS,todayRezList);
     }
 
     /**
@@ -59,15 +51,11 @@ public class DashBoardController {
      * @return BaseResponse<GetMonthRes>
      */
     @GetMapping("/month-sales")
-    public BaseResponse<GetMonthRes> getMonthSales() {
+    public BaseResponse<GetMonthRes> getMonthSales() throws BaseException {
         Long partnerIdx=0L;
-        try {
-            partnerIdx = checkUserService.getPartnerIdx();
-            GetMonthRes monthRes = dashBoardService.getMonthRes(partnerIdx);
-            return new BaseResponse<>(SUCCESS,monthRes);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+        partnerIdx = checkUserService.getPartnerIdx();
+        GetMonthRes monthRes = dashBoardService.getMonthRes(partnerIdx);
+        return new BaseResponse<>(SUCCESS,monthRes);
     }
 
     /**
@@ -76,15 +64,11 @@ public class DashBoardController {
      * @return BaseResponse<List<GetCalendarRes>>
      */
     @GetMapping("/calendar")
-    public BaseResponse<List<GetCalendarRes>> getCalendar() {
+    public BaseResponse<List<GetCalendarRes>> getCalendar() throws BaseException {
         Long partnerIdx=0L;
-        try {
-            partnerIdx = checkUserService.getPartnerIdx();
-            List<GetCalendarRes> calendarRes = dashBoardService.getCalendarList(partnerIdx);
-            return new BaseResponse<>(SUCCESS,calendarRes);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+        partnerIdx = checkUserService.getPartnerIdx();
+        List<GetCalendarRes> calendarRes = dashBoardService.getCalendarList(partnerIdx);
+        return new BaseResponse<>(SUCCESS,calendarRes);
     }
 
     /**
@@ -93,14 +77,10 @@ public class DashBoardController {
      * @return BaseResponse<List<GetRezListRes>>
      */
     @GetMapping("/reservations/day")
-    public BaseResponse<List<GetRezListRes>> getSpecificReservations(@RequestParam("reservationDay") String reservationDay) {
+    public BaseResponse<List<GetRezListRes>> getSpecificReservations(@RequestParam("reservationDay") String reservationDay) throws BaseException {
         Long partnerIdx=0L;
-        try {
-            partnerIdx = checkUserService.getPartnerIdx();
-            List<GetRezListRes> specificRezList = dashBoardService.getSpecificRezList(partnerIdx,reservationDay);
-            return new BaseResponse<>(SUCCESS,specificRezList);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+        partnerIdx = checkUserService.getPartnerIdx();
+        List<GetRezListRes> specificRezList = dashBoardService.getSpecificRezList(partnerIdx,reservationDay);
+        return new BaseResponse<>(SUCCESS,specificRezList);
     }
 }

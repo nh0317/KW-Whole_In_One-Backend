@@ -26,26 +26,18 @@ public class PartnerStoresController {
     CheckUserService checkUserService;
 
     @GetMapping("/myStore")
-    public BaseResponse<CommonStoreRes> getStore(){
+    public BaseResponse<CommonStoreRes> getStore() throws BaseException{
         CommonStoreRes commonStoreRes;
-        try{
-            Long partnerIdx = checkUserService.getPartnerIdx();
-            commonStoreRes = partnerStoreService.getStore(partnerIdx);
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        commonStoreRes = partnerStoreService.getStore(partnerIdx);
 //            log.info(commonStoreRes.get);
-            return new BaseResponse<>(SUCCESS, commonStoreRes);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+        return new BaseResponse<>(SUCCESS, commonStoreRes);
     }
 
     @PostMapping("/register")
-    public BaseResponse<CommonStoreRes> registerStore(@RequestBody PostStoreReq postStoreReq){
+    public BaseResponse<CommonStoreRes> registerStore(@RequestBody PostStoreReq postStoreReq) throws BaseException{
         CommonStoreRes commonStoreRes;
-        try {
-            commonStoreRes = partnerStoreService.saveStore(postStoreReq);
-            return new BaseResponse<>(SUCCESS, commonStoreRes);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+        commonStoreRes = partnerStoreService.saveStore(postStoreReq);
+        return new BaseResponse<>(SUCCESS, commonStoreRes);
     }
 }

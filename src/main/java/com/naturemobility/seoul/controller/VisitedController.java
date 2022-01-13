@@ -28,18 +28,10 @@ public class VisitedController {
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<List<GetVisitedByUserIdx>> getVisiteds(@RequestParam(value = "page",required = false) Integer page) {
+    public BaseResponse<List<GetVisitedByUserIdx>> getVisiteds(@RequestParam(value = "page",required = false) Integer page) throws BaseException {
         Long userIdx=0L;
-        try {
-             userIdx = checkUserService.getUserIdx();
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try {
-            List<GetVisitedByUserIdx> allVistiedStore = visitedService.findAllVisitedStore(userIdx, page);
-            return new BaseResponse<>(SUCCESS, allVistiedStore);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        userIdx = checkUserService.getUserIdx();
+        List<GetVisitedByUserIdx> allVistiedStore = visitedService.findAllVisitedStore(userIdx, page);
+        return new BaseResponse<>(SUCCESS, allVistiedStore);
     }
 }

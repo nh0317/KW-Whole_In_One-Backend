@@ -35,7 +35,7 @@ public class PartnerController {
      */
     @ResponseBody
     @PostMapping("sign_up")
-    public BaseResponse<PostPartnerRes> postPartners(@RequestBody PostPartnerReq parameters) {
+    public BaseResponse<PostPartnerRes> postPartners(@RequestBody PostPartnerReq parameters) throws BaseException {
         // 1. Body Parameter Validation
         if (!isRegexEmail(parameters.getEmail())){
             return new BaseResponse<>(INVALID_EMAIL);
@@ -45,12 +45,8 @@ public class PartnerController {
         }
 
         // 2. Post PartnerInfo
-        try {
-            PostPartnerRes postPartnerRes = partnerService.createPartnerInfo(parameters);
-            return new BaseResponse<>(SUCCESS, postPartnerRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        PostPartnerRes postPartnerRes = partnerService.createPartnerInfo(parameters);
+        return new BaseResponse<>(SUCCESS, postPartnerRes);
     }
     /**
      * 로그인 API
@@ -60,7 +56,7 @@ public class PartnerController {
      */
     @ResponseBody
     @PostMapping("login")
-    public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters) {
+    public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters) throws BaseException {
         // 1. Body Parameter Validation
         if (parameters.getId() == null || parameters.getId().length() == 0){
             return new BaseResponse<>(REQUEST_ERROR);
@@ -69,12 +65,8 @@ public class PartnerController {
         }
 
         // 2. Login
-        try {
-            PostLoginRes postLoginRes = partnerService.login(parameters);
-            return new BaseResponse<>(SUCCESS, postLoginRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        PostLoginRes postLoginRes = partnerService.login(parameters);
+        return new BaseResponse<>(SUCCESS, postLoginRes);
     }
     /**
      * 이메일 중복 확인 API (반드시 회원 가입전 확인)
@@ -84,14 +76,8 @@ public class PartnerController {
      */
     @ResponseBody
     @PostMapping("sign_up/check_email")
-    public BaseResponse<String> checkEmail(@RequestParam("email") String partnerEmail){
-        String check ="";
-        try {
-            check = partnerService.checkEmail(partnerEmail);
-        }
-        catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<String> checkEmail(@RequestParam("email") String partnerEmail) throws BaseException{
+        String check = partnerService.checkEmail(partnerEmail);
         // 2. Post PartnerInfo
         return new BaseResponse<>(SUCCESS,check);
     }
@@ -103,18 +89,13 @@ public class PartnerController {
      */
     @ResponseBody
     @GetMapping("mypage/edit")
-    public BaseResponse<GetPartnerRes> getPartner() {
-
-        try {
-            PartnerInfo partnerInfo = checkUserService.getPartner();
-            GetPartnerRes getPartnerRes
-                    = new GetPartnerRes(partnerInfo.getPartnerIdx(),
-                                        partnerInfo.getPartnerEmail(),
-                                        partnerInfo.getPartnerName());
+    public BaseResponse<GetPartnerRes> getPartner()  throws BaseException{
+        PartnerInfo partnerInfo = checkUserService.getPartner();
+        GetPartnerRes getPartnerRes
+                = new GetPartnerRes(partnerInfo.getPartnerIdx(),
+                                    partnerInfo.getPartnerEmail(),
+                                    partnerInfo.getPartnerName());
             return new BaseResponse<>(SUCCESS, getPartnerRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
     }
 
     /**
@@ -125,13 +106,9 @@ public class PartnerController {
      */
     @ResponseBody
     @PatchMapping("mypage/edit")
-    public BaseResponse<PatchPartnerRes> getPartner(@RequestBody PatchPartnerReq parameters) {
-        try {
-            PartnerInfo partnerInfo = checkUserService.getPartner();
-            return new BaseResponse<>(SUCCESS, partnerService.updatePartnerInfo(partnerInfo, parameters));
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<PatchPartnerRes> getPartner(@RequestBody PatchPartnerReq parameters) throws BaseException {
+        PartnerInfo partnerInfo = checkUserService.getPartner();
+        return new BaseResponse<>(SUCCESS, partnerService.updatePartnerInfo(partnerInfo, parameters));
     }
     
     /**
@@ -142,16 +119,11 @@ public class PartnerController {
      */
     @ResponseBody
     @PatchMapping("mypage/edit_password")
-    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq) {
+    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq) throws BaseException {
         // 2. Post PartnerInfo
         PostLoginRes postLoginRes;
-        try {
-            PartnerInfo partnerInfo = checkUserService.getPartner();
-            partnerService.updatePW(partnerInfo,patchPWReq);
-
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        PartnerInfo partnerInfo = checkUserService.getPartner();
+        partnerService.updatePW(partnerInfo,patchPWReq);
         return new BaseResponse<>(SUCCESS);
     }
     /**
@@ -162,17 +134,12 @@ public class PartnerController {
      */
     @ResponseBody
     @PostMapping("check_password")
-    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password) {
+    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password) throws BaseException {
 
         // 2. Post PartnerInfo
         PostLoginRes postLoginRes;
-        try {
-            String partnerEmail = checkUserService.getEmail();
-            postLoginRes = partnerService.checkPW(partnerEmail,password);
-
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        String partnerEmail = checkUserService.getEmail();
+        postLoginRes = partnerService.checkPW(partnerEmail,password);
         return new BaseResponse<>(SUCCESS,postLoginRes);
     }
     
@@ -182,13 +149,9 @@ public class PartnerController {
      * @return BaseResponse<Void>
      */
     @DeleteMapping("withdraw")
-    public BaseResponse<Void> deletePartners() {
-        try {
-            PartnerInfo partnerInfo = checkUserService.getPartner();
-            partnerService.deletePartnerInfo(partnerInfo);
-            return new BaseResponse<>(SUCCESS);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<Void> deletePartners() throws BaseException {
+        PartnerInfo partnerInfo = checkUserService.getPartner();
+        partnerService.deletePartnerInfo(partnerInfo);
+        return new BaseResponse<>(SUCCESS);
     }
 }

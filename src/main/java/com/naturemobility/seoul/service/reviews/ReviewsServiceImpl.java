@@ -19,17 +19,12 @@ public class ReviewsServiceImpl implements ReviewsService {
     @Override
     public PatchReviewsRes saveScore(Long reservationIdx, Long storeIdx, Long userIdx, Float reviewScore) throws BaseException {
         PatchReviewsRes patchRezRes;
-        try{
-            ReviewInfo reviewInfo = new ReviewInfo();
-            reviewInfo.setReservationIdx(reservationIdx);
-            reviewInfo.setReviewScore(reviewScore);
-            reviewInfo.setUserIdx(userIdx);
-            reviewInfo.setStoreIdx(storeIdx);
-            reviewsMapper.saveScore(reviewInfo);
-        }catch (Exception exception){
-            exception.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        ReviewInfo reviewInfo = new ReviewInfo();
+        reviewInfo.setReservationIdx(reservationIdx);
+        reviewInfo.setReviewScore(reviewScore);
+        reviewInfo.setUserIdx(userIdx);
+        reviewInfo.setStoreIdx(storeIdx);
+        reviewsMapper.saveScore(reviewInfo);
         return new PatchReviewsRes(reservationIdx, storeIdx, reviewScore);
     }
 }

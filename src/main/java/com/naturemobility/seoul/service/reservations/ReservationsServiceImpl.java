@@ -34,20 +34,15 @@ public class ReservationsServiceImpl implements ReservationsService {
     @Override
     public GetRezRes findByRezIdx(Long reservationIdx) throws BaseException {
         ReservationInfo reservation;
-        try{
-            reservation = reservationMapper.findByRezIdx(reservationIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
-            String reservationTime = changeDateFormat(reservation.getReservationTime(),RESERVATION_TIME);
-            String paymentTime = changeDateFormat(reservation.getPaymentTime(), PAYMENT_TIME);
+        reservation = reservationMapper.findByRezIdx(reservationIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
+        String reservationTime = changeDateFormat(reservation.getReservationTime(),RESERVATION_TIME);
+        String paymentTime = changeDateFormat(reservation.getPaymentTime(), PAYMENT_TIME);
 
-            GetRezRes result = new GetRezRes(reservation.getReservationIdx(), reservation.getStoreName(),
-                    reservationTime, paymentTime, reservation.getUseTime(),
-                    reservation.getSelectedHall(), reservation.getPersonCount(), reservation.getAlreadyUsed(),
-                    reservation.getReservePrice(), reservation.getDiscountPrice(), reservation.getPayPrice());
-            return result;
-        }catch (Exception exception){
-            exception.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        GetRezRes result = new GetRezRes(reservation.getReservationIdx(), reservation.getStoreName(),
+                reservationTime, paymentTime, reservation.getUseTime(),
+                reservation.getSelectedHall(), reservation.getPersonCount(), reservation.getAlreadyUsed(),
+                reservation.getReservePrice(), reservation.getDiscountPrice(), reservation.getPayPrice());
+        return result;
     }
 
     @Override
@@ -56,36 +51,26 @@ public class ReservationsServiceImpl implements ReservationsService {
         ReservationInfo reservationInfo = new ReservationInfo(userIdx);
         Integer total = reservationMapper.cntTotal(userIdx);
         if(total != null && total >0) {
-            try {
-                if(page!=null && page > 1){
-                    reservationInfo.setPage(page);
-                }
-                PageInfo pageInfo = new PageInfo(reservationInfo);
-                pageInfo.SetTotalData(total);
-                reservationInfo.setPageInfo(pageInfo);
-                reservationList = reservationMapper.findAllByUserIdx(reservationInfo);
-
-                return reservationList.stream().map( (r)->
-                        new GetRezResByUserIdx(r.getReservationIdx(),r.getStoreName(),
-                                changeDateFormat(r.getReservationTime(),RESERVATION_DETAIL),
-                                r.getUseTime(), r.getSelectedHall(), r.getPersonCount(), r.getAlreadyUsed())
-                ).collect(Collectors.toList());
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                throw new BaseException(RESPONSE_ERROR);
+            if(page!=null && page > 1){
+                reservationInfo.setPage(page);
             }
+            PageInfo pageInfo = new PageInfo(reservationInfo);
+            pageInfo.SetTotalData(total);
+            reservationInfo.setPageInfo(pageInfo);
+            reservationList = reservationMapper.findAllByUserIdx(reservationInfo);
+
+            return reservationList.stream().map( (r)->
+                    new GetRezResByUserIdx(r.getReservationIdx(),r.getStoreName(),
+                            changeDateFormat(r.getReservationTime(),RESERVATION_DETAIL),
+                            r.getUseTime(), r.getSelectedHall(), r.getPersonCount(), r.getAlreadyUsed())
+            ).collect(Collectors.toList());
         }else throw new BaseException(RESPONSE_ERROR);
     }
 
     @Override
     public Long getStoreIdx(Long reservationIdx) throws BaseException {
         Long storeIdx = 0L;
-        try {
-            storeIdx = reservationMapper.findStoreIdxByRezIdx(reservationIdx);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        storeIdx = reservationMapper.findStoreIdxByRezIdx(reservationIdx);
         return storeIdx;
     }
 
@@ -95,24 +80,14 @@ public class ReservationsServiceImpl implements ReservationsService {
         PostRezInfo postRezInfo = new PostRezInfo(userIdx,postRezReq.getStoreIdx(),postRezReq.getReservationTime(),postRezReq.getUseTime(),
                 postRezReq.getNumberOfGame(),postRezReq.getSelectedHall(),postRezReq.getRequest(),postRezReq.getPersonCount(),
                 postRezReq.getPrice(),postRezReq.getDiscountPrice(),payPrice,postRezReq.getEndTime());
-        try {
-            reservationMapper.postReservation(postRezInfo);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(REQUEST_ERROR);
-        }
+        reservationMapper.postReservation(postRezInfo);
         return;
     }
 
     @Override
     public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay,Long hallNumber) throws BaseException {
         List<GetRezTime> getRezTime;
-        try {
-            getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay,hallNumber);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay,hallNumber);
         return getRezTime;
     }
 
@@ -120,24 +95,21 @@ public class ReservationsServiceImpl implements ReservationsService {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        Date date = transFormat.parse(dateStr);
         String result="";
-        try {
-            switch (type) {
-                case PAYMENT_TIME:
-                    transFormat = new SimpleDateFormat("yyyy.MM.dd");
-                    result = transFormat.format(date);
-                    return result;
-                case RESERVATION_TIME:
-                    transFormat = new SimpleDateFormat("yyyy.MM.dd aa hh:mm");
-                    result = transFormat.format(date);
-                    return result;
-                case RESERVATION_DETAIL:
-                    transFormat = new SimpleDateFormat("yyyy년 MM월 dd일 aa hh:mm");
-                    result = transFormat.format(date);
-                    return result;
-                default:
-                    break;
-            }
-        }catch (Exception exception){
+        switch (type) {
+            case PAYMENT_TIME:
+                transFormat = new SimpleDateFormat("yyyy.MM.dd");
+                result = transFormat.format(date);
+                return result;
+            case RESERVATION_TIME:
+                transFormat = new SimpleDateFormat("yyyy.MM.dd aa hh:mm");
+                result = transFormat.format(date);
+                return result;
+            case RESERVATION_DETAIL:
+                transFormat = new SimpleDateFormat("yyyy년 MM월 dd일 aa hh:mm");
+                result = transFormat.format(date);
+                return result;
+            default:
+                break;
         }
         return result;
     }

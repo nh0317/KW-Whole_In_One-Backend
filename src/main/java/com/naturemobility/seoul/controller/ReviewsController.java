@@ -31,25 +31,10 @@ public class ReviewsController {
      * @return BaseResponse<PatchReviewsRes>
      */
     @PatchMapping("/{reservationIdx}")
-    public BaseResponse<PatchReviewsRes> saveScore(@PathVariable("reservationIdx")Long reservationIdx, @RequestBody PatchReviewsReq patchRezReq){
-        Long userIdx=0L;
-        try {
-            userIdx = checkUserService.getUserIdx();
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        Long storeIdx=0L;
-        try {
-            storeIdx = reservationsService.getStoreIdx(reservationIdx);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
-            log.info("storeIdx {}", storeIdx);
-            PatchReviewsRes patchRezRes = reviewsService.saveScore(reservationIdx, storeIdx, userIdx, patchRezReq.getScore());
-            return new BaseResponse<>(SUCCESS, patchRezRes);
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<PatchReviewsRes> saveScore(@PathVariable("reservationIdx")Long reservationIdx, @RequestBody PatchReviewsReq patchRezReq) throws BaseException{
+        Long userIdx = checkUserService.getUserIdx();
+        Long storeIdx = reservationsService.getStoreIdx(reservationIdx);
+        PatchReviewsRes patchRezRes = reviewsService.saveScore(reservationIdx, storeIdx, userIdx, patchRezReq.getScore());
+        return new BaseResponse<>(SUCCESS, patchRezRes);
     }
 }

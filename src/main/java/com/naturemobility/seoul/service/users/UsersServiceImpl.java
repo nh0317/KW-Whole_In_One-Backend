@@ -92,11 +92,7 @@ public class UsersServiceImpl implements UsersService {
         UserInfo userInfo = new UserInfo(email, password, nickname, name);
 
         // 3. 유저 정보 저장
-        try {
-            usersMapper.save(userInfo);
-        } catch (Exception exception) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        usersMapper.save(userInfo);
 
         // 5. DTOUsersLoginRes로 변환하여 return
         Long idx = userInfo.getUserIdx();
@@ -110,24 +106,20 @@ public class UsersServiceImpl implements UsersService {
      */
     @Override
     public PatchUserRes updateUserInfo(UserInfo userInfo, PatchUserReq patchUserReq) throws BaseException {
-        try {
-            String nickname = patchUserReq.getNickname()+"_edited";
-            String name = patchUserReq.getName()+"_edited";
-            String image = patchUserReq.getUserImage()+"_edited";
-            log.info(userInfo.toString());
+        String nickname = patchUserReq.getNickname()+"_edited";
+        String name = patchUserReq.getName()+"_edited";
+        String image = patchUserReq.getUserImage()+"_edited";
+        log.info(userInfo.toString());
 
-            if (patchUserReq.getName() != null && patchUserReq.getName().length() != 0)
-                userInfo.setUserName(patchUserReq.getName());
-            if (patchUserReq.getNickname() != null && patchUserReq.getNickname().length() != 0)
-                userInfo.setUserNickname(patchUserReq.getNickname());
-            if (patchUserReq.getUserImage() != null && patchUserReq.getNickname().length() != 0)
-                userInfo.setUserName(patchUserReq.getUserImage());
+        if (patchUserReq.getName() != null && patchUserReq.getName().length() != 0)
+            userInfo.setUserName(patchUserReq.getName());
+        if (patchUserReq.getNickname() != null && patchUserReq.getNickname().length() != 0)
+            userInfo.setUserNickname(patchUserReq.getNickname());
+        if (patchUserReq.getUserImage() != null && patchUserReq.getNickname().length() != 0)
+            userInfo.setUserName(patchUserReq.getUserImage());
 
-            usersMapper.update(userInfo);
-            return new PatchUserRes(nickname, name,image);
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        usersMapper.update(userInfo);
+        return new PatchUserRes(nickname, name,image);
     }
 
     /** 비밀번호 수정
@@ -148,11 +140,7 @@ public class UsersServiceImpl implements UsersService {
 
         //변경사항 저장
         userInfo.setUserPassword(password);
-        try {
-            usersMapper.update(userInfo);
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        usersMapper.update(userInfo);
     }
         /**
          * 회원 탈퇴
@@ -171,11 +159,7 @@ public class UsersServiceImpl implements UsersService {
 
         // 2-2. 해당 DTOUsers의 status를 WITHDRAWN로 설정
         userInfo.setUserStatus(UserStatus.WITHDRAWN.getValue());
-        try {
-            usersMapper.update(userInfo);
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        usersMapper.update(userInfo);
     }
     /**
      * 전체 회원 조회
@@ -186,15 +170,10 @@ public class UsersServiceImpl implements UsersService {
     public List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
         List<UserInfo> userInfoList;
-        try {
-            if (word == null) { // 전체 조회
-                userInfoList = usersMapper.findByStatus(UserStatus.ACTIVE.getValue());
-            } else { // 검색 조회
-                userInfoList = usersMapper.findByStatusAndNicknameIsContaining(UserStatus.ACTIVE.getValue(), word);
-            }
-        } catch (Exception ignored) {
-            throw new BaseException(RESPONSE_ERROR);
-        }
+        if (word == null) // 전체 조회
+            userInfoList = usersMapper.findByStatus(UserStatus.ACTIVE.getValue());
+         else // 검색 조회
+            userInfoList = usersMapper.findByStatusAndNicknameIsContaining(UserStatus.ACTIVE.getValue(), word);
 
         // 2. UserInfoRes로 변환하여 return
         return userInfoList.stream().map(userInfo -> {

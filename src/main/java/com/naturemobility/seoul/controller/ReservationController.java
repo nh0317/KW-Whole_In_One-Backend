@@ -31,19 +31,10 @@ public class ReservationController {
      * @return BaseResponse<List<GetRezResByUserIdx>>
      */
     @GetMapping("")
-    public BaseResponse<List<GetRezResByUserIdx>> getReservationList(@RequestParam(value = "page",required = false) Integer page) {
-        Long userIdx=0L;
-        try {
-            userIdx = checkUserService.getUserIdx();
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try {
+    public BaseResponse<List<GetRezResByUserIdx>> getReservationList(@RequestParam(value = "page",required = false) Integer page) throws BaseException {
+        Long userIdx = checkUserService.getUserIdx();
             List<GetRezResByUserIdx> allReservations = reservationsService.findByUserIdx(userIdx, page);
             return new BaseResponse<>(SUCCESS, allReservations);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
     }
 
     /**
@@ -52,18 +43,10 @@ public class ReservationController {
      * @return BaseResponse<GetRezRes>
      */
     @GetMapping("{reservationIdx}")
-    public BaseResponse<GetRezRes> getReservation(@PathVariable("reservationIdx") Long reservationIdx) {
-        try {
-            Long userIdx = checkUserService.getUserIdx();
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try {
-            GetRezRes reservation = reservationsService.findByRezIdx(reservationIdx);
-            return new BaseResponse<>(SUCCESS, reservation);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetRezRes> getReservation(@PathVariable("reservationIdx") Long reservationIdx) throws BaseException {
+        Long userIdx = checkUserService.getUserIdx();
+        GetRezRes reservation = reservationsService.findByRezIdx(reservationIdx);
+        return new BaseResponse<>(SUCCESS, reservation);
     }
 
     /**
@@ -85,15 +68,10 @@ public class ReservationController {
      * @return
      */
     @PostMapping("")
-    public BaseResponse postReservation(@RequestBody PostRezReq postRezReq) {
-        Long userIdx=0L;
-        try {
-            userIdx = checkUserService.getUserIdx();
-            reservationsService.postReservation(postRezReq,userIdx);
-            return new BaseResponse(SUCCESS);
-        } catch (BaseException exception) {
-            return new BaseResponse(exception.getStatus());
-        }
+    public BaseResponse postReservation(@RequestBody PostRezReq postRezReq) throws BaseException {
+        Long userIdx= checkUserService.getUserIdx();
+        reservationsService.postReservation(postRezReq,userIdx);
+        return new BaseResponse(SUCCESS);
     }
 
     /**
@@ -104,12 +82,8 @@ public class ReservationController {
     @ResponseBody
     @GetMapping("/reserved-time")
     public BaseResponse<List<GetRezTime>> getReservationTime(@RequestParam("storeIdx") Long storeIdx,@RequestParam("reservationDay") String reservationDay,
-                                                             @RequestParam("hallNumber") Long hallNumber) {
-        try {
-            List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,hallNumber);
-            return new BaseResponse<>(SUCCESS,getRezTime);
-        } catch (BaseException exception) {
-            return new BaseResponse(exception.getStatus());
-        }
+                                                             @RequestParam("hallNumber") Long hallNumber) throws BaseException{
+        List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,hallNumber);
+        return new BaseResponse<>(SUCCESS,getRezTime);
     }
 }

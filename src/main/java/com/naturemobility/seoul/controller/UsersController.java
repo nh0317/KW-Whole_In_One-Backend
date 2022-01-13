@@ -35,13 +35,9 @@ public class UsersController {
      */
     @ResponseBody
     @GetMapping("") // (GET) 127.0.0.1:9000/users
-    public BaseResponse<List<GetUsersRes>> getUsers(@RequestParam(required = false) String word) {
-        try {
-            List<GetUsersRes> getUsersResList = usersService.retrieveUserInfoList(word);
-            return new BaseResponse<>(SUCCESS, getUsersResList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<List<GetUsersRes>> getUsers(@RequestParam(required = false) String word) throws BaseException {
+        List<GetUsersRes> getUsersResList = usersService.retrieveUserInfoList(word);
+        return new BaseResponse<>(SUCCESS, getUsersResList);
     }
 
     /**
@@ -51,15 +47,11 @@ public class UsersController {
      */
     @ResponseBody
     @GetMapping("mypage")
-    public BaseResponse<GetMyPageRes> getMyPage() {
+    public BaseResponse<GetMyPageRes> getMyPage() throws BaseException {
         Long userIdx;
-        try {
-            userIdx = checkUserService.getUserIdx();
-            GetMyPageRes getMyPageRes = usersService.myPage(userIdx);
-            return new BaseResponse<>(SUCCESS, getMyPageRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        userIdx = checkUserService.getUserIdx();
+        GetMyPageRes getMyPageRes = usersService.myPage(userIdx);
+        return new BaseResponse<>(SUCCESS, getMyPageRes);
     }
 
     /**
@@ -69,14 +61,10 @@ public class UsersController {
      */
     @ResponseBody
     @GetMapping("mypage/edit")
-    public BaseResponse<GetUserRes> getUser() {
-        try {
-            Long userIdx = checkUserService.getUserIdx();
-            GetUserRes getUserRes = usersService.findUserInfo(userIdx);
-            return new BaseResponse<>(SUCCESS, getUserRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetUserRes> getUser() throws BaseException {
+        Long userIdx = checkUserService.getUserIdx();
+        GetUserRes getUserRes = usersService.findUserInfo(userIdx);
+        return new BaseResponse<>(SUCCESS, getUserRes);
     }
     /**
      * 회원 정보 수정 API (id는 수정 불가, 비밀번호는 따로 수정)
@@ -86,13 +74,9 @@ public class UsersController {
      */
     @ResponseBody
     @PatchMapping("mypage/edit")
-    public BaseResponse<PatchUserRes> pathUser(@RequestBody PatchUserReq parameters) {
-        try {
-            UserInfo userInfo = checkUserService.getUser();
-            return new BaseResponse<>(SUCCESS, usersService.updateUserInfo(userInfo, parameters));
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<PatchUserRes> pathUser(@RequestBody PatchUserReq parameters) throws BaseException {
+        UserInfo userInfo = checkUserService.getUser();
+        return new BaseResponse<>(SUCCESS, usersService.updateUserInfo(userInfo, parameters));
     }
     /**
      * 비밀번호 수정 (개인정보 조회 및 수정 전 비밀번호 요구 시)
@@ -102,15 +86,10 @@ public class UsersController {
      */
     @ResponseBody
     @PatchMapping("mypage/edit_password")
-    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq) {
+    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq) throws BaseException {
         // 2. Post UserInfo
-        try {
-            UserInfo userInfo = checkUserService.getUser();
-            usersService.updatePW(userInfo,patchPWReq);
-
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        UserInfo userInfo = checkUserService.getUser();
+        usersService.updatePW(userInfo,patchPWReq);
         return new BaseResponse<>(SUCCESS);
     }
     /**
@@ -121,14 +100,8 @@ public class UsersController {
      */
     @ResponseBody
     @PostMapping("sign_up/check_email")
-    public BaseResponse<String> checkEmail(@RequestParam("email") String userEmail){
-        String check ="";
-        try {
-            check = usersService.checkEmail(userEmail);
-        }
-        catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<String> checkEmail(@RequestParam("email") String userEmail) throws BaseException{
+        String check = usersService.checkEmail(userEmail);
         // 2. Post UserInfo
         return new BaseResponse<>(SUCCESS,check);
     }
@@ -141,22 +114,16 @@ public class UsersController {
      */
     @ResponseBody
     @PostMapping("sign_up")
-    public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
+    public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters)  throws BaseException {
         // 1. Body Parameter Validation
-        if (!isRegexEmail(parameters.getEmail())){
+        if (!isRegexEmail(parameters.getEmail()))
             return new BaseResponse<>(INVALID_EMAIL);
-        }
-        if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
+        if (!parameters.getPassword().equals(parameters.getConfirmPassword()))
             return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
-        }
 
         // 2. Post UserInfo
-        try {
-            PostUserRes postUserRes = usersService.createUserInfo(parameters);
-            return new BaseResponse<>(SUCCESS, postUserRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        PostUserRes postUserRes = usersService.createUserInfo(parameters);
+        return new BaseResponse<>(SUCCESS, postUserRes);
     }
 
     /**
@@ -167,16 +134,11 @@ public class UsersController {
      */
     @ResponseBody
     @PostMapping("check_password")
-    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password) {
+    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password) throws BaseException {
         // 2. Post UserInfo
         PostLoginRes postLoginRes;
-        try {
-            String email = checkUserService.getEmail();
-            postLoginRes = usersService.checkPW(email,password);
-
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+        String email = checkUserService.getEmail();
+        postLoginRes = usersService.checkPW(email,password);
         return new BaseResponse<>(SUCCESS,postLoginRes);
     }
 
@@ -192,11 +154,10 @@ public class UsersController {
         log.info("아이디 : "+postLoginReq.getId());
         log.info("패스워드 : "+postLoginReq.getPassword());
         // 1. Body Parameter Validation
-        if (postLoginReq.getId() == null || postLoginReq.getId().length() == 0){
+        if (postLoginReq.getId() == null || postLoginReq.getId().length() == 0)
             return new BaseResponse<>(REQUEST_ERROR);
-        } else if (postLoginReq.getPassword() == null || postLoginReq.getPassword().length() == 0) {
+        else if (postLoginReq.getPassword() == null || postLoginReq.getPassword().length() == 0)
             return new BaseResponse<>(REQUEST_ERROR);
-        }
 
         // 2. Login
         PostLoginRes postLoginRes = usersService.login(postLoginReq);
@@ -209,14 +170,10 @@ public class UsersController {
      * @return BaseResponse<Void>
      */
     @DeleteMapping("withdraw")
-    public BaseResponse<Void> deleteUsers() {
-        try {
-            UserInfo userInfo = checkUserService.getUser();
-            usersService.deleteUserInfo(userInfo);
-            return new BaseResponse<>(SUCCESS);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<Void> deleteUsers()  throws BaseException {
+        UserInfo userInfo = checkUserService.getUser();
+        usersService.deleteUserInfo(userInfo);
+        return new BaseResponse<>(SUCCESS);
     }
 
     /**
