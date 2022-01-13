@@ -69,14 +69,9 @@ public class PriceController {
      */
     @GetMapping("/{storeIdx}/week_price")
     public BaseResponse<List<GetPriceRes>> getWeekPrice(@PathVariable("storeIdx") Long storeIdx,
-                                                        @RequestParam(value = "isHoliday",required = false) Boolean isHoliday){
-        try{
-            List<GetPriceRes> weeks = priceService.getPrice(storeIdx,isHoliday);
-            return new BaseResponse<>(SUCCESS, weeks);
-        }catch (BaseException exception){
-            exception.printStackTrace();
-            return new BaseResponse<>(exception.getStatus());
-        }
+                                                        @RequestParam(value = "isHoliday",required = false) Boolean isHoliday) throws BaseException{
+        List<GetPriceRes> weeks = priceService.getPrice(storeIdx,isHoliday);
+        return new BaseResponse<>(SUCCESS, weeks);
     }
     /**
      * 특정 기간 가격 조회 API
@@ -84,11 +79,11 @@ public class PriceController {
      *
      * @return BaseResponse<List<GetPriceRes>>
      */
-    @GetMapping("/{store_idx}/period_price")
+    @GetMapping("/{storeIdx}/period_price")
     public BaseResponse<List<GetPriceRes>> getPeriodPrice(@PathVariable("storeIdx") Long storeIdx,
                                                           @RequestParam(value = "isHoliday",required = false) Boolean isHoliday) throws BaseException{
-            List<GetPriceRes> weeks = priceService.getPeriodPrice(isHoliday,storeIdx);
-            return new BaseResponse<>(SUCCESS, weeks);
+        List<GetPriceRes> weeks = priceService.getPeriodPrice(isHoliday,storeIdx);
+        return new BaseResponse<>(SUCCESS, weeks);
     }
     /**
      * 특정 날짜 및 시간의 가격 조회 API
@@ -97,7 +92,8 @@ public class PriceController {
      * @return BaseResponse<Integer>
      */
     @GetMapping("/{storeIdx}/current_price")
-    public BaseResponse<Integer> getCurrentPrice(@PathVariable("storeIdx") Long storeIdx,@RequestBody GetCurPriceReq getCurPriceReq) throws BaseException{
+    public BaseResponse<Integer> getCurrentPrice(@PathVariable("storeIdx") Long storeIdx,
+                                                 @RequestBody GetCurPriceReq getCurPriceReq) throws BaseException{
         Integer price = priceService.getCurrentPrice(getCurPriceReq, storeIdx);
         return new BaseResponse<>(SUCCESS, price);
     }
