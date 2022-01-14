@@ -64,7 +64,7 @@ public class ReservationsServiceImpl implements ReservationsService {
                             changeDateFormat(r.getReservationTime(),RESERVATION_DETAIL),
                             r.getUseTime(), r.getSelectedHall(), r.getPersonCount(), r.getAlreadyUsed())
             ).collect(Collectors.toList());
-        }else throw new BaseException(RESPONSE_ERROR);
+        }else throw new BaseException(NOT_FOUND_DATA);
     }
 
     @Override

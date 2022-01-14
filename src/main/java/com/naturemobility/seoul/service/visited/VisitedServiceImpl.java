@@ -61,7 +61,7 @@ public class VisitedServiceImpl implements VisitedService {
             pageInfo.SetTotalData(totalVisited);
             visitedInfo.setPageInfo(pageInfo);
             visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
-        } else throw new BaseException(RESPONSE_ERROR);
+        } else throw new BaseException(NOT_FOUND_DATA);
         return visiteds;
     }
 }

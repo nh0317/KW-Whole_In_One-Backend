@@ -25,6 +25,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.naturemobility.seoul.config.BaseResponseStatus.NOT_FOUND_DATA;
 import static com.naturemobility.seoul.config.BaseResponseStatus.RESPONSE_ERROR;
 import static java.lang.Boolean.FALSE;
 
@@ -66,7 +67,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
         storeInfo.setCouponStatus(postStoreReq.getCouponStatus());
         //TODO: storeImage 테이블에 저장하는 로직 추가
         if(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).isPresent()){
-            storeInfo.setStoreBrand(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).orElseThrow(() -> new BaseException(RESPONSE_ERROR)));
+            storeInfo.setStoreBrand(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
         }
         else if (postStoreReq.getStoreBrand().equals("미설정")|| postStoreReq.getStoreBrand()==null || postStoreReq.getStoreBrand().equals(""))
             storeInfo.setStoreBrand(null);
@@ -85,7 +86,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
 
         Long partnerIdx = checkUserService.getPartnerIdx();
         if(partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
-            storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR)));
+            storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA)));
             partnerStoreMapper.update(storeInfo);
         }
         else {
@@ -107,7 +108,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
         StoreInfo storeInfo = new StoreInfo();
         List<String> storeImages=null;
         Long storeIdx=null;
-        storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(RESPONSE_ERROR));
+        storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA));
         if(storeIdx==null){
             storeInfo.setLefthandStatus(FALSE);
             storeInfo.setParkingStatus(FALSE);
@@ -119,7 +120,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
             storeInfo.setCouponStatus(FALSE);
         }
         else{
-            storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx).orElseThrow(() -> new BaseException(RESPONSE_ERROR));
+            storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
             storeImages = storeImageFileMapper.findByStoreIdx(storeIdx);
         }
         if (storeInfo.getStoreImage()==null||storeInfo.getStoreImage().length()==0)
