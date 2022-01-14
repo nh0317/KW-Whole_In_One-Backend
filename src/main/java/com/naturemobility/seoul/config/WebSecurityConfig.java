@@ -58,12 +58,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/users/mypage").hasRole("MEMBER")
-//                .antMatchers("/users/mypage/**").hasRole("MEMBER")
-//                .antMatchers("/user/check_password").hasRole("MEMBER")
-//                .antMatchers("/partner/mypage").hasRole("ADMIN")
-//                .antMatchers("/partner/mypage/**").hasRole("ADMIN")
-//                .antMatchers("/partner//check_password").hasRole("ADMIN")
+                .antMatchers("/users/mypage").hasRole("MEMBER")
+                .antMatchers("/users/mypage/**").hasRole("MEMBER")
+                .antMatchers("/user/check_password").hasRole("MEMBER")
+                .antMatchers("/partner/mypage").hasRole("ADMIN")
+                .antMatchers("/partner/mypage/**").hasRole("ADMIN")
+                .antMatchers("/partner/check_password").hasRole("ADMIN")
                 .antMatchers("/**").permitAll()
 
 //                .and()
