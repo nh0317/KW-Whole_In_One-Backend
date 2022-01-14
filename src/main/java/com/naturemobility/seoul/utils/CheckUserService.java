@@ -42,9 +42,9 @@ public class CheckUserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal().equals("anonymousUser")) {
             log.info(authentication.getPrincipal().toString());
-//            throw new BaseException(NEED_LOGIN);
-            UserInfo userInfo = usersService.retrieveUserInfoByUserIdx(1L);
-            return userInfo;
+            throw new BaseException(NEED_LOGIN);
+//            UserInfo userInfo = usersService.retrieveUserInfoByUserIdx(1L);
+//            return userInfo;
         }
         else{
             UserInfo userInfo = usersService.retrieveUserInfoByEmail(authentication.getName());
@@ -71,8 +71,8 @@ public class CheckUserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal().equals("anonymousUser")) {
             log.info(authentication.getPrincipal().toString());
-            return 1L;
-//            throw new BaseException(NEED_LOGIN);
+//            return 1L;
+            throw new BaseException(NEED_LOGIN);
         }
         else{
             UserInfo userInfo = usersService.retrieveUserInfoByEmail(authentication.getName());

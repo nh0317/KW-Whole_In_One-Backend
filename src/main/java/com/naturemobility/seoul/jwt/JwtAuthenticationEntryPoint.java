@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.naturemobility.seoul.config.BaseResponseStatus.NEED_LOGIN;
 import static com.naturemobility.seoul.config.BaseResponseStatus.UNATHORIZED;
 
 @Component
@@ -25,7 +26,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException {
         // 유효한 자격증명을 제공하지 않고 접근하려 할때 401
 //        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        BaseResponse<String> baseResponse = new BaseResponse<>(UNATHORIZED);
+        BaseResponse<String> baseResponse = new BaseResponse<>(NEED_LOGIN);
         baseResponse.writeError(response);
 
     }
