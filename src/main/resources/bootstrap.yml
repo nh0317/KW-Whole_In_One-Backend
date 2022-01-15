@@ -3,3 +3,10 @@ spring:
     config:
       uri: http://seoul.naturemobility.com:18082
       name: wholeinone
+
+encrypt:
+  key-store:
+    alias: tacokey
+    location: classpath:/keystore.jks
+    password: wholeinone
+    secret: wholeinone
