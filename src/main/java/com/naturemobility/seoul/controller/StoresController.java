@@ -59,8 +59,13 @@ public class StoresController {
         }
 
         //방문한 매장 표시
-        Long userIdx = checkUserService.getUserIdx();
-        visitedService.setVistiedStore(storeIdx,userIdx);
+        try {
+            Long userIdx = checkUserService.getUserIdx();
+            visitedService.setVistiedStore(storeIdx, userIdx);
+        }catch (BaseException e){
+            if (!e.getStatus().equals(NEED_LOGIN))
+                throw new BaseException(e.getStatus());
+        }
 
         Integer checkStoreIdx = storeService.checkStoreIdx(storeIdx);
         if (checkStoreIdx == 0) {
