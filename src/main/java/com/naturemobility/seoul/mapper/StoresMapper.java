@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface StoresMapper {
@@ -28,4 +29,6 @@ public interface StoresMapper {
                                                             @Param("floorscreenStatus")Integer floorscreenStatus,@Param("storageStatus")Integer storageStatus,@Param("lessonStatus")Integer lessonStatus,
                                                              @Param("distance")Integer distance);
     List<GetBrandRes> retrieveBrandInfo();
+
+    Optional<String> findStoreName(@Param("storeIdx") Long storeIdx);
 }

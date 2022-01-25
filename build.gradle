@@ -64,7 +64,8 @@ dependencies {
 	//profile 마다 다른 logback 설정
 	implementation 'org.codehaus.janino:janino:3.1.6'
 
-
+	//Gson
+	implementation 'com.google.code.gson:gson:2.8.7'
 
 	//Swagger
 //	implementation 'io.springfox:springfox-boot-starter:3.0.0'

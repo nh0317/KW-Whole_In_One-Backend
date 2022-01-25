@@ -150,4 +150,7 @@
         SELECT brandIdx,brandName FROM StoreBrand;
     </select>
 
+    <select id="findStoreName" resultType="String">
+        SELECT storeName FROM Stores WHERE storeIdx=#{storeIdx}
+    </select>
 </mapper>

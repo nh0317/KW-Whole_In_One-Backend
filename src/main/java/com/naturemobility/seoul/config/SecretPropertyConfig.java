@@ -21,4 +21,13 @@ public class SecretPropertyConfig {
 
     @Value("${searchapi.naversecret}")
     private String naverSecret;
+
+    @Value("${iamport.imp_key}")
+    private String impKey;
+
+    @Value("${iamport.imp_secret}")
+    private String impSecret;
+
+    @Value("${billingKey.secret}")
+    private String aes256Key;
 }

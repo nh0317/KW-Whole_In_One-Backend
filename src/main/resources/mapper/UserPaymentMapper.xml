@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.UserPaymentMapper">
+    <insert id="saveUserPayment" useGeneratedKeys="true" keyProperty="userPaymentIdx" parameterType="UserPaymentInfo" >
+        INSERT INTO UserPayment(userIdx, cardNumber, billingKey,cardType,cardCode)
+        VALUES(#{userIdx},#{cardNumber},#{billingKey},#{cardType},#{cardCode})
+    </insert>
+
+    <select id="findUserPayment" resultType="String">
+        SELECT billingKey
+        FROM UserPayment
+        WHERE userPaymentIdx = #{userPaymentIdx}
+    </select>
+
+    <select id="findAllUserPayments" resultType="GetUserPayments">
+        SELECT userPaymentIdx,cardNumber, cardCode,
+               (case
+                   when cardType=0 then "신용카드"
+                   when cardType=1 then "체크카드"
+                end) as cardType, isMain
+        FROM UserPayment
+        WHERE userIdx = #{userIdx}
+        Order by isMain desc
+    </select>
+
+    <update id="updateMain" >
+        UPDATE UserPayment
+            SET isMain=#{isMain}
+        WHERE userPaymentIdx = #{userPaymentIdx}
+    </update>
+</mapper>
