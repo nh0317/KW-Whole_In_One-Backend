@@ -2,6 +2,7 @@ package com.naturemobility.seoul.mapper;
 import com.naturemobility.seoul.domain.dashboard.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface DashBoardMapper
     List<GetRezListRes> getSpecificRezList(@Param("reservationDay") String reservationDay,@Param("storeIdx")Long storeIdx);
     List<GetMemoRes> getMemoList(Long partnerIdx);
     void postMemo(PostMemoInfo postMemoInfo);
+    Long getPartnerIdxByMemoIdx(@PathVariable("memoIdx") Long memoIdx);
+    void deleteMemo(@PathVariable("memoIdx") Long memoIdx);
 }

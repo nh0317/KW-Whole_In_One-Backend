@@ -37,7 +37,7 @@ public class ReservationManagementController {
 
     /**
      * 예약 삭제
-     * [DELETE] /reservation-management/reservations/23
+     * [DELETE] /reservation-management/reservations/{reservationIdx}
      * @return
      */
     @DeleteMapping("/reservations/{reservationIdx}")

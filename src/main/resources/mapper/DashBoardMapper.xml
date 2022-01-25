@@ -65,4 +65,16 @@
         VALUES (#{memo},#{partnerIdx});
     </insert>
 
+    <select id="getPartnerIdxByMemoIdx" resultType="Long">
+        SELECT partnerIdx
+        FROM DashBoardMemo
+        WHERE memoIdx = #{memoIdx}
+    </select>
+
+    <delete id="deleteMemo">
+        DELETE
+        FROM DashBoardMemo
+        WHERE memoIdx = #{memoIdx};
+    </delete>
+
 </mapper>

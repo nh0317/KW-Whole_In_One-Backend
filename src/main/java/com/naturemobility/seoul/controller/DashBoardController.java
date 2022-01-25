@@ -99,7 +99,7 @@ public class DashBoardController {
 
     /**
      * 관리메모 생성
-     * [POST] /dashboard/memo?content=안녕하세
+     * [POST] /dashboard/memo?content=안녕하세요
      * @return
      */
     @PostMapping("/memo")
@@ -107,6 +107,19 @@ public class DashBoardController {
         Long partnerIdx=0L;
         partnerIdx = checkUserService.getPartnerIdx();
         dashBoardService.postMemo(content,partnerIdx);
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    /**
+     * 관리메모 삭제
+     * [DELETE] /dashboard/{memoIdx}
+     * @return
+     */
+    @DeleteMapping("/memo/{memoIdx}")
+    public BaseResponse deleteMemo(@PathVariable("memoIdx") Long memoIdx) throws BaseException {
+        Long partnerIdx=0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        dashBoardService.deleteMemo(memoIdx,partnerIdx);
         return new BaseResponse<>(SUCCESS);
     }
 }

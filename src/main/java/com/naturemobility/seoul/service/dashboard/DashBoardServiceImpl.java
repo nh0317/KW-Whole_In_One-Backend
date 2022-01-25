@@ -68,4 +68,15 @@ public class DashBoardServiceImpl implements DashBoardService {
         dashBoardMapper.postMemo(postMemoInfo);
         return;
     }
+
+    @Override
+    public void deleteMemo(Long memoIdx, Long partnerIdx) throws BaseException {
+        Long partnerIdxByMemoIdx =  dashBoardMapper.getPartnerIdxByMemoIdx(memoIdx);
+        if (partnerIdx != partnerIdxByMemoIdx){
+            throw new BaseException(NO_AUTHORITY);
+        }
+        else {
+            dashBoardMapper.deleteMemo(memoIdx);
+        }
+    }
 }
