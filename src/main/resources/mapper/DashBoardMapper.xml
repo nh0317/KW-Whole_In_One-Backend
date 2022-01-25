@@ -54,4 +54,8 @@
           AND storeIdx = #{storeIdx};
     </select>
 
+    <select id="getMemoList" resultType="GetMemoRes">
+        SELECT * FROM DashBoardMemo WHERE partnerIdx = #{partnerIdx}
+    </select>
+
 </mapper>

@@ -37,8 +37,8 @@ public class ReservationManagementController {
 
     /**
      * 예약 삭제
-     * [GET] /reservation-management/reservations/day?reservationDay=2022-01-10
-     * @return BaseResponse<List<GetRezListByManagementRes>>
+     * [DELETE] /reservation-management/reservations/23
+     * @return
      */
     @DeleteMapping("/reservations/{reservationIdx}")
     public BaseResponse deleteReservations(@PathVariable("reservationIdx") Long reservationIdx) throws BaseException {

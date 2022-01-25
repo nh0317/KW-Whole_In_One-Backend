@@ -1,9 +1,6 @@
 package com.naturemobility.seoul.service.dashboard;
 import com.naturemobility.seoul.config.BaseException;
-import com.naturemobility.seoul.domain.dashboard.GetCalendarRes;
-import com.naturemobility.seoul.domain.dashboard.GetMonthRes;
-import com.naturemobility.seoul.domain.dashboard.GetRezListRes;
-import com.naturemobility.seoul.domain.dashboard.GetTodayRes;
+import com.naturemobility.seoul.domain.dashboard.*;
 import com.naturemobility.seoul.mapper.DashBoardMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +53,12 @@ public class DashBoardServiceImpl implements DashBoardService {
         Long storeIdx = dashBoardMapper.getStoreIdx(partnerIdx);
         specificRezList = dashBoardMapper.getSpecificRezList(reservationDay,storeIdx);
         return specificRezList;
+    }
+
+    @Override
+    public List<GetMemoRes> getMemoList(Long partnerIdx) throws BaseException {
+        List<GetMemoRes> memoList;
+        memoList = dashBoardMapper.getMemoList(partnerIdx);
+        return memoList;
     }
 }

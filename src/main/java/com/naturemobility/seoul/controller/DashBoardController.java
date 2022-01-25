@@ -83,4 +83,17 @@ public class DashBoardController {
         List<GetRezListRes> specificRezList = dashBoardService.getSpecificRezList(partnerIdx,reservationDay);
         return new BaseResponse<>(SUCCESS,specificRezList);
     }
+
+    /**
+     * 관리메모 조회
+     * [GET] /memo
+     * @return BaseResponse<List<GetMemoRes>>
+     */
+    @GetMapping("/memo")
+    public BaseResponse<List<GetMemoRes>> getMemo() throws BaseException {
+        Long partnerIdx=0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        List<GetMemoRes> memoList = dashBoardService.getMemoList(partnerIdx);
+        return new BaseResponse<>(SUCCESS,memoList);
+    }
 }

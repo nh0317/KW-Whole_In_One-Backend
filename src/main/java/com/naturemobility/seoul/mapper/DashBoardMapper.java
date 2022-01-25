@@ -14,4 +14,5 @@ public interface DashBoardMapper
     List<GetRezListRes> getTodayRezList(Long storeIdx);
     List<GetCalendarRes> getCalendarList(Long storeIdx);
     List<GetRezListRes> getSpecificRezList(@Param("reservationDay") String reservationDay,@Param("storeIdx")Long storeIdx);
+    List<GetMemoRes> getMemoList(Long partnerIdx);
 }

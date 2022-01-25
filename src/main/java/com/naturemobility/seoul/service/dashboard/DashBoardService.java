@@ -9,5 +9,6 @@ public interface DashBoardService {
     public GetMonthRes getMonthRes(Long partnerIdx) throws BaseException;
     public List<GetCalendarRes> getCalendarList(Long partnerIdx) throws BaseException;
     public List<GetRezListRes> getSpecificRezList(Long partnerIdx,String reservationDay) throws BaseException;
+    public List<GetMemoRes> getMemoList(Long partnerIdx) throws BaseException;
 
 }
