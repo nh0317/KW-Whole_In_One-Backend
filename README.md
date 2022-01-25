@@ -99,6 +99,14 @@ spring:
 보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
 [API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 
+### userPayment API
+* 결제수단 등록 API 
+* 결제 요청 API 
+* 등록된 카드 조회 API 
+* 기본 결제수단 변경 API 
+
+보다 자세한 설명은 아래의 링크에서 확인가능 합니다.<br>
+[API 문서](https://documenter.getpostman.com/view/18157329/UVR8o7nG)
 ### Stores API
 * 골프장 검색
 * 골프장 조회 (storeIdx로 조회)
