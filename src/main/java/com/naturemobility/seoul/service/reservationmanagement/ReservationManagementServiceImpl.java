@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.naturemobility.seoul.config.BaseResponseStatus.*;
+
 @Service
 @Slf4j
 public class ReservationManagementServiceImpl implements ReservationManagementService {
@@ -21,5 +23,16 @@ public class ReservationManagementServiceImpl implements ReservationManagementSe
         Long storeIdx = reservationManagementMapper.getStoreIdx(partnerIdx);
         rezList = reservationManagementMapper.getRezList(reservationDay,storeIdx);
         return rezList;
+    }
+
+    @Override
+    public void deleteRez(Long partnerIdx, Long reservationIdx) throws BaseException {
+        Long storeIdx = reservationManagementMapper.getStoreIdx(partnerIdx);
+        Long storeIdxByRezIdx = reservationManagementMapper.getStoreIdxByRezIdx(reservationIdx);
+        if (storeIdx != storeIdxByRezIdx) {
+            throw new BaseException(NO_AUTHORITY);
+        } else {
+            reservationManagementMapper.deleteRez(reservationIdx);
+        }
     }
 }

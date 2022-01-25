@@ -23,4 +23,16 @@
           AND storeIdx = #{storeIdx};
     </select>
 
+    <select id="getStoreIdxByRezIdx" resultType="Long">
+        SELECT storeIdx
+        FROM Reservations
+        WHERE reservationIdx = #{reservationIdx}
+    </select>
+
+    <delete id="deleteRez">
+        DELETE
+        FROM Reservations
+        WHERE reservationIdx = #{reservationIdx}
+    </delete>
+
 </mapper>

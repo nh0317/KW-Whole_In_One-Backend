@@ -30,6 +30,7 @@ public enum BaseResponseStatus {
     WRONG_PASSWORD(false, 2030, "비밀번호가 틀렸습니다. 비밀번호를 다시 입력해주세요."),
     DO_NOT_MATCH_PASSWORD(false, 2031, "비밀번호와 비밀번호확인 값이 일치하지 않습니다."),
     NEED_LOGIN(false, 2040, "로그인이 필요합니다"),
+    NO_AUTHORITY(false, 2032, "권한이 없습니다."),
 //    EMPTY_EMAIL(false, 2020, "이메일을 입력해주세요."),
 //    EMPTY_PASSWORD(false, 2030, "비밀번호를 입력해주세요."),
 //    EMPTY_CONFIRM_PASSWORD(false, 2031, "비밀번호 확인을 입력해주세요."),

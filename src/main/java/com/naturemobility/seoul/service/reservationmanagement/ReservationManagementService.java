@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ReservationManagementService {
     public List<GetRezListByManagementRes> getRezList(Long partnerIdx,String reservationDay) throws BaseException;
+    public void deleteRez(Long partnerIdx, Long reservationIdx) throws BaseException;
+
 }

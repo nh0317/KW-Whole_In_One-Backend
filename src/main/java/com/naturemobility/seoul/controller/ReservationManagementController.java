@@ -34,4 +34,17 @@ public class ReservationManagementController {
         List<GetRezListByManagementRes> rezList = reservationManagementService.getRezList(partnerIdx,reservationDay);
         return new BaseResponse<>(SUCCESS,rezList);
     }
+
+    /**
+     * 예약 삭제
+     * [GET] /reservation-management/reservations/day?reservationDay=2022-01-10
+     * @return BaseResponse<List<GetRezListByManagementRes>>
+     */
+    @DeleteMapping("/reservations/{reservationIdx}")
+    public BaseResponse deleteReservations(@PathVariable("reservationIdx") Long reservationIdx) throws BaseException {
+        Long partnerIdx=0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        reservationManagementService.deleteRez(partnerIdx,reservationIdx);
+        return new BaseResponse<>(SUCCESS);
+    }
 }
