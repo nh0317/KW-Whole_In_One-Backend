@@ -61,4 +61,11 @@ public class DashBoardServiceImpl implements DashBoardService {
         memoList = dashBoardMapper.getMemoList(partnerIdx);
         return memoList;
     }
+
+    @Override
+    public void postMemo(String content, Long partnerIdx) throws BaseException {
+        PostMemoInfo postMemoInfo = new PostMemoInfo(content,partnerIdx);
+        dashBoardMapper.postMemo(postMemoInfo);
+        return;
+    }
 }

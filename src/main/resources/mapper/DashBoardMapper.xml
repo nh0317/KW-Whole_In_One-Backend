@@ -55,7 +55,14 @@
     </select>
 
     <select id="getMemoList" resultType="GetMemoRes">
-        SELECT * FROM DashBoardMemo WHERE partnerIdx = #{partnerIdx}
+        SELECT *
+        FROM DashBoardMemo
+        WHERE partnerIdx = #{partnerIdx}
     </select>
+
+    <insert id="postMemo" parameterType="PostMemoInfo">
+        INSERT INTO DashBoardMemo (memo,partnerIdx)
+        VALUES (#{memo},#{partnerIdx});
+    </insert>
 
 </mapper>

@@ -86,7 +86,7 @@ public class DashBoardController {
 
     /**
      * 관리메모 조회
-     * [GET] /memo
+     * [GET] /dashboard/memo
      * @return BaseResponse<List<GetMemoRes>>
      */
     @GetMapping("/memo")
@@ -95,5 +95,18 @@ public class DashBoardController {
         partnerIdx = checkUserService.getPartnerIdx();
         List<GetMemoRes> memoList = dashBoardService.getMemoList(partnerIdx);
         return new BaseResponse<>(SUCCESS,memoList);
+    }
+
+    /**
+     * 관리메모 생성
+     * [POST] /dashboard/memo?content=안녕하세
+     * @return
+     */
+    @PostMapping("/memo")
+    public BaseResponse postMemo(@RequestParam("content") String content) throws BaseException {
+        Long partnerIdx=0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        dashBoardService.postMemo(content,partnerIdx);
+        return new BaseResponse<>(SUCCESS);
     }
 }
