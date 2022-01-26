@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -45,17 +48,21 @@ public class UserPaymentServiceImpl implements UserPaymentService {
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
             httpHeaders.setBearerAuth(token);
 
-            String url = "https://api.iamport.kr/subscribe/customers/" + billingKey;
+//            String url = "https://api.iamport.kr/subscribe/customers/" + billingKey;
+            UriComponents url = UriComponentsBuilder
+                    .fromHttpUrl("https://api.iamport.kr/subscribe/customers/"+billingKey)
+                    .build();
+            log.info(url.toUri().toString());
 
-            Map<String, Object> result = getResponse(httpHeaders, url);
+            Map<String, Object> result = getResponse(httpHeaders, url.toUri());
             log.info(result.toString());
-            String cardName = ((Map) result.get("response")).get("card_name").toString();
+            String cardCode = ((Map) result.get("response")).get("card_code").toString();
             Integer cardType = ((Double) ((Map) result.get("response")).get("card_type")).intValue();
             String cardNumber = ((Map) result.get("response")).get("card_number").toString();
-
+            String cardCo= CardCode.cardCoOf(cardCode);
             String formatedCardNumber = String.join("-", cardNumber.split("(?<=\\G.{" + 4 + "})"));
             UserPaymentInfo userPaymentInfo = new UserPaymentInfo(userIdx, aes256.encrypt(billingKey),
-                    formatedCardNumber, cardType, cardName);
+                    formatedCardNumber, cardType, cardCo);
             userPaymentMapper.saveUserPayment(userPaymentInfo);
             return new PostUserPaymentRes(userPaymentInfo.getUserPaymentIdx(), userPaymentInfo.getCardNumber(),
                     userPaymentInfo.getCardType(), userPaymentInfo.getCardCode());
@@ -98,11 +105,12 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     public String getToken() throws BaseException{
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        String url = "https://api.iamport.kr/users/getToken";
+//        String url = "https://api.iamport.kr/users/getToken";
+        UriComponents url = UriComponentsBuilder.fromHttpUrl("https://api.iamport.kr/users/getToken").build();
         Map<String, Object> data = new HashMap<>();
         data.put("imp_key", secretPropertyConfig.getImpKey());
         data.put("imp_secret", secretPropertyConfig.getImpSecret());
-        Map<String, Object> result = getResponse(httpHeaders, data,url);
+        Map<String, Object> result = getResponse(httpHeaders, data,url.toUri());
         return ((Map) result.get("response")).get("access_token").toString();
     }
 
@@ -124,14 +132,17 @@ public class UserPaymentServiceImpl implements UserPaymentService {
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
             httpHeaders.setBearerAuth(token);
 
-            String url = "https://api.iamport.kr/subscribe/payments/again";
+//            String url = "https://api.iamport.kr/subscribe/payments/again";
+            UriComponents url = UriComponentsBuilder
+                    .fromHttpUrl("https://api.iamport.kr/subscribe/payments/again")
+                    .build();
             Map<String, Object> data = new HashMap<>();
             data.put("customer_uid", customerUid);
             data.put("merchant_uid", "order_" + LocalDateTime.now());
             data.put("amount", postPayReq.getAmount());
             data.put("name", name);
 
-            Map<String, Object> response = getResponse(httpHeaders, data,url);
+            Map<String, Object> response = getResponse(httpHeaders, data,url.toUri());
             return new PostPayRes(((Map)response.get("response")).get("imp_uid").toString(),
                     ((Map)response.get("response")).get("merchant_uid").toString());
     }
@@ -141,8 +152,12 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setBearerAuth(token);
 
-        String url = "https://api.iamport.kr/payments/"+getPaymentData.getImp_uid();
-        Map<String, Object> result = getResponse(httpHeaders, url);
+//        String url = "https://api.iamport.kr/payments/"+getPaymentData.getImp_uid();
+        UriComponents url = UriComponentsBuilder
+                .fromHttpUrl("https://api.iamport.kr/payments/"+getPaymentData.getImp_uid())
+                .build();
+        log.info(url.toUri().toString());
+        Map<String, Object> result = getResponse(httpHeaders, url.toUri());
         Double amount = (Double) ((Map)result.get("response")).get("amount");
         String status = ((Map)result.get("response")).get("status").toString();
         if (Objects.equals(postPayReq.getAmount(), amount.intValue())){
@@ -161,7 +176,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         else throw new BaseException(RESPONSE_ERROR);
     }
 
-    private Map<String,Object> getResponse(HttpHeaders httpHeaders, String url) {
+    private Map<String,Object> getResponse(HttpHeaders httpHeaders, URI url) {
         ResponseEntity<String> resultJson;
         RestTemplate restTemplate = new RestTemplate();
         resultJson = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(httpHeaders), String.class);
@@ -169,7 +184,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         return gson.fromJson(resultJson.getBody(), Map.class);
     }
 
-    private Map<String,Object> getResponse(HttpHeaders httpHeaders, Map<String, Object> data, String url) {
+    private Map<String,Object> getResponse(HttpHeaders httpHeaders, Map<String, Object> data, URI url) {
         ResponseEntity<String> resultJson;
         RestTemplate restTemplate = new RestTemplate();
         resultJson = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(data,httpHeaders), String.class);
