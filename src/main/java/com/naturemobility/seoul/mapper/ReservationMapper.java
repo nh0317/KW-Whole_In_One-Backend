@@ -18,5 +18,5 @@ public interface ReservationMapper {
     int delete(ReservationInfo reservationInfo);
     void postReservation(PostRezInfo postRezInfo);
     List<GetRezTime> getReservationTime(@Param("storeIdx") Long storeIdx, @Param("reservationDay") String reservationDay,
-                                        @Param("hallNumber") Long hallNumber);
+                                        @Param("roomIdx") Long roomIdx);
 }

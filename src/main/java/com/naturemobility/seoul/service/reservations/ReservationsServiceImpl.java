@@ -85,9 +85,9 @@ public class ReservationsServiceImpl implements ReservationsService {
     }
 
     @Override
-    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay,Long hallNumber) throws BaseException {
+    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay,Long roomIdx) throws BaseException {
         List<GetRezTime> getRezTime;
-        getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay,hallNumber);
+        getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay,roomIdx);
         return getRezTime;
     }
 

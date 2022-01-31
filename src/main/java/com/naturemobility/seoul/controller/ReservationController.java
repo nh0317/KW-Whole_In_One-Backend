@@ -83,8 +83,8 @@ public class ReservationController {
     @ResponseBody
     @GetMapping("/reserved-time")
     public BaseResponse<List<GetRezTime>> getReservationTime(@RequestParam("storeIdx") Long storeIdx,@RequestParam("reservationDay") String reservationDay,
-                                                             @RequestParam("hallNumber") Long hallNumber) throws BaseException{
-        List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,hallNumber);
+                                                             @RequestParam("roomIdx") Long roomIdx) throws BaseException{
+        List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,roomIdx);
         return new BaseResponse<>(SUCCESS,getRezTime);
     }
 }

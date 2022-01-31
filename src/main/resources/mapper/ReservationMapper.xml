@@ -62,7 +62,7 @@
         FROM Reservations
         WHERE storeIdx = #{storeIdx}
           AND DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}
-          AND selectedHall = #{hallNumber}
+          AND roomIdx = #{roomIdx}
     </select>
 
 </mapper>
