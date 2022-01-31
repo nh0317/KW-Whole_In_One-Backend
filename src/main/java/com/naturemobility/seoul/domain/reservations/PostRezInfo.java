@@ -12,6 +12,7 @@ public class PostRezInfo {
     private String reservationTime;
     private Integer useTime;
     private Integer numberOfGame;
+    private Long roomIdx;
     private Integer selectedHall;
     private String request;
     private Integer personCount;
@@ -21,7 +22,7 @@ public class PostRezInfo {
     private String endTime;
 
     public PostRezInfo(Long userIdx,Integer storeIdx,String reservationTime,Integer useTime,Integer numberOfGame,Integer selectedHall,String request,
-                       Integer personCount,Integer price,Integer discountPrice,Integer payPrice,String endTime) {
+                       Integer personCount,Integer price,Integer discountPrice,Integer payPrice,String endTime,Long roomIdx) {
         this.userIdx = userIdx;
         this.storeIdx = storeIdx;
         this.reservationTime = reservationTime;
@@ -34,5 +35,6 @@ public class PostRezInfo {
         this.payPrice = payPrice;
         this.selectedHall = selectedHall;
         this.endTime = endTime;
+        this.roomIdx = roomIdx;
     }
 }
