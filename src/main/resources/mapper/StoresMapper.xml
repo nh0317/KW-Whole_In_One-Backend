@@ -153,4 +153,13 @@
     <select id="findStoreName" resultType="String">
         SELECT storeName FROM Stores WHERE storeIdx=#{storeIdx}
     </select>
+
+    <select id="retrievePartnerIdx" resultType="Long">
+        SELECT partnerIdx FROM Partner WHERE storeIdx = #{storeIdx};
+    </select>
+
+    <select id="retrieveRoomIdx" resultType="GetRoomIdxRes">
+        SELECT roomIdx,roomName FROM Rooms WHERE partnerIdx = #{partnerIdx};
+    </select>
+
 </mapper>

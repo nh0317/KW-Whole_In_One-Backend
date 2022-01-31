@@ -17,4 +17,6 @@ public interface StoreService {
                                                                    Integer parkingStatus,Integer groupseatStatus,
                                                                    Integer floorscreenStatus,Integer storageStatus,Integer lessonStatus,Integer distance) throws BaseException;
     public List<GetBrandRes>retrieveBrandInfo() throws BaseException;
+
+    public List <GetRoomIdxRes> retrieveRoomIdx(Long storeIdx) throws BaseException;
 }

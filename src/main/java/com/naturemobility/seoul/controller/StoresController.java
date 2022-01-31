@@ -162,6 +162,19 @@ public class StoresController {
         List<GetBrandRes> brandRes = storeService.retrieveBrandInfo();
         return new BaseResponse<>(SUCCESS, brandRes);
     }
+
+    /**
+     * 매장 roomIdx 조회 API
+     * [GET] /stores/roomIdx?storeIdx=10
+     *
+     * @return BaseResponse<List < GetRoomIdxRes>>
+     */
+    @ResponseBody
+    @GetMapping("/roomIdx")
+    public BaseResponse<List<GetRoomIdxRes>> getRoomIdx(@RequestParam Long storeIdx) throws BaseException {
+        List<GetRoomIdxRes> roomIdxRes = storeService.retrieveRoomIdx(storeIdx);
+        return new BaseResponse<>(SUCCESS, roomIdxRes);
+    }
 }
 
 
