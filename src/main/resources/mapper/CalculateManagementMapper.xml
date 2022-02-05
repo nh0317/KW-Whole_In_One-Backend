@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naturemobility.seoul.mapper.CalculateManagementMapper">
+
+    <select id="getStoreIdx" resultType="Long">
+        SELECT storeIdx
+        From Partner
+        WHERE partnerIdx = #{partnerIdx}
+    </select>
+
+    <select id="getCalculateList" resultType="GetCalculateListRes">
+        SELECT reservePrice,
+               discountPrice,
+               payPrice,
+               (CASE calculateStatus
+                    WHEN 0 THEN '정산 미완료'
+                    WHEN 1 THEN '정산 완료'
+                    WHEN 2 THEN '정산 등록'
+                   END) AS calculateStatus,
+               createdAt,
+               paymentTime
+        FROM Reservations
+        WHERE paymentTime &gt;= #{startDay}
+          AND paymentTime &lt;= #{endDay}
+          AND storeIdx = #{storeIdx};
+    </select>
+
+</mapper>
