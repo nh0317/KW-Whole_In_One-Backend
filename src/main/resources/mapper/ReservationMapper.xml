@@ -65,4 +65,22 @@
           AND roomIdx = #{roomIdx}
     </select>
 
+    <select id="checkDuplication1" resultType="Integer">
+        SELECT COUNT(1)
+        FROM Reservations
+        WHERE reservationTime >= #{startTime}
+          AND reservationTime &lt;= #{endTime}
+          AND storeIdx = #{storeIdx}
+          AND roomIdx = #{roomIdx};
+    </select>
+
+    <select id="checkDuplication2" resultType="Integer">
+        SELECT COUNT(1)
+        FROM Reservations
+        WHERE endTime >= #{startTime}
+          AND endTime &lt;= #{endTime}
+          AND storeIdx = #{storeIdx}
+          AND roomIdx = #{roomIdx};
+    </select>
+
 </mapper>

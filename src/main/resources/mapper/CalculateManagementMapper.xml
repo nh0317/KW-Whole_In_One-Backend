@@ -23,7 +23,8 @@
         FROM Reservations
         WHERE paymentTime &gt;= #{startDay}
           AND paymentTime &lt;= #{endDay}
-          AND storeIdx = #{storeIdx};
+          AND storeIdx = #{storeIdx}
+        ORDER BY paymentTime DESC;
     </select>
 
     <select id="getStoreIdxByCalculationIdx" resultType="Long">
