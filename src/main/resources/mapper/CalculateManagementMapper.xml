@@ -9,14 +9,15 @@
     </select>
 
     <select id="getCalculateList" resultType="GetCalculateListRes">
-        SELECT reservePrice,
+        SELECT reservationIdx AS calculationIdx,
+               reservePrice,
                discountPrice,
                payPrice,
                (CASE calculateStatus
                     WHEN 0 THEN '정산 미완료'
                     WHEN 1 THEN '정산 완료'
                     WHEN 2 THEN '정산 등록'
-                   END) AS calculateStatus,
+                   END)       AS calculateStatus,
                createdAt,
                paymentTime
         FROM Reservations
