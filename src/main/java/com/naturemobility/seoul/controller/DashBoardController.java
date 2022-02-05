@@ -99,14 +99,17 @@ public class DashBoardController {
 
     /**
      * 관리메모 생성
-     * [POST] /dashboard/memo?content=안녕하세요
+     * [POST] /dashboard/memo
+     * body{
+     * content : 안녕
+     * }
      * @return
      */
     @PostMapping("/memo")
-    public BaseResponse postMemo(@RequestParam("content") String content) throws BaseException {
+    public BaseResponse postMemo(@RequestBody PostMemo memo) throws BaseException {
         Long partnerIdx=0L;
         partnerIdx = checkUserService.getPartnerIdx();
-        dashBoardService.postMemo(content,partnerIdx);
+        dashBoardService.postMemo(memo,partnerIdx);
         return new BaseResponse<>(SUCCESS);
     }
 
