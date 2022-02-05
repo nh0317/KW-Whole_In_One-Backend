@@ -26,4 +26,15 @@
           AND storeIdx = #{storeIdx};
     </select>
 
+    <select id="getStoreIdxByCalculationIdx" resultType="Long">
+        SELECT storeIdx
+        FROM Reservations
+        WHERE reservationIdx = #{calculationIdx}
+    </select>
+
+    <update id="changeCalculateStatus">
+        UPDATE Reservations
+        SET calculateStatus = 2
+        WHERE reservationIdx = #{calculationIdx}
+    </update>
 </mapper>

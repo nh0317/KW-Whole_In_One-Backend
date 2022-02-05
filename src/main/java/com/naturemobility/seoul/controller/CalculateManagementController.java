@@ -34,4 +34,17 @@ public class CalculateManagementController {
         List<GetCalculateListRes> calculateList = calculateManagementService.getCalculateList(partnerIdx,startDay,endDay);
         return new BaseResponse<>(SUCCESS,calculateList);
     }
+
+    /**
+     * 정산하기
+     * [PATCH] /calculate-management/calculate?calculationIdx=11
+     * @return BaseResponse
+     */
+    @PatchMapping("/calculate")
+    public BaseResponse calculate(@RequestParam("calculationIdx") Long calculationIdx) throws BaseException {
+        Long partnerIdx=0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        calculateManagementService.calculate(partnerIdx,calculationIdx);
+        return new BaseResponse<>(SUCCESS);
+    }
 }
