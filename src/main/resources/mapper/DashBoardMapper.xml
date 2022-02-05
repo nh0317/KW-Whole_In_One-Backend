@@ -17,11 +17,11 @@
     </select>
 
     <select id="getMonthRes" resultType="GetMonthRes">
-        SELECT COUNT(reservationIdx) AS monthReservatioCount,
-               SUM(payPrice)         AS monthSales
+        SELECT COUNT(reservationIdx)    AS monthReservatioCount,
+               IFNULL(0, SUM(payPrice)) AS monthSales
         FROM Reservations
         WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
-          AND #{storeIdx};
+          AND storeIdx = #{storeIdx};
     </select>
 
     <select id="getTodayRezList" resultType="GetRezListRes">
