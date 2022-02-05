@@ -9,8 +9,8 @@
     </select>
 
     <select id="getTodayRes" resultType="GetTodayRes">
-        SELECT COUNT(reservationIdx) AS reservationCount,
-               SUM(payPrice)         AS todaySales
+        SELECT COUNT(reservationIdx)    AS reservationCount,
+               IFNULL(0, SUM(payPrice)) AS todaySales
         FROM Reservations
         WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
           AND storeIdx = #{storeIdx};
