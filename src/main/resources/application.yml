@@ -42,9 +42,7 @@ spring:
     name: wholeinone
 #    config:
 #      import: optional:configserver:http://localhost:8082
-  redis:
-    port: 18083
-    host: seoul.naturemobility.com
+
 
 # mybatis
 mybatis:

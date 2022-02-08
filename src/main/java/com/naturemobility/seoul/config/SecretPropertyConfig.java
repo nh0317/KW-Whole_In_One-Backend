@@ -34,4 +34,10 @@ public class SecretPropertyConfig {
 
     @Value("${billingKey.secret}")
     private String aes256Key;
+
+    @Value("${spring.redis.port}")
+    private String redisPort;
+
+    @Value("${spring.redis.host}")
+    private String redisHost;
 }
