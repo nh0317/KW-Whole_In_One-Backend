@@ -16,6 +16,10 @@ public class SecretPropertyConfig {
     @Value("${jwt.secret.token_validity_in_seconds}")
     private String tokenValidityInSeconds;
 
+
+    @Value("${jwt.secret.refresh_token_validity_in_seconds}")
+    private String refreshTokenValidityInSeconds;
+
     @Value("${searchapi.naverid}")
     private String naverId;
 

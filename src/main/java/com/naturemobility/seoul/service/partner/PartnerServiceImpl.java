@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.service.partner;
 
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.config.SecretPropertyConfig;
 import com.naturemobility.seoul.config.secret.Secret;
 import com.naturemobility.seoul.domain.partners.*;
 import com.naturemobility.seoul.domain.users.PatchPWReq;
@@ -10,6 +11,7 @@ import com.naturemobility.seoul.jwt.JwtFilter;
 import com.naturemobility.seoul.jwt.JwtService;
 import com.naturemobility.seoul.mapper.PartnerMapper;
 import com.naturemobility.seoul.utils.ValidationRegex;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,19 +31,14 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.NOT_FOUND_USER;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class PartnerServiceImpl implements PartnerService{
 
     private final PartnerMapper partnerMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    public PartnerServiceImpl(PartnerMapper partnerMapper, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManagerBuilder authenticationManagerBuilder) {
-        this.partnerMapper = partnerMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-    }
+    private final SecretPropertyConfig secretPropertyConfig;
 
     /**
      * 중복 회원 검증
@@ -111,7 +109,7 @@ public class PartnerServiceImpl implements PartnerService{
      * @throws BaseException
      */
     @Override
-    public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException, UsernameNotFoundException {
+    public PostLoginRes login(HttpServletResponse response,PostLoginReq postLoginReq) throws BaseException, UsernameNotFoundException {
         PartnerInfo partnerInfo;
         // 1. DB에서 PartnerInfo 조회
         String partnerId=postLoginReq.getId();
@@ -121,7 +119,7 @@ public class PartnerServiceImpl implements PartnerService{
 
         // 2.유저 조회 및 비밀 번호 확인
         // 4. PostLoginRes 변환하여 return
-        return createJwt(postLoginReq.getId(), postLoginReq.getPassword());
+        return createJwt(response,postLoginReq.getId(), postLoginReq.getPassword());
     }
 
     /** 비밀번호 확인
@@ -130,19 +128,19 @@ public class PartnerServiceImpl implements PartnerService{
      * @throws BaseException
      */
     @Override
-    public PostLoginRes checkPW(String partnerEmail, String pw) throws BaseException {
+    public PostLoginRes checkPW(HttpServletResponse response,String partnerEmail, String pw) throws BaseException {
 
-        return createJwt(partnerEmail, pw);
+        return createJwt(response,partnerEmail, pw);
     }
     /** 비밀번호 수정
      * @param partnerInfo, patchPWReq
      * @throws BaseException
      */
     @Override
-    public void updatePW(PartnerInfo partnerInfo, PatchPWReq patchPWReq) throws BaseException {
+    public void updatePW(HttpServletResponse response,PartnerInfo partnerInfo, PatchPWReq patchPWReq) throws BaseException {
 
         // 3. Create JWT
-        createJwt(partnerInfo.getPartnerEmail(), patchPWReq.getPassword());
+        createJwt(response,partnerInfo.getPartnerEmail(), patchPWReq.getPassword());
 
         //새로운 비밀번호 일치 확인
         if (!patchPWReq.getNewPassword().equals(patchPWReq.getConfirmNewPassword())) {
@@ -275,7 +273,7 @@ public class PartnerServiceImpl implements PartnerService{
         return partnerInfo;
     }
 
-    private PostLoginRes createJwt(String email, String pw) throws BaseException {
+    private PostLoginRes createJwt(HttpServletResponse response, String email, String pw) throws BaseException {
         UsernamePasswordAuthenticationToken authenticationToken;
         try {
             authenticationToken
@@ -285,10 +283,10 @@ public class PartnerServiceImpl implements PartnerService{
         }
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtService.createJwt(authentication);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        return new PostLoginRes(email, jwt);
+        String jwt = jwtService.createJwt(authentication);
+        String refreshJwt = jwtService.createRefreshJwt(authentication);
+        jwtService.setTokens(response, authentication, jwt, refreshJwt);
+        return new PostLoginRes(email, jwt, refreshJwt, Long.parseLong(secretPropertyConfig.getRefreshTokenValidityInSeconds()));
     }
 }

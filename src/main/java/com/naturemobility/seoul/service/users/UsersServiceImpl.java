@@ -1,12 +1,16 @@
 package com.naturemobility.seoul.service.users;
 
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.config.BaseResponseStatus;
+import com.naturemobility.seoul.config.SecretPropertyConfig;
 import com.naturemobility.seoul.config.secret.Secret;
 import com.naturemobility.seoul.domain.users.*;
 import com.naturemobility.seoul.jwt.JwtFilter;
 import com.naturemobility.seoul.jwt.JwtService;
 import com.naturemobility.seoul.mapper.UsersMapper;
 import com.naturemobility.seoul.domain.users.UserStatus;
+import com.naturemobility.seoul.redis.RedisService;
+import com.naturemobility.seoul.utils.CookieUtil;
 import com.naturemobility.seoul.utils.ValidationRegex;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +24,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +42,9 @@ public class UsersServiceImpl implements UsersService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final SecretPropertyConfig secretPropertyConfig;
+    private final CookieUtil cookieUtil;
+    private final RedisService redisService;
 
     /**
      * 중복 회원 검증
@@ -123,13 +133,13 @@ public class UsersServiceImpl implements UsersService {
     }
 
     /** 비밀번호 수정
-     * @param userInfo, patchPWReq
+     * @param res, userInfo, patchPWReq
      * @throws BaseException
      */
     @Override
-    public void updatePW(UserInfo userInfo, PatchPWReq patchPWReq) throws BaseException {
+    public void updatePW(HttpServletResponse res, UserInfo userInfo, PatchPWReq patchPWReq) throws BaseException {
         log.info("비밀번호 변경 " + userInfo.getUserEmail());
-        createJwt(userInfo.getUserEmail(), patchPWReq.getPassword());
+        createJwt(res,userInfo.getUserEmail(), patchPWReq.getPassword());
         //새로운 비밀번호 일치 확인
         if (!patchPWReq.getNewPassword().equals(patchPWReq.getConfirmNewPassword())) {
             throw new BaseException(WRONG_PASSWORD);
@@ -212,7 +222,7 @@ public class UsersServiceImpl implements UsersService {
      * @throws BaseException
      */
     @Override
-    public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
+    public PostLoginRes login(HttpServletResponse response, PostLoginReq postLoginReq) throws BaseException {
         // 1. DB에서 UserInfo 조회
         String userId=postLoginReq.getId();
         if (!ValidationRegex.isRegexEmail(userId))
@@ -220,7 +230,7 @@ public class UsersServiceImpl implements UsersService {
         else retrieveUserInfoByEmail(userId);
 
         // 4. Create JWT
-        return createJwt(postLoginReq.getId(), postLoginReq.getPassword());
+        return createJwt(response,postLoginReq.getId(), postLoginReq.getPassword());
     }
     /**
      * 비밀번호 확인
@@ -229,8 +239,8 @@ public class UsersServiceImpl implements UsersService {
      * @throws BaseException
      */
     @Override
-    public PostLoginRes checkPW(String userEmail, String pw) throws BaseException {
-        return createJwt(userEmail, pw);
+    public PostLoginRes checkPW(HttpServletResponse response,String userEmail, String pw) throws BaseException {
+        return createJwt(response, userEmail, pw);
     }
 
     /**
@@ -288,6 +298,23 @@ public class UsersServiceImpl implements UsersService {
         return userInfo;
     }
 
+    @Override
+    public PostLoginRes refreshToken(HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        Cookie refreshToken = cookieUtil.getCookie(request, JwtService.REFRESH_TOKEN);
+        String refreshJwt=null;
+        if(refreshToken!=null){
+            refreshJwt = refreshToken.getValue();
+        }
+        if (refreshJwt!=null && redisService.isExist(refreshJwt)){
+            Authentication authentication = jwtService.getAuthenticationFromRefreshToken(refreshJwt);
+            String newJwt = jwtService.createJwt(authentication);
+            String newRefreshJwt = jwtService.createRefreshJwt(authentication);
+            jwtService.setTokens(response,authentication,newJwt,newRefreshJwt);
+            redisService.deleteValues(refreshJwt);
+            return new PostLoginRes(authentication.getName(),newJwt, newRefreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
+        } else throw new BaseException(INVALID_JWT);
+    }
+
     /** 마이페이지
      * @param userIdx
      * @return GetMyPageRes
@@ -315,7 +342,7 @@ public class UsersServiceImpl implements UsersService {
         return getMyPageRes;
     }
 
-    private PostLoginRes createJwt(String email, String pw) throws BaseException {
+    private PostLoginRes createJwt(HttpServletResponse res, String email, String pw) throws BaseException {
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(email+":user", pw);
         Authentication authentication;
@@ -324,11 +351,10 @@ public class UsersServiceImpl implements UsersService {
         }catch ( Exception exception){
             throw new BaseException(WRONG_PASSWORD);
         }
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtService.createJwt(authentication);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        return new PostLoginRes(email, jwt);
+        String refreshJwt = jwtService.createRefreshJwt(authentication);
+        jwtService.setTokens(res, authentication, jwt, refreshJwt);
+        return new PostLoginRes(email, jwt, refreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
     }
+
 }

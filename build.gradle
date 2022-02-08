@@ -67,6 +67,9 @@ dependencies {
 	//Gson
 	implementation 'com.google.code.gson:gson:2.8.7'
 
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.4.0'
+
 	//Swagger
 //	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
@@ -86,10 +88,10 @@ public class UsersController {
      */
     @ResponseBody
     @PatchMapping("mypage/edit_password")
-    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq) throws BaseException {
+    public BaseResponse<Void> editPW(HttpServletResponse response, @RequestBody PatchPWReq patchPWReq) throws BaseException {
         // 2. Post UserInfo
         UserInfo userInfo = checkUserService.getUser();
-        usersService.updatePW(userInfo,patchPWReq);
+        usersService.updatePW(response,userInfo,patchPWReq);
         return new BaseResponse<>(SUCCESS);
     }
     /**
@@ -134,11 +136,11 @@ public class UsersController {
      */
     @ResponseBody
     @PostMapping("check_password")
-    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password) throws BaseException {
+    public BaseResponse<PostLoginRes> confirmPW(HttpServletResponse response,@RequestParam("password") String password) throws BaseException {
         // 2. Post UserInfo
         PostLoginRes postLoginRes;
         String email = checkUserService.getEmail();
-        postLoginRes = usersService.checkPW(email,password);
+        postLoginRes = usersService.checkPW(response,email,password);
         return new BaseResponse<>(SUCCESS,postLoginRes);
     }
 
@@ -150,7 +152,7 @@ public class UsersController {
      */
     @ResponseBody
     @PostMapping(value="login" )
-    public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq postLoginReq) throws BaseException {
+    public BaseResponse<PostLoginRes> login(HttpServletResponse response,@RequestBody PostLoginReq postLoginReq) throws BaseException {
         log.info("아이디 : "+postLoginReq.getId());
         log.info("패스워드 : "+postLoginReq.getPassword());
         // 1. Body Parameter Validation
@@ -160,7 +162,7 @@ public class UsersController {
             return new BaseResponse<>(REQUEST_ERROR);
 
         // 2. Login
-        PostLoginRes postLoginRes = usersService.login(postLoginReq);
+        PostLoginRes postLoginRes = usersService.login(response,postLoginReq);
         return new BaseResponse<>(SUCCESS, postLoginRes);
     }
 
@@ -191,4 +193,11 @@ public class UsersController {
 //            return new BaseResponse<>(exception.getStatus());
 //        }
 //    }
+
+    @PostMapping("/refresh")
+    public BaseResponse<PostLoginRes> refreshToken(HttpServletRequest request, HttpServletResponse response)
+            throws BaseException {
+        PostLoginRes result = usersService.refreshToken(request, response);
+        return new BaseResponse<>(SUCCESS,result);
+    }
 }
