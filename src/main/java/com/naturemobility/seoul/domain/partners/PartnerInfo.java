@@ -1,11 +1,8 @@
 package com.naturemobility.seoul.domain.partners;
 
 import com.naturemobility.seoul.domain.DTOCommon;
-import com.naturemobility.seoul.domain.users.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.servlet.http.Part;
 
 @Getter
 @Setter

@@ -3,22 +3,24 @@ package com.naturemobility.seoul.service.users;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.domain.users.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface UsersService {
-    public List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException;
-    public String checkEmail(String userEmail) throws BaseException;
-    public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException;
-    public GetMyPageRes myPage(Long userIdx) throws BaseException;
-    public PatchUserRes updateUserInfo(UserInfo userInfo, PatchUserReq patchUserReq) throws BaseException;
-
-    void updatePW(UserInfo userInfo, PatchPWReq patchPWReq) throws BaseException;
-    public PostLoginRes checkPW(String userEmail, String pw) throws BaseException;
+    List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException;
+    PostLoginRes login(HttpServletResponse response, PostLoginReq postLoginReq) throws BaseException;
+    String checkEmail(String userEmail) throws BaseException;
+    GetMyPageRes myPage(Long userIdx) throws BaseException;
+    PatchUserRes updateUserInfo(UserInfo userInfo, PatchUserReq patchUserReq) throws BaseException;
+    void updatePW(HttpServletResponse res, UserInfo userInfo, PatchPWReq patchPWReq) throws BaseException;
     void deleteUserInfo(UserInfo userInfo) throws BaseException;
+    GetUserRes findUserInfo(Long userIdx) throws BaseException;
+    PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException;
+    PostLoginRes checkPW(HttpServletResponse response, String userEmail, String pw) throws BaseException;
+    UserInfo retrieveUserInfoByUserIdx(Long userIdx) throws BaseException;
+    UserInfo retrieveUserInfoByEmail(String email) throws BaseException;
 
-    public GetUserRes findUserInfo(Long userIdx) throws BaseException;
+    PostLoginRes refreshToken(HttpServletRequest request, HttpServletResponse response) throws BaseException;
 
-    public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException;
-    public UserInfo retrieveUserInfoByUserIdx(Long userIdx) throws BaseException;
-    public UserInfo retrieveUserInfoByEmail(String email) throws BaseException;
 }

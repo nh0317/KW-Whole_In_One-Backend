@@ -7,8 +7,6 @@ import com.naturemobility.seoul.domain.users.UserInfo;
 import com.naturemobility.seoul.domain.users.UserStatus;
 import com.naturemobility.seoul.mapper.PartnerMapper;
 import com.naturemobility.seoul.mapper.UsersMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

@@ -3,6 +3,7 @@ package com.naturemobility.seoul.config;
 import com.naturemobility.seoul.jwt.*;
 import com.naturemobility.seoul.mapper.UsersMapper;
 import com.naturemobility.seoul.service.CustomUserDetailsService;
+import com.naturemobility.seoul.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtService jwtService;
+    private final CookieUtil cookieUtil;
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
@@ -83,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtFilter jwtFilter() {
-        return new JwtFilter(jwtService);
+        return new JwtFilter(jwtService,cookieUtil);
     }
 }
 

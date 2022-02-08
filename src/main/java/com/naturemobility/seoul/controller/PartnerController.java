@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 import static com.naturemobility.seoul.config.BaseResponseStatus.REQUEST_ERROR;
 import static com.naturemobility.seoul.utils.ValidationRegex.isRegexEmail;
@@ -56,7 +58,7 @@ public class PartnerController {
      */
     @ResponseBody
     @PostMapping("login")
-    public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters) throws BaseException {
+    public BaseResponse<PostLoginRes> login(HttpServletResponse response, @RequestBody PostLoginReq parameters) throws BaseException {
         // 1. Body Parameter Validation
         if (parameters.getId() == null || parameters.getId().length() == 0){
             return new BaseResponse<>(REQUEST_ERROR);
@@ -65,7 +67,7 @@ public class PartnerController {
         }
 
         // 2. Login
-        PostLoginRes postLoginRes = partnerService.login(parameters);
+        PostLoginRes postLoginRes = partnerService.login(response,parameters);
         return new BaseResponse<>(SUCCESS, postLoginRes);
     }
     /**
@@ -119,11 +121,11 @@ public class PartnerController {
      */
     @ResponseBody
     @PatchMapping("mypage/edit_password")
-    public BaseResponse<Void> editPW(@RequestBody PatchPWReq patchPWReq) throws BaseException {
+    public BaseResponse<Void> editPW(HttpServletResponse response,@RequestBody PatchPWReq patchPWReq) throws BaseException {
         // 2. Post PartnerInfo
         PostLoginRes postLoginRes;
         PartnerInfo partnerInfo = checkUserService.getPartner();
-        partnerService.updatePW(partnerInfo,patchPWReq);
+        partnerService.updatePW(response,partnerInfo,patchPWReq);
         return new BaseResponse<>(SUCCESS);
     }
     /**
@@ -134,12 +136,12 @@ public class PartnerController {
      */
     @ResponseBody
     @PostMapping("check_password")
-    public BaseResponse<PostLoginRes> confirmPW(@RequestParam("password") String password) throws BaseException {
+    public BaseResponse<PostLoginRes> confirmPW(HttpServletResponse response,@RequestParam("password") String password) throws BaseException {
 
         // 2. Post PartnerInfo
         PostLoginRes postLoginRes;
         String partnerEmail = checkUserService.getEmail();
-        postLoginRes = partnerService.checkPW(partnerEmail,password);
+        postLoginRes = partnerService.checkPW(response,partnerEmail,password);
         return new BaseResponse<>(SUCCESS,postLoginRes);
     }
     

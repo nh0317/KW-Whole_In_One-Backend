@@ -88,4 +88,10 @@
         GROUP BY u.userIdx;
     </select>
 
+    <update id="updateUserPoint">
+            UPDATE Users
+            SET
+                userPoint = userPoint + #{userPoint}
+            WHERE userIdx =#{userIdx}
+        </update>
 </mapper>
