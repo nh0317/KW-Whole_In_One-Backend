@@ -44,6 +44,7 @@ public class PriceServiceImpl implements PriceService{
         return postWeekRes;
     }
     @Override
+    @Transactional
     public PostPriceRes registerPrice(PostPriceReq postPriceReq, Long partnerIdx, Long storePriceIdx) throws BaseException {
         // 사장님의 가게를 찾는다.
         Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
@@ -54,10 +55,15 @@ public class PriceServiceImpl implements PriceService{
                 postPriceReq.getEndDate(), postPriceReq.getHole(), postPriceReq.getIsHoliday());
     }
     @Override
-    public List<GetPriceRes> getPrice(Long partnerIdx, Boolean isHoliday) throws BaseException{
-        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
-        List<GetPriceRes> priceInfos = weekPriceMapper.findWeekPriceByStoreIdx(isHoliday,storeIdx);
-        return priceInfos;
+    public List<GetPriceRes> getPrice(Long storeIdx, Boolean isHoliday) throws BaseException{
+        try {
+//            Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+            List<GetPriceRes> priceInfos = weekPriceMapper.findWeekPriceByStoreIdx(isHoliday, storeIdx);
+            return priceInfos;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override
@@ -78,6 +84,7 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
+    @Transactional
     public void deletePrice(Long partnerIdx, Long storePriceIdx) throws BaseException {
         Long storeIdx=partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         Long priceSchemeIdx = weekPriceMapper.findPriceSchemeByStoreIdx(storeIdx, storePriceIdx)
@@ -118,10 +125,9 @@ public class PriceServiceImpl implements PriceService{
                                 getCurPriceReq.getTime(), false)
                         .orElseGet(() -> 0);
             }
-            log.info("현재 가격 : {} ", price);
-            Integer hour = Integer.parseInt(getCurPriceReq.getTime().split(":")[0])
-                    + (Integer.parseInt(getCurPriceReq.getTime().split(":")[1])/60);
-            return price * getCurPriceReq.getCount() * hour;
+            double hour = getCurPriceReq.getPeriod().doubleValue() / 60;
+            log.info("현재 가격 : {} * {}", price,hour);
+            return Double.valueOf((price * getCurPriceReq.getCount() * hour)).intValue();
         });
         return currentPrice;
     }
@@ -132,7 +138,9 @@ public class PriceServiceImpl implements PriceService{
         weekPriceMapper.saveHolidayWeek(holidayWeekInfo);
     }
     //가격 등록
-    private Long setPrice(PostPriceReq postPriceReq, Long storeIdx, Long partnerIdx,Long storePriceIdx) throws BaseException {
+    @Transactional
+    @Override
+    public Long setPrice(PostPriceReq postPriceReq, Long storeIdx, Long partnerIdx, Long storePriceIdx) throws BaseException {
         PriceSchemeInfo priceSchemeInfo = new PriceSchemeInfo(storeIdx, postPriceReq.getName(), partnerIdx);
         if (storePriceIdx == null) {
             // 가격을 새로 등록하는 경우

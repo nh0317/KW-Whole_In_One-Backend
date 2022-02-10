@@ -23,9 +23,28 @@
         Order by isMain desc
     </select>
 
+    <select id="findMainUserPayment" resultType="GetUserPayments">
+        SELECT userPaymentIdx,cardNumber, cardCode,
+               (case
+                    when cardType=0 then "신용카드"
+                    when cardType=1 then "체크카드"
+                   end) as cardType, isMain
+        FROM UserPayment
+        WHERE userIdx = #{userIdx} and isMain=1
+    </select>
+
     <update id="updateMain" >
         UPDATE UserPayment
             SET isMain=#{isMain}
         WHERE userPaymentIdx = #{userPaymentIdx}
     </update>
+    <delete id="deleteUserPayment">
+        DELETE FROM UserPayment
+        WHERE userPaymentIdx=#{userPaymentIdx}
+    </delete>
+    <select id="findMainCard" resultType="Long">
+        SELECT userPaymentIdx
+        FROM userPaymentIdx
+        WHERE userIdx = #{userIdx}
+    </select>
 </mapper>

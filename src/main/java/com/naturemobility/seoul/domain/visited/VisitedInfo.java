@@ -2,7 +2,6 @@ package com.naturemobility.seoul.domain.visited;
 
 import com.naturemobility.seoul.domain.DTOCommon;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 

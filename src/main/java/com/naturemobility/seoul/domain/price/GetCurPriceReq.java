@@ -11,5 +11,5 @@ public class GetCurPriceReq {
     private String time;
     private Integer hole;
     private Integer count;
-    private String period;
+    private Integer period;
 }

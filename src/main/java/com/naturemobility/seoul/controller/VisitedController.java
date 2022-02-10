@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
@@ -33,5 +34,12 @@ public class VisitedController {
         userIdx = checkUserService.getUserIdx();
         List<GetVisitedByUserIdx> allVistiedStore = visitedService.findAllVisitedStore(userIdx, page);
         return new BaseResponse<>(SUCCESS, allVistiedStore);
+    }
+
+    @GetMapping("total_page")
+    public BaseResponse<Map<String,Integer>> getTotalPage() throws BaseException {
+        Long userIdx = checkUserService.getUserIdx();
+        Map<String, Integer> result = visitedService.getTotalPage(userIdx);
+        return new BaseResponse<>(SUCCESS, result);
     }
 }

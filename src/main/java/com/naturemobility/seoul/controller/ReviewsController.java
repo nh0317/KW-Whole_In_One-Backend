@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 import static com.naturemobility.seoul.config.BaseResponseStatus.SUCCESS;
 
 @RestController
@@ -33,8 +35,13 @@ public class ReviewsController {
     @PatchMapping("/{reservationIdx}")
     public BaseResponse<PatchReviewsRes> saveScore(@PathVariable("reservationIdx")Long reservationIdx, @RequestBody PatchReviewsReq patchRezReq) throws BaseException{
         Long userIdx = checkUserService.getUserIdx();
-        Long storeIdx = reservationsService.getStoreIdx(reservationIdx);
-        PatchReviewsRes patchRezRes = reviewsService.saveScore(reservationIdx, storeIdx, userIdx, patchRezReq.getScore());
+        PatchReviewsRes patchRezRes = reviewsService.saveScore(reservationIdx, userIdx, patchRezReq.getScore());
         return new BaseResponse<>(SUCCESS, patchRezRes);
+    }
+
+    @GetMapping("/{reservationIdx}")
+    public BaseResponse<Map<String, Float>> saveScore(@PathVariable("reservationIdx")Long reservationIdx) throws BaseException{
+        Map<String, Float> result = reviewsService.getScore(reservationIdx);
+        return new BaseResponse<>(SUCCESS, result);
     }
 }

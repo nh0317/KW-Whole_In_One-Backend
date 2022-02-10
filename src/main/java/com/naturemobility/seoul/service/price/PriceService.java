@@ -2,6 +2,7 @@ package com.naturemobility.seoul.service.price;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.domain.price.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,4 +17,8 @@ public interface PriceService {
 
     void deletePrice(Long partnerIdx, Long storePriceIdx) throws BaseException;
     Integer getCurrentPrice(GetCurPriceReq getCurPriceReq, Long storeIdx) throws BaseException;
+
+    //가격 등록
+    @Transactional
+    Long setPrice(PostPriceReq postPriceReq, Long storeIdx, Long partnerIdx, Long storePriceIdx) throws BaseException;
 }

@@ -4,6 +4,7 @@
 
     <select id="findAllByUserIdx" parameterType="ReservationInfo" resultType="ReservationInfo">
         select r.reservationIdx,
+               r.storeIdx,
                s.storeName,
                r.reservationTime,
                r.useTime,
