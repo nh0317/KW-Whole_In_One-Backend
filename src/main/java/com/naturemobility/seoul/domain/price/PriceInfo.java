@@ -3,6 +3,7 @@ package com.naturemobility.seoul.domain.price;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,10 +19,10 @@ public abstract class PriceInfo {
     private Integer price;
 
     // 시작 시간
-    private Timestamp startTime;
+    private Time startTime;
 
     // 종료 시간
-    private Timestamp endTime;
+    private Time endTime;
 
     private Integer hole;
 
@@ -36,8 +37,8 @@ public abstract class PriceInfo {
     public PriceInfo(Long priceSchemeIdx, Integer price, LocalTime startTime, LocalTime endTime, Integer hole, Boolean isHoliday) {
         this.priceSchemeIdx = priceSchemeIdx;
         this.price = price;
-        this.startTime = Timestamp.valueOf(LocalDateTime.of(LocalDate.now(),startTime));
-        this.endTime = Timestamp.valueOf(LocalDateTime.of(LocalDate.now(),endTime));
+        this.startTime = Time.valueOf(startTime);
+        this.endTime = Time.valueOf(endTime);
         this.hole = hole;
         this.isHoliday = isHoliday;
     }

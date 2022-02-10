@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
@@ -27,19 +25,13 @@ public class ReservationsServiceImpl implements ReservationsService {
     @Autowired
     ReservationMapper reservationMapper;
 
-    private static final int PAYMENT_TIME=1;
-    private static final int RESERVATION_TIME=2;
-    private static final int RESERVATION_DETAIL=3;
-
     @Override
     public GetRezRes findByRezIdx(Long reservationIdx) throws BaseException {
-        ReservationInfo reservation;
-        reservation = reservationMapper.findByRezIdx(reservationIdx).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
-        String reservationTime = changeDateFormat(reservation.getReservationTime(),RESERVATION_TIME);
-        String paymentTime = changeDateFormat(reservation.getPaymentTime(), PAYMENT_TIME);
+        ReservationInfo reservation = reservationMapper.findByRezIdx(reservationIdx)
+                .orElseThrow(()->new BaseException(NOT_FOUND_DATA));
 
         GetRezRes result = new GetRezRes(reservation.getReservationIdx(), reservation.getStoreName(),
-                reservationTime, paymentTime, reservation.getUseTime(),
+                reservation.getReservationTime(), reservation.getPaymentTime(), reservation.getUseTime(),
                 reservation.getSelectedHall(), reservation.getPersonCount(), reservation.getAlreadyUsed(),
                 reservation.getReservePrice(), reservation.getDiscountPrice(), reservation.getPayPrice());
         return result;
@@ -57,14 +49,21 @@ public class ReservationsServiceImpl implements ReservationsService {
             PageInfo pageInfo = new PageInfo(reservationInfo);
             pageInfo.SetTotalData(total);
             reservationInfo.setPageInfo(pageInfo);
+
+            if (page > reservationInfo.getPageInfo().getTotalPage()){
+                return new ArrayList<>();
+            }
+
             reservationList = reservationMapper.findAllByUserIdx(reservationInfo);
 
             return reservationList.stream().map( (r)->
-                    new GetRezResByUserIdx(r.getReservationIdx(),r.getStoreName(),
-                            changeDateFormat(r.getReservationTime(),RESERVATION_DETAIL),
-                            r.getUseTime(), r.getSelectedHall(), r.getPersonCount(), r.getAlreadyUsed())
+                    new GetRezResByUserIdx(r.getReservationIdx(),r.getStoreIdx(),r.getStoreName(),
+                            r.getReservationTime(), r.getUseTime(), r.getSelectedHall(),
+                            r.getPersonCount(), r.getAlreadyUsed())
             ).collect(Collectors.toList());
-        }else throw new BaseException(NOT_FOUND_DATA);
+        }else if(page > total)
+            return new ArrayList<>();
+        else return new ArrayList<>();
     }
 
     @Override
@@ -91,26 +90,21 @@ public class ReservationsServiceImpl implements ReservationsService {
         return getRezTime;
     }
 
-    public String changeDateFormat(Date date, int type) {
-        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        Date date = transFormat.parse(dateStr);
-        String result="";
-        switch (type) {
-            case PAYMENT_TIME:
-                transFormat = new SimpleDateFormat("yyyy.MM.dd");
-                result = transFormat.format(date);
-                return result;
-            case RESERVATION_TIME:
-                transFormat = new SimpleDateFormat("yyyy.MM.dd aa hh:mm");
-                result = transFormat.format(date);
-                return result;
-            case RESERVATION_DETAIL:
-                transFormat = new SimpleDateFormat("yyyy년 MM월 dd일 aa hh:mm");
-                result = transFormat.format(date);
-                return result;
-            default:
-                break;
+    @Override
+    public Map<String,Integer> getTotalPage(Long userIdx){
+        List<ReservationInfo> reservationList = new ArrayList<>();
+        ReservationInfo reservationInfo = new ReservationInfo(userIdx);
+        Integer total = reservationMapper.cntTotal(userIdx);
+        Map<String, Integer> result = new HashMap<>();
+        if(total != null && total >0) {
+            PageInfo pageInfo = new PageInfo(reservationInfo);
+            pageInfo.SetTotalData(total);
+            reservationInfo.setPageInfo(pageInfo);
+
+            result.put("totalPage", reservationInfo.getPageInfo().getTotalPage());
+            return result;
         }
+        result.put("totalPage", 0);
         return result;
     }
 }

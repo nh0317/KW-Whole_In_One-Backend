@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.REQUEST_ERROR;
 import static com.naturemobility.seoul.config.BaseResponseStatus.SUCCESS;
@@ -85,5 +86,12 @@ public class ReservationController {
                                                              @RequestParam("hallNumber") Long hallNumber) throws BaseException{
         List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,hallNumber);
         return new BaseResponse<>(SUCCESS,getRezTime);
+    }
+
+    @GetMapping("total_page")
+    public BaseResponse<Map<String,Integer>> getTotalPage() throws BaseException {
+        Long userIdx = checkUserService.getUserIdx();
+        Map<String, Integer> result = reservationsService.getTotalPage(userIdx);
+        return new BaseResponse<>(SUCCESS, result);
     }
 }

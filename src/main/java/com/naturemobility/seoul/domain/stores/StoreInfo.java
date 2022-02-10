@@ -4,8 +4,6 @@ import com.naturemobility.seoul.domain.DTOCommon;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
 @Getter
 @Setter
 // 골프장 정보

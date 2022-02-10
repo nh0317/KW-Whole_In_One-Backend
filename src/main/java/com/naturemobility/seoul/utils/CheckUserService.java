@@ -1,11 +1,8 @@
 package com.naturemobility.seoul.utils;
 
 import com.naturemobility.seoul.config.BaseException;
-import com.naturemobility.seoul.domain.CustomUserDetails;
 import com.naturemobility.seoul.domain.partners.PartnerInfo;
 import com.naturemobility.seoul.domain.users.UserInfo;
-import com.naturemobility.seoul.mapper.PartnerMapper;
-import com.naturemobility.seoul.mapper.UsersMapper;
 import com.naturemobility.seoul.service.partner.PartnerService;
 import com.naturemobility.seoul.service.users.UsersService;
 import lombok.extern.slf4j.Slf4j;

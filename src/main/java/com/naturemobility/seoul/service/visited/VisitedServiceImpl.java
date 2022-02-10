@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
@@ -60,8 +62,32 @@ public class VisitedServiceImpl implements VisitedService {
             PageInfo pageInfo = new PageInfo(visitedInfo);
             pageInfo.SetTotalData(totalVisited);
             visitedInfo.setPageInfo(pageInfo);
+
+            if (page > visitedInfo.getPageInfo().getTotalPage()){
+                return new ArrayList<>();
+            }
             visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
-        } else throw new BaseException(NOT_FOUND_DATA);
+        }else if(page > totalVisited)
+            return new ArrayList<>();
+        else return new ArrayList<>();
         return visiteds;
+    }
+
+    @Override
+    public Map<String,Integer> getTotalPage(Long userIdx){
+        VisitedInfo visitedInfo = new VisitedInfo(userIdx);
+        List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
+        Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
+        Map<String, Integer> result = new HashMap<>();
+        if(totalVisited != null && totalVisited >0) {
+            PageInfo pageInfo = new PageInfo(visitedInfo);
+            pageInfo.SetTotalData(totalVisited);
+            visitedInfo.setPageInfo(pageInfo);
+
+            result.put("totalPage", visitedInfo.getPageInfo().getTotalPage());
+            return result;
+        }
+        result.put("totalPage", 0);
+        return result;
     }
 }

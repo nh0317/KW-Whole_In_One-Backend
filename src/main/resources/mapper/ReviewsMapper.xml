@@ -7,4 +7,9 @@
         ON DUPLICATE KEY UPDATE
             reviewScore =#{reviewScore}
     </insert>
+    <select id="getScore" resultType="Float">
+        SELECT reviewScore
+        FROM Reviews
+        WHERE reservationIdx = #{reservationIdx}
+    </select>
 </mapper>

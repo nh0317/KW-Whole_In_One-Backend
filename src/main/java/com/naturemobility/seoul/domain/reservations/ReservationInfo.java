@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Setter
@@ -23,10 +25,10 @@ public class ReservationInfo extends DTOCommon {
     private Long userIdx;
 
     // 예약 시간
-    private Date reservationTime;
+    private LocalDateTime reservationTime;
 
     // 결제 시간
-    private Date paymentTime;
+    private LocalDateTime paymentTime;
 
     // 이용시간
     private Integer useTime;
@@ -58,7 +60,7 @@ public class ReservationInfo extends DTOCommon {
     private Long modiBy;
 
     //store join 시
-    private String StoreName;
+    private String storeName;
 
     public ReservationInfo(Long userIdx) {
         this.userIdx = userIdx;
