@@ -52,25 +52,30 @@ public class VisitedServiceImpl implements VisitedService {
      */
     @Override
     public List<GetVisitedByUserIdx> findAllVisitedStore(Long userIdx, Integer page) throws BaseException {
-        VisitedInfo visitedInfo = new VisitedInfo(userIdx);
-        List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
-        Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
-        if(totalVisited != null && totalVisited >0) {
-            if(page!=null && page > 1){
-                visitedInfo.setPage(page);
-            }
-            PageInfo pageInfo = new PageInfo(visitedInfo);
-            pageInfo.SetTotalData(totalVisited);
-            visitedInfo.setPageInfo(pageInfo);
+        try {
+            VisitedInfo visitedInfo = new VisitedInfo(userIdx);
+            List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
+            Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
+            if (totalVisited != null && totalVisited > 0) {
+                if (page != null && page > 1) {
+                    visitedInfo.setPage(page);
+                }
+                PageInfo pageInfo = new PageInfo(visitedInfo);
+                pageInfo.SetTotalData(totalVisited);
+                visitedInfo.setPageInfo(pageInfo);
 
-            if (page > visitedInfo.getPageInfo().getTotalPage()){
+                if (page != null && page > visitedInfo.getPageInfo().getTotalPage()) {
+                    return new ArrayList<>();
+                }
+                visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
+            } else if (page > totalVisited)
                 return new ArrayList<>();
-            }
-            visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
-        }else if(page > totalVisited)
-            return new ArrayList<>();
-        else return new ArrayList<>();
-        return visiteds;
+            else return new ArrayList<>();
+            return visiteds;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

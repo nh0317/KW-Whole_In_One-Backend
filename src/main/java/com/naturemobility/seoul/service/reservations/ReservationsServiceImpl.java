@@ -51,7 +51,7 @@ public class ReservationsServiceImpl implements ReservationsService {
             pageInfo.SetTotalData(total);
             reservationInfo.setPageInfo(pageInfo);
 
-            if (page > reservationInfo.getPageInfo().getTotalPage()){
+            if (page != null && page > reservationInfo.getPageInfo().getTotalPage()){
                 return new ArrayList<>();
             }
 
