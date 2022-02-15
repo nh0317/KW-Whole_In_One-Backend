@@ -40,5 +40,4 @@ public class FileUploadService {
             throw new IllegalArgumentException(String.format("잘못된 형식의 파일 (%s) 입니다", fileName));
         }
     }
-
 }
