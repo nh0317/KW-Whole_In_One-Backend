@@ -1,4 +1,4 @@
-package com.naturemobility.seoul.config;
+package com.naturemobility.seoul.external;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;

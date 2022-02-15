@@ -1,4 +1,4 @@
-package com.naturemobility.seoul.external;
+package com.naturemobility.seoul.external.component;
 
 import lombok.Getter;
 import lombok.Setter;

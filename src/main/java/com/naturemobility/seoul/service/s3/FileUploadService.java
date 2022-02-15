@@ -1,7 +1,7 @@
-package com.naturemobility.seoul.service;
+package com.naturemobility.seoul.service.s3;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.naturemobility.seoul.config.UploadService;
+import com.naturemobility.seoul.external.UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
