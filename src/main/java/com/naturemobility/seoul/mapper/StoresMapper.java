@@ -31,4 +31,7 @@ public interface StoresMapper {
     List<GetBrandRes> retrieveBrandInfo();
 
     Optional<String> findStoreName(@Param("storeIdx") Long storeIdx);
+
+    Long retrievePartnerIdx(@Param("storeIdx") Long storeIdx);
+    List<GetRoomIdxRes> retrieveRoomIdx(Long partnerIdx);
 }

@@ -9,19 +9,19 @@
     </select>
 
     <select id="getTodayRes" resultType="GetTodayRes">
-        SELECT COUNT(reservationIdx) AS reservationCount,
-               SUM(payPrice)         AS todaySales
+        SELECT COUNT(reservationIdx)    AS reservationCount,
+               IFNULL(0, SUM(payPrice)) AS todaySales
         FROM Reservations
         WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
           AND storeIdx = #{storeIdx};
     </select>
 
     <select id="getMonthRes" resultType="GetMonthRes">
-        SELECT COUNT(reservationIdx) AS monthReservatioCount,
-               SUM(payPrice)         AS monthSales
+        SELECT COUNT(reservationIdx)    AS monthReservatioCount,
+               IFNULL(0, SUM(payPrice)) AS monthSales
         FROM Reservations
         WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
-          AND #{storeIdx};
+          AND storeIdx = #{storeIdx};
     </select>
 
     <select id="getTodayRezList" resultType="GetRezListRes">

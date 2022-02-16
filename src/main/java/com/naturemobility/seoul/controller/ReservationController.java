@@ -60,6 +60,7 @@ public class ReservationController {
      *     "useTime":30,
      *     "endTime":"2022-01-12 14:30"
      *     "numberOfGame":4,
+     *     "roomIdx":3
      *     "selectedHall":2,
      *     "request":"hello",
      *     "personCount":4,
@@ -83,8 +84,8 @@ public class ReservationController {
     @ResponseBody
     @GetMapping("/reserved-time")
     public BaseResponse<List<GetRezTime>> getReservationTime(@RequestParam("storeIdx") Long storeIdx,@RequestParam("reservationDay") String reservationDay,
-                                                             @RequestParam("hallNumber") Long hallNumber) throws BaseException{
-        List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,hallNumber);
+                                                             @RequestParam("roomIdx") Long roomIdx) throws BaseException{
+        List<GetRezTime> getRezTime = reservationsService.getReservationTime(storeIdx,reservationDay,roomIdx);
         return new BaseResponse<>(SUCCESS,getRezTime);
     }
 

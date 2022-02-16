@@ -38,3 +38,4 @@ out/
 src/main/resources/properties/config.yaml
 src/main/java/com/naturemobility/seoul/config/secret/*
 src/main/resources/static/*
+src/main/resources/keystore.jks

@@ -83,5 +83,15 @@ public class StoreServiceImpl implements StoreService {
         brandInfoList = storesMapper.retrieveBrandInfo();
         return brandInfoList;
     }
+
+    @Override
+    public List<GetRoomIdxRes> retrieveRoomIdx(Long storeIdx) throws BaseException {
+
+        Long partnerIdx = 0L;
+        List<GetRoomIdxRes> roomIdxRes;
+        partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
+        roomIdxRes = storesMapper.retrieveRoomIdx(partnerIdx);
+        return roomIdxRes;
+    }
 }
 

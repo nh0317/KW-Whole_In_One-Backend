@@ -10,7 +10,7 @@ public interface DashBoardService {
     public List<GetCalendarRes> getCalendarList(Long partnerIdx) throws BaseException;
     public List<GetRezListRes> getSpecificRezList(Long partnerIdx,String reservationDay) throws BaseException;
     public List<GetMemoRes> getMemoList(Long partnerIdx) throws BaseException;
-    public void postMemo(String content,Long partnerIdx) throws BaseException;
+    public void postMemo(PostMemo memo,Long partnerIdx) throws BaseException;
     public void deleteMemo(Long memoIdx,Long partnerIdx) throws BaseException;
 
 }

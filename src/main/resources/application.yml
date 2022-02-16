@@ -43,7 +43,6 @@ spring:
 #    config:
 #      import: optional:configserver:http://localhost:8082
 
-
 # mybatis
 mybatis:
   configuration:
@@ -62,4 +61,3 @@ logging:
 #  documentation:
 #    swagger:
 #      use-model-v3 : false
-

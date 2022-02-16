@@ -77,6 +77,13 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.4.0'
 
+	//aws s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	//temp
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+
 	//Swagger
 //	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }
