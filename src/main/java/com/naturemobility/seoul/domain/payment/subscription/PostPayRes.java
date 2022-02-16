@@ -1,4 +1,4 @@
-package com.naturemobility.seoul.domain.userPayment;
+package com.naturemobility.seoul.domain.payment.subscription;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

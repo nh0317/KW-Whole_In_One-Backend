@@ -10,4 +10,5 @@ public class PostUserReq {
     private String confirmPassword;
     private String nickname;
     private String name;
+    private String tel;
 }

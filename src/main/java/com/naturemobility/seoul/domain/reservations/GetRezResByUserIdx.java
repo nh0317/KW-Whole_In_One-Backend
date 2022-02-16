@@ -30,13 +30,8 @@ public class GetRezResByUserIdx {
         this.selectHall = selectHall;
         this.personCount = personCount;
         this.alreadyUsed = alreadyUsed;
-        try{
-            DateTimeFormatter format;
-            format =  DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm");
-            this.reservationTime = reservationTime.format(format);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }
+        DateTimeFormatter format;
+        format =  DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm");
+        this.reservationTime = reservationTime.format(format);
     }
 }

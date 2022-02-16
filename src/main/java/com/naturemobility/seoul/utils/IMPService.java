@@ -40,7 +40,7 @@ public class IMPService {
         Map<String, Object> data = new HashMap<>();
         data.put("imp_key", secretPropertyConfig.getImpKey());
         data.put("imp_secret", secretPropertyConfig.getImpSecret());
-        log.info("imp_key: "+secretPropertyConfig.getImpKey()+"imp_secret: "+secretPropertyConfig.getImpSecret());
+        log.info("imp_key: "+secretPropertyConfig.getImpKey()+" imp_secret: "+secretPropertyConfig.getImpSecret());
         Map<String, Object> result = getResponse(null, HttpMethod.POST, data,url);
         return ((Map) result.get("response")).get("access_token").toString();
     }

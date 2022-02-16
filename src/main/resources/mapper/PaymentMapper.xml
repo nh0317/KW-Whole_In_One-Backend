@@ -2,11 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.naturemobility.seoul.mapper.PaymentMapper">
     <insert id="savePayment" parameterType="PaymentInfo">
-        INSERT INTO Payment(merchantUid, userIdx, storeIdx,amount,name,isRefund,modiBy,modiRole)
-        VALUES(#{merchantUid},#{userIdx},#{storeIdx},#{amount},#{name},#{isRefund},#{modiBy},#{modiRole})
+        INSERT INTO Payment(reservationIdx,merchantUid, userIdx, storeIdx, payMethod, userPaymentIdx, impUid ,amount,name,point,refundStatus,modiBy,modiRole)
+        VALUES(#{reservationIdx},#{merchantUid},#{userIdx},#{storeIdx},#{payMethod},#{userPaymentIdx},#{impUid},#{amount},#{name},#{point},#{refundStatus},#{modiBy},#{modiRole})
         ON DUPLICATE KEY UPDATE
-        isRefund=#{isRefund},
-        modiBy=#{modiBy},
-        modiRole=#{modiRole}
+            refundStatus=#{refundStatus},
+            modiBy=#{modiBy},
+             modiRole=#{modiRole}
     </insert>
+    <select id="findPayment" resultType="PaymentInfo">
+        SELECT *
+        FROM Payment
+        WHERE merchantUid = #{merchantUid}
+    </select>
+    <update id="updateRefundInfo">
+        UPDATE Payment
+        SET
+            refundReason=#{refundReason},
+            refundHolder=#{refundHolder},
+            refundBank=#{refundBank},
+            refundAccount=#{refundAccount},
+            refundStatus=#{refundStatus},
+            modiBy=#{modiBy},
+            modiRole=#{modiRole}
+        WHERE merchantUid=#{merchantUid}
+    </update>
+    <update id="updateRefundApproveInfo">
+        UPDATE Payment
+        SET
+            cancelAmount=#{cancelAmount},
+            refundStatus=#{refundStatus},
+            modiBy=#{modiBy},
+            modiRole=#{modiRole}
+        WHERE merchantUid=#{merchantUid}
+    </update>
+    <select id="findMerchantUidByRefundStatus" resultType="String">
+        SELECT merchantUid
+        FROM Payment
+        WHERE reservationIdx=#{reservationIdx} and refundStatus=#{refundStatus}
+    </select>
 </mapper>

@@ -38,11 +38,15 @@ public class GetRezRes {
         this.reservePrice = reservePrice;
         this.discountPrice = discountPrice;
         this.payPrice = payPrice;
-
-        DateTimeFormatter format;
-        format =  DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm");
-        this.reservationTIme = reservationTIme.format(format);
-        format =  DateTimeFormatter.ofPattern("yyyy.MM.dd");
-        this.paymentTime = paymentTime.format(format);
+        try{
+            DateTimeFormatter format;
+            format = DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm");
+            this.reservationTIme = reservationTIme.format(format);
+            format = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+            this.paymentTime = paymentTime.format(format);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
