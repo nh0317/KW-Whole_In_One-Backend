@@ -69,18 +69,23 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public PostClientPayRes savePayment(PostPayRes getPaymentData, PostPayReq postPayReq,
                                         Long userIdx, String name) throws BaseException {
-        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        int earnPoint = Double.valueOf(postPayReq.getAmount() * 0.03).intValue();
-        int point = earnPoint - postPayReq.getPoint();
-        if (userInfo.getUserPoint()-point<0)
-            point = userInfo.getUserPoint();
+        try{
+            UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+            int earnPoint = Double.valueOf(postPayReq.getAmount() * 0.03).intValue();
+            int point = earnPoint - postPayReq.getPoint();
+            if (userInfo.getUserPoint() - point < 0)
+                point = userInfo.getUserPoint();
 
-        paymentMapper.savePayment(new PaymentInfo(getPaymentData.getMerchant_uid(), postPayReq.getReservationIdx(),
-                postPayReq.getUserPaymentIdx(),getPaymentData.getImp_uid(), postPayReq.getPayMethod(), userIdx,
-                postPayReq.getStoreIdx(), postPayReq.getAmount(), name, point, userIdx, "ROLE_MEMBER"));
-        usersMapper.updateUserPoint(userIdx, point);
-        return new PostClientPayRes(getPaymentData.getMerchant_uid(), postPayReq.getAmount(),
-                earnPoint, userInfo.getUserPoint());
+            paymentMapper.savePayment(new PaymentInfo(getPaymentData.getMerchant_uid(), postPayReq.getReservationIdx(),
+                    postPayReq.getUserPaymentIdx(), getPaymentData.getImp_uid(), postPayReq.getPayMethod(), userIdx,
+                    postPayReq.getStoreIdx(), postPayReq.getAmount(), name, point, userIdx, "ROLE_MEMBER"));
+            usersMapper.updateUserPoint(userIdx, point);
+            return new PostClientPayRes(getPaymentData.getMerchant_uid(), postPayReq.getAmount(),
+                    earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public String validatePayment(PostPayRes getPaymentData, PostPayReq postPayReq) throws BaseException {
