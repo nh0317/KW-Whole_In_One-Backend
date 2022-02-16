@@ -50,8 +50,8 @@ public class PaymentServiceImpl implements PaymentService {
         String name = storeName + "_골프예약_" + LocalDateTime.now();
         PostPayRes postPayRes = new PostPayRes(postGeneralPayReq.getImpUid(), postGeneralPayReq.getMerchantUid());
         PostPayReq postPayReq = new PostPayReq(postGeneralPayReq.getReservationIdx(),
-                postGeneralPayReq.getStoreIdx(), null, postGeneralPayReq.getPayMethod(),
-                postGeneralPayReq.getAmount(), postGeneralPayReq.getPoint());
+                postGeneralPayReq.getStoreIdx(), postGeneralPayReq.getCouponIdx(), null,
+                postGeneralPayReq.getPayMethod(), postGeneralPayReq.getAmount(), postGeneralPayReq.getPoint());
         return validateAndSave(userIdx, name, postPayRes, postPayReq);
     }
 
@@ -77,8 +77,9 @@ public class PaymentServiceImpl implements PaymentService {
                 point = userInfo.getUserPoint();
 
             paymentMapper.savePayment(new PaymentInfo(getPaymentData.getMerchant_uid(), postPayReq.getReservationIdx(),
-                    postPayReq.getUserPaymentIdx(), getPaymentData.getImp_uid(), postPayReq.getPayMethod(), userIdx,
-                    postPayReq.getStoreIdx(), postPayReq.getAmount(), name, point, userIdx, "ROLE_MEMBER"));
+                    postPayReq.getUserPaymentIdx(), postPayReq.getCouponIdx(), getPaymentData.getImp_uid(),
+                    postPayReq.getPayMethod(), userIdx, postPayReq.getStoreIdx(), postPayReq.getAmount(), name,
+                    point, userIdx, "ROLE_MEMBER"));
             usersMapper.updateUserPoint(userIdx, point);
             return new PostClientPayRes(getPaymentData.getMerchant_uid(), postPayReq.getAmount(),
                     earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());

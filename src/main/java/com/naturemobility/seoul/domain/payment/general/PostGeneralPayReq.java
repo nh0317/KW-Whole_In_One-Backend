@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 public class PostGeneralPayReq {
     private Long reservationIdx;
     private Long storeIdx;
+    private Long couponIdx;
     private String impUid;
     private String merchantUid;
     private String payMethod;

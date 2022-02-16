@@ -18,6 +18,8 @@ public class PaymentInfo extends DTOCommon {
 
     private Long userPaymentIdx;
 
+    private Long couponIdx;
+
     private String impUid;
 
     private String payMethod;
@@ -45,10 +47,13 @@ public class PaymentInfo extends DTOCommon {
     //수정한 사람의 권한 (MEMBER/ADMIN)
     private String modiRole;
 
-    public PaymentInfo(String merchantUid, Long reservationIdx, Long userPaymentIdx, String impUid, String payMethod, Long userIdx, Long storeIdx, int amount, String name, Integer point, Long modiBy, String modiRole) {
+    public PaymentInfo(String merchantUid, Long reservationIdx, Long userPaymentIdx, Long couponIdx, String impUid,
+                       String payMethod, Long userIdx, Long storeIdx, int amount, String name, Integer point,
+                       Long modiBy, String modiRole) {
         this.merchantUid = merchantUid;
         this.reservationIdx = reservationIdx;
         this.userPaymentIdx = userPaymentIdx;
+        this.couponIdx = couponIdx;
         this.impUid = impUid;
         this.payMethod = payMethod;
         this.userIdx = userIdx;
