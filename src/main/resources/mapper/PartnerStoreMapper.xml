@@ -68,4 +68,10 @@
         FROM Stores s LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
         WHERE storeIdx=#{storeIdx}
     </select>
+
+    <insert id="postCouponInfo" parameterType="PostCouponInfo">
+        INSERT INTO Coupons (storeIdx, couponName, couponPercentage, couponDeadline)
+        VALUES (#{storeIdx}, #{couponName}, #{couponPercentage}, #{couponDeadline})
+    </insert>
+
 </mapper>

@@ -2,15 +2,17 @@ package com.naturemobility.seoul.controller;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
+import com.naturemobility.seoul.domain.coupons.PostCouponReq;
 import com.naturemobility.seoul.domain.stores.PostStoreReq;
 import com.naturemobility.seoul.domain.stores.CommonStoreRes;
-import com.naturemobility.seoul.service.s3.FileUploadService;
+
+
 import com.naturemobility.seoul.service.stores.PartnerStoreService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
 import static com.naturemobility.seoul.config.BaseResponseStatus.SUCCESS;
 
 @RestController
@@ -22,8 +24,6 @@ public class PartnerStoresController {
     PartnerStoreService partnerStoreService;
     @Autowired
     CheckUserService checkUserService;
-
-    FileUploadService fileUploadService;
 
     @GetMapping("/myStore")
     public BaseResponse<CommonStoreRes> getStore() throws BaseException{
@@ -41,5 +41,22 @@ public class PartnerStoresController {
         return new BaseResponse<>(SUCCESS, commonStoreRes);
     }
 
+    /**
+     * 쿠폰등록 API
+     * [POST] /partner/coupons
+     * @RequestBody
+     * String couponName
+     * Integer couponPercentage
+     * String couponDeadline
+     * @return BaseResponse
+     */
+
+    @PostMapping("/coupon")
+    public BaseResponse postCouponInfo(@RequestBody PostCouponReq postCouponReq) throws BaseException{
+
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        partnerStoreService.postCoupon(partnerIdx, postCouponReq);
+        return new BaseResponse<>(SUCCESS);
+    }
 }
 

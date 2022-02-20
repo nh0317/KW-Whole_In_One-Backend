@@ -2,6 +2,8 @@ package com.naturemobility.seoul.service.stores;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.domain.brand.BrandInfo;
+import com.naturemobility.seoul.domain.coupons.PostCouponReq;
+import com.naturemobility.seoul.domain.coupons.PostCouponInfo;
 import com.naturemobility.seoul.domain.stores.PostStoreReq;
 import com.naturemobility.seoul.domain.stores.CommonStoreRes;
 import com.naturemobility.seoul.domain.stores.StoreInfo;
@@ -13,16 +15,9 @@ import com.naturemobility.seoul.utils.CheckUserService;
 import com.naturemobility.seoul.utils.GeocoderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.NOT_FOUND_DATA;
@@ -137,5 +132,15 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
                 storeInfo.getGroupSeatStatus(), storeInfo.getFloorScreenStatus(), storeInfo.getStorageStatus(),
                 storeInfo.getLessonStatus(), storeInfo.getReserveStatus(), storeInfo.getCouponStatus());
         return commonStoreRes;
+    }
+
+    @Override
+    public void postCoupon(Long partnerIdx, PostCouponReq postCouponReq) throws BaseException {
+
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA));;
+        PostCouponInfo postcouponInfo = new PostCouponInfo(storeIdx, postCouponReq.getCouponName(),
+                postCouponReq.getCouponPercentage(), postCouponReq.getCouponDeadline());
+        partnerStoreMapper.postCouponInfo(postcouponInfo);
+        return;
     }
 }
