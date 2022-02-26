@@ -50,8 +50,7 @@ public class UsersController {
     @ResponseBody
     @GetMapping("mypage")
     public BaseResponse<GetMyPageRes> getMyPage() throws BaseException {
-        Long userIdx;
-        userIdx = checkUserService.getUserIdx();
+        Long userIdx = checkUserService.getUserIdx();
         GetMyPageRes getMyPageRes = usersService.myPage(userIdx);
         return new BaseResponse<>(SUCCESS, getMyPageRes);
     }
@@ -138,9 +137,7 @@ public class UsersController {
     @PostMapping("check_password")
     public BaseResponse<PostLoginRes> confirmPW(HttpServletResponse response,@RequestParam("password") String password) throws BaseException {
         // 2. Post UserInfo
-        PostLoginRes postLoginRes;
-        String email = checkUserService.getEmail();
-        postLoginRes = usersService.checkPW(response,email,password);
+        PostLoginRes postLoginRes = usersService.checkPW(response,checkUserService.getEmail(),password);
         return new BaseResponse<>(SUCCESS,postLoginRes);
     }
 
@@ -199,5 +196,10 @@ public class UsersController {
             throws BaseException {
         PostLoginRes result = usersService.refreshToken(request, response);
         return new BaseResponse<>(SUCCESS,result);
+    }
+    @PostMapping("/logout")
+    public BaseResponse<Void> logout(HttpServletRequest req, HttpServletResponse res) throws BaseException{
+        usersService.logout(req, res);
+        return new BaseResponse<>(SUCCESS);
     }
 }

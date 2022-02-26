@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
+import static com.naturemobility.seoul.jwt.JwtFilter.AUTHORIZATION_HEADER;
 
 
 @Service
@@ -95,12 +97,8 @@ public class UsersServiceImpl implements UsersService {
         }
 
         // 2. 유저 정보 생성
-        String email = postUserReq.getEmail();
-        String nickname = postUserReq.getNickname();
-        String name = postUserReq.getName();
-        String password = passwordEncoder.encode(postUserReq.getPassword());
-        UserInfo userInfo = new UserInfo(email, password, nickname, name);
-
+        UserInfo userInfo = new UserInfo(postUserReq.getEmail(), passwordEncoder.encode(postUserReq.getPassword()),
+                postUserReq.getNickname(), postUserReq.getName(), postUserReq.getTel());
         // 3. 유저 정보 저장
         usersMapper.save(userInfo);
 
@@ -205,14 +203,11 @@ public class UsersServiceImpl implements UsersService {
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
 
         // 2. UserInfoRes로 변환하여 return
-        Long idx = userInfo.getUserIdx();
-        String email = userInfo.getUserEmail();
-        String nickname = userInfo.getUserNickname();
-        String name = userInfo.getUserName();
         String image = userInfo.getUserImage();
         if (image == null)
-            image = "https://i.ibb.co/f1G246p/default-profile.jpg";
-        return new GetUserRes(idx, email, nickname, name, image);
+            image = "https://whole-in-one.s3.ap-northeast-2.amazonaws.com/558dff33-c1fe-49ab-b2a9-a871287d83a8.jpg";
+        return new GetUserRes(userInfo.getUserIdx(), userInfo.getUserEmail(), userInfo.getUserNickname(),
+                userInfo.getUserImage(), image);
     }
 
     /**
@@ -231,6 +226,19 @@ public class UsersServiceImpl implements UsersService {
 
         // 4. Create JWT
         return createJwt(response,postLoginReq.getId(), postLoginReq.getPassword());
+    }
+
+    @Override
+    public void logout(HttpServletRequest req, HttpServletResponse res) throws BaseException{
+        Cookie refreshToken = cookieUtil.getCookie(req, JwtService.REFRESH_TOKEN);
+        String refreshJwt=null;
+        if(refreshToken!=null){
+            refreshJwt = refreshToken.getValue();
+        }
+        if (refreshJwt!=null && redisService.isExist(refreshJwt)){
+            redisService.deleteValues(refreshJwt);
+            jwtService.expireTokens(res,refreshToken);
+        } else throw new BaseException(INVALID_JWT);
     }
     /**
      * 비밀번호 확인
@@ -322,24 +330,15 @@ public class UsersServiceImpl implements UsersService {
      */
     @Override
     public GetMyPageRes myPage(Long userIdx) throws BaseException {
-        UserInfo user;
         log.info("user {}", userIdx);
-        Integer point=0, cntReservation=0, cntStoreLike=0, cntCoupon=0;
-        String image=null, nickName=null;
-        user = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
-        if (user!=null) {
-            nickName = user.getUserNickname();
-            image = user.getUserImage();
-            point = user.getUserPoint();
-            cntReservation = usersMapper.cntReservation(userIdx).orElseGet(()->0);
-            cntCoupon = usersMapper.cntCoupon(userIdx).orElseGet(()->0);
-            cntStoreLike = usersMapper.cntStoreLike(userIdx).orElseGet(()->0);
-        }
+        UserInfo user = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
+        String image = user.getUserImage();
         if(image == null){
-            image ="https://i.ibb.co/f1G246p/default-profile.jpg";
+            image ="https://whole-in-one.s3.ap-northeast-2.amazonaws.com/558dff33-c1fe-49ab-b2a9-a871287d83a8.jpg";
         }
-        GetMyPageRes getMyPageRes = new GetMyPageRes(image,nickName,cntReservation, cntStoreLike, point,cntCoupon);
-        return getMyPageRes;
+        return new GetMyPageRes(image,user.getUserNickname(),
+                usersMapper.cntReservation(userIdx).orElseGet(()->0), usersMapper.cntStoreLike(userIdx).orElseGet(()->0),
+                user.getUserPoint(),usersMapper.cntCoupon(userIdx).orElseGet(()->0));
     }
 
     private PostLoginRes createJwt(HttpServletResponse res, String email, String pw) throws BaseException {

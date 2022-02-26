@@ -287,6 +287,6 @@ public class PartnerServiceImpl implements PartnerService{
         String jwt = jwtService.createJwt(authentication);
         String refreshJwt = jwtService.createRefreshJwt(authentication);
         jwtService.setTokens(response, authentication, jwt, refreshJwt);
-        return new PostLoginRes(email, jwt, refreshJwt, Long.parseLong(secretPropertyConfig.getRefreshTokenValidityInSeconds()));
+        return new PostLoginRes(email, jwt, refreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
     }
 }

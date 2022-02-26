@@ -1,8 +1,11 @@
 package com.naturemobility.seoul.domain.stores;
 
 import com.naturemobility.seoul.domain.DTOCommon;
+import com.naturemobility.seoul.domain.partnerStore.PostStoreReq;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.function.Supplier;
 
 @Getter
 @Setter
@@ -69,4 +72,36 @@ public class StoreInfo extends DTOCommon {
 
     //brand 조인 시
     private String brandName;
+
+
+    public StoreInfo(PostStoreReq postStoreReq, Double lat, Double longitude) {
+        this.storeName = postStoreReq.getStoreName();
+        this.storeInfo = postStoreReq.getStoreInfo();
+        this.storePhoneNumber = postStoreReq.getStorePhoneNumber();
+        this.storeLocation = postStoreReq.getStoreLocation();
+        this.storeLatitude = lat;
+        this.storeLongitude = longitude;
+        this.storeTime = postStoreReq.getStoreTime();
+        this.batCount = postStoreReq.getBatCount();
+        this.lefthandStatus = postStoreReq.getLefthandStatus();
+        this.parkingStatus = postStoreReq.getParkingStatus();
+        this.groupSeatStatus = postStoreReq.getGroupSeatStatus();
+        this.floorScreenStatus = postStoreReq.getFloorScreenStatus();
+        this.storageStatus = postStoreReq.getStorageStatus();
+        this.lessonStatus = postStoreReq.getLessonStatus();
+        this.reserveStatus = postStoreReq.getReserveStatus();
+        this.couponStatus = postStoreReq.getCouponStatus();
+
+    }
+
+    public StoreInfo() {
+        this.lefthandStatus = false;
+        this.parkingStatus = false;
+        this.groupSeatStatus = false;
+        this.floorScreenStatus = false;
+        this.storageStatus = false;
+        this.lessonStatus = false;
+        this.reserveStatus = false;
+        this.couponStatus = false;
+    }
 }

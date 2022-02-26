@@ -198,4 +198,13 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentInfo.getCancelAmount(),userInfo.getUserPoint(), RefundStatus.COMPLETE.getMsg());
 
     }
+
+    @Override
+    public GetUserInfoInPayment getUserInfo(Long userIdx) throws BaseException{
+        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        GetUserInfoInPayment getUserInfoInPayment = new GetUserInfoInPayment(userInfo.getUserPhoneNumber(), userInfo.getUserName(), userInfo.getUserEmail(), userInfo.getUserPoint());
+        getUserInfoInPayment.setUserCoupon(usersMapper.cntCoupon(userIdx).orElseGet(()->0));
+        getUserInfoInPayment.setUserCoupons(usersMapper.getUserCoupons(userIdx));
+        return getUserInfoInPayment;
+    }
 }

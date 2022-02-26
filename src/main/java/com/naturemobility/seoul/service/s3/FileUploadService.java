@@ -23,6 +23,7 @@ public class FileUploadService {
         objectMetadata.setContentLength(file.getSize());
         try (InputStream inputStream = file.getInputStream()) {
             s3Service.uploadFile(inputStream, objectMetadata, fileName);
+
         } catch (IOException e) {
             throw new IllegalArgumentException(String.format("파일 변환 중 에러가 발생하였습니다 (%s)", file.getOriginalFilename()));
         }

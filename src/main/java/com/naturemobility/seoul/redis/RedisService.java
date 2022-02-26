@@ -28,7 +28,7 @@ public class RedisService {
         return redisTemplate.hasKey(token);
     }
     public void deleteValues(String token){
-        redisTemplate.delete(token.substring(7));
+        redisTemplate.delete(token);
     }
     public void setValueExpire(String token, String email, long duration){
         ValueOperations<String, String> values = redisTemplate.opsForValue();

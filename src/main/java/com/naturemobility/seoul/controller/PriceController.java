@@ -91,7 +91,7 @@ public class PriceController {
      *
      * @return BaseResponse<Integer>
      */
-    @GetMapping("/{storeIdx}/current_price")
+    @PostMapping("/{storeIdx}/current_price")
     public BaseResponse<Integer> getCurrentPrice(@PathVariable("storeIdx") Long storeIdx,
                                                  @RequestBody GetCurPriceReq getCurPriceReq) throws BaseException{
         Integer price = priceService.getCurrentPrice(getCurPriceReq, storeIdx);

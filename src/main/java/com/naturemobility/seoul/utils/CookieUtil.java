@@ -1,9 +1,11 @@
 package com.naturemobility.seoul.utils;
 
+import com.naturemobility.seoul.jwt.JwtService;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class CookieUtil {
@@ -22,5 +24,9 @@ public class CookieUtil {
                 return cookie;
         }
         return null;
+    }
+    public void expireCookie(HttpServletResponse res, String name){
+        Cookie cookie=createCookie(name, null, 0);
+        res.addCookie(cookie);
     }
 }

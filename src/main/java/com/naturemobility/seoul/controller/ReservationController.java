@@ -2,10 +2,7 @@ package com.naturemobility.seoul.controller;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
-import com.naturemobility.seoul.domain.reservations.GetRezRes;
-import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
-import com.naturemobility.seoul.domain.reservations.GetRezTime;
-import com.naturemobility.seoul.domain.reservations.PostRezReq;
+import com.naturemobility.seoul.domain.reservations.*;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import org.apache.ibatis.annotations.Param;
@@ -93,6 +90,12 @@ public class ReservationController {
     public BaseResponse<Map<String,Integer>> getTotalPage() throws BaseException {
         Long userIdx = checkUserService.getUserIdx();
         Map<String, Integer> result = reservationsService.getTotalPage(userIdx);
+        return new BaseResponse<>(SUCCESS, result);
+    }
+
+    @GetMapping("/get_rez_store_info/{storeIdx}")
+    public BaseResponse<GetRezResByStoreIdx> getStoreInfo(@PathVariable("storeIdx")Long storeIdx) throws BaseException{
+        GetRezResByStoreIdx result = reservationsService.getStoreInfo(storeIdx);
         return new BaseResponse<>(SUCCESS, result);
     }
 }

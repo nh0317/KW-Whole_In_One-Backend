@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.controller;
 
+import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
 import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.payment.*;
@@ -12,10 +13,7 @@ import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import com.naturemobility.seoul.service.payment.PaymentService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("pay")
@@ -52,6 +50,13 @@ public class PaymentController {
     BaseResponse<PostApproveRefundRes> approveRefund(@RequestBody PostApproveRefundReq postApproveRefund) throws Exception{
         Long partnerIdx = checkUserService.getPartnerIdx();
         PostApproveRefundRes result = paymentService.approveRefund(postApproveRefund, partnerIdx);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
+    }
+
+    @GetMapping("/get_user_info")
+    BaseResponse<GetUserInfoInPayment> getUserInfo() throws BaseException{
+        Long userIdx = checkUserService.getUserIdx();
+        GetUserInfoInPayment result = paymentService.getUserInfo(userIdx);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
 }

@@ -8,8 +8,10 @@ import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
 import com.naturemobility.seoul.domain.review.PatchReviewsRes;
 import com.naturemobility.seoul.domain.reservations.ReservationInfo;
 import com.naturemobility.seoul.domain.reservations.*;
+import com.naturemobility.seoul.domain.stores.GetStoreRes;
 import com.naturemobility.seoul.domain.stores.GetStoreResByMap;
 import com.naturemobility.seoul.mapper.ReservationMapper;
+import com.naturemobility.seoul.mapper.StoresMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 public class ReservationsServiceImpl implements ReservationsService {
     @Autowired
     ReservationMapper reservationMapper;
+
+    @Autowired
+    StoresMapper storesMapper;
 
     @Override
     public GetRezRes findByRezIdx(Long reservationIdx) throws BaseException {
@@ -120,5 +125,11 @@ public class ReservationsServiceImpl implements ReservationsService {
         }
         result.put("totalPage", 0);
         return result;
+    }
+
+    @Override
+    public GetRezResByStoreIdx getStoreInfo(Long storeIdx){
+        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
+        return new GetRezResByStoreIdx(getStoreRes.getStoreName(), getStoreRes.getStoreLocation());
     }
 }

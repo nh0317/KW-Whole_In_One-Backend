@@ -9,7 +9,6 @@
                             storeLocation,
                             storeLatitude,
                             storeLongitude,
-                            storeImage,
                             storeTime,
                             batCount,
                             lefthandStatus,
@@ -27,7 +26,6 @@
                 #{storeLocation},
                 #{storeLatitude},
                 #{storeLongitude},
-                #{storeImage},
                 #{storeTime},
                 #{batCount},
                 #{lefthandStatus},
@@ -49,7 +47,6 @@
             storeLocation=#{storeLocation},
             storeLatitude=#{storeLatitude},
             storeLongitude=#{storeLongitude},
-            storeImage=#{storeImage},
             storeTime=#{storeTime},
             batCount=#{batCount},
             lefthandStatus=#{lefthandStatus},
@@ -74,4 +71,9 @@
         VALUES (#{storeIdx}, #{couponName}, #{couponPercentage}, #{couponDeadline})
     </insert>
 
+    <update id="updateStoreImage">
+        UPDATE Stores
+        SET storeImage = #{storeImage}
+        WHERE storeIdx = #{storeIdx}
+    </update>
 </mapper>

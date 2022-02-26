@@ -1,9 +1,9 @@
 package com.naturemobility.seoul.mapper;
 
+import com.naturemobility.seoul.domain.userCoupons.GetCouponByUserIdx;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +24,7 @@ public interface UsersMapper {
     Optional<Integer> cntReservation(@Param("userIdx") Long userIdx);
 
     int updateUserPoint(@Param("userIdx")Long userIdx, @Param("userPoint")int point);
+
+    List<GetCouponByUserIdx> getUserCoupons(@Param("userIdx") Long userIdx);
+
 }

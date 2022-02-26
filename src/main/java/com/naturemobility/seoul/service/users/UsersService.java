@@ -17,6 +17,9 @@ public interface UsersService {
     void deleteUserInfo(UserInfo userInfo) throws BaseException;
     GetUserRes findUserInfo(Long userIdx) throws BaseException;
     PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException;
+
+    void logout(HttpServletRequest req, HttpServletResponse res) throws BaseException;
+
     PostLoginRes checkPW(HttpServletResponse response, String userEmail, String pw) throws BaseException;
     UserInfo retrieveUserInfoByUserIdx(Long userIdx) throws BaseException;
     UserInfo retrieveUserInfoByEmail(String email) throws BaseException;
