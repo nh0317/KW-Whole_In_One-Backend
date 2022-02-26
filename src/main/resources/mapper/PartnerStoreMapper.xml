@@ -9,7 +9,6 @@
                             storeLocation,
                             storeLatitude,
                             storeLongitude,
-                            storeImage,
                             storeTime,
                             batCount,
                             lefthandStatus,
@@ -27,7 +26,6 @@
                 #{storeLocation},
                 #{storeLatitude},
                 #{storeLongitude},
-                #{storeImage},
                 #{storeTime},
                 #{batCount},
                 #{lefthandStatus},
@@ -49,7 +47,6 @@
             storeLocation=#{storeLocation},
             storeLatitude=#{storeLatitude},
             storeLongitude=#{storeLongitude},
-            storeImage=#{storeImage},
             storeTime=#{storeTime},
             batCount=#{batCount},
             lefthandStatus=#{lefthandStatus},
@@ -68,4 +65,10 @@
         FROM Stores s LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
         WHERE storeIdx=#{storeIdx}
     </select>
+    
+    <update id="updateStoreImage">
+        UPDATE Stores
+        SET storeImage = #{storeImage}
+        WHERE storeIdx = #{storeIdx}
+    </update>
 </mapper>
