@@ -153,7 +153,10 @@ public class JwtService implements InitializingBean {
 
         redisService.setValues(refreshJwt,authentication.getName());
     }
-
+    public void expireTokens(HttpServletResponse res, Cookie refreshToken){
+        cookieUtil.expireCookie(res,refreshToken.getName());
+        res.setHeader(JwtFilter.AUTHORIZATION_HEADER,null);
+    }
     public Boolean isTokenExist(String token){
         return redisService.isExist(token);
     }

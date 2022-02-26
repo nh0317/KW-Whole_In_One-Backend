@@ -33,18 +33,19 @@ public class UserInfo extends DTOCommon {
     // 유저 이미지 profileImage
     private String userImage;
 
+    private String userPhoneNumber;
+
     //mypage (join)
     private Integer cntReservation; //예약 수
     private Integer cntStoreLike; // 찜한 매장 수
     private Integer cntCoupon; // 쿠폰 수
 
-    private String userTel;
-
-    public UserInfo(String email, String password, String nickname, String userName) {
+    public UserInfo(String email, String password, String nickname, String userName,String userPhoneNumber) {
         this.userEmail = email;
         this.userPassword = password;
         this.userNickname = nickname;
         this.userName = userName;
+        this.userPhoneNumber = userPhoneNumber;
     }
 
     public UserInfo() {}

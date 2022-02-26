@@ -7,8 +7,8 @@
     </sql>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="userIdx" parameterType="UserInfo">
-        INSERT INTO Users(userNickname,userName,userPassword,userEmail,userImage)
-        VALUES( #{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage} )
+        INSERT INTO Users(userNickname,userName,userPassword,userEmail,userImage,userPhoneNumber)
+        VALUES( #{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage},#{userPhoneNumber} )
         ON DUPLICATE KEY UPDATE
             userNickname = #{userNickname},
             userName = #{userName},
@@ -16,7 +16,8 @@
             userStatus = #{userStatus},
             userPoint = #{userPoint},
             userEmail = #{userEmail},
-            userImage = #{userImage}
+            userImage = #{userImage},
+            userPhoneNumber = #{userPhoneNumber}
     </insert>
 
     <update id="update" parameterType="UserInfo">
@@ -94,4 +95,10 @@
                 userPoint = userPoint + #{userPoint}
             WHERE userIdx =#{userIdx}
         </update>
+
+    <select id="getUserCoupons" resultType="GetCouponByUserIdx">
+        SELECT uc.couponName, uc.couponStatus as isUsable
+        FROM Users as u LEFT JOIN UserCoupons as uc ON u.userIdx=uc.userIdx
+        WHERE u.userIdx=#{userIdx} AND uc.couponStatus=0
+    </select>
 </mapper>
