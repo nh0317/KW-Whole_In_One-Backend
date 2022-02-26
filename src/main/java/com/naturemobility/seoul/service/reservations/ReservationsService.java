@@ -15,4 +15,6 @@ public interface ReservationsService {
     public List<GetRezTime> getReservationTime(Long storeIdx,String reservationDay,Long hallNumber) throws BaseException;
 
     Map<String,Integer> getTotalPage(Long userIdx);
+
+    GetRezResByStoreIdx getStoreInfo(Long storeIdx);
 }
