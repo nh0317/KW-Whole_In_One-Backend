@@ -3,6 +3,7 @@ package com.naturemobility.seoul.service.reservations;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
 import com.naturemobility.seoul.domain.paging.PageInfo;
+import com.naturemobility.seoul.domain.payment.RefundStatus;
 import com.naturemobility.seoul.domain.reservations.GetRezRes;
 import com.naturemobility.seoul.domain.reservations.GetRezResByUserIdx;
 import com.naturemobility.seoul.domain.review.PatchReviewsRes;
@@ -36,10 +37,7 @@ public class ReservationsServiceImpl implements ReservationsService {
         ReservationInfo reservation = reservationMapper.findByRezIdx(reservationIdx)
                 .orElseThrow(()->new BaseException(NOT_FOUND_DATA));
 
-        GetRezRes result = new GetRezRes(reservation.getReservationIdx(), reservation.getStoreName(),
-                reservation.getReservationTime(), reservation.getPaymentTime(), reservation.getUseTime(),
-                reservation.getSelectedHall(), reservation.getPersonCount(), reservation.getAlreadyUsed(),
-                reservation.getReservePrice(), reservation.getDiscountPrice(), reservation.getPayPrice());
+        GetRezRes result = new GetRezRes(reservation);
         return result;
     }
 
@@ -65,7 +63,7 @@ public class ReservationsServiceImpl implements ReservationsService {
             return reservationList.stream().map( (r)->
                     new GetRezResByUserIdx(r.getReservationIdx(),r.getStoreIdx(),r.getStoreName(),
                             r.getReservationTime(), r.getUseTime(), r.getSelectedHall(),
-                            r.getPersonCount(), r.getAlreadyUsed())
+                            r.getPersonCount(), r.getAlreadyUsed(), RefundStatus.getMsg(r.getRefundStatus()))
             ).collect(Collectors.toList());
         }else if(page > total)
             return new ArrayList<>();
@@ -81,25 +79,28 @@ public class ReservationsServiceImpl implements ReservationsService {
 
     @Override
     public void postReservation(PostRezReq postRezReq, Long userIdx) throws BaseException {
-        Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
+        try{
+            Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
 
-        String startTime = postRezReq.getReservationTime();
-        String endTime = postRezReq.getEndTime();
-        Integer storeIdx = postRezReq.getStoreIdx();
-        Long roomIdx = postRezReq.getRoomIdx();
+            String startTime = postRezReq.getReservationTime();
+            String endTime = postRezReq.getEndTime();
+            Long storeIdx = postRezReq.getStoreIdx();
+            Long roomIdx = postRezReq.getRoomIdx();
 
-        Integer checkDuplication1 = reservationMapper.checkDuplication1(startTime, endTime, storeIdx, roomIdx);
-        Integer checkDuplication2 = reservationMapper.checkDuplication2(startTime, endTime, storeIdx, roomIdx);
+            Integer checkDuplication1 = reservationMapper.checkDuplication1(startTime, endTime, storeIdx, roomIdx);
+            Integer checkDuplication2 = reservationMapper.checkDuplication2(startTime, endTime, storeIdx, roomIdx);
 
-        if (checkDuplication1 >= 1 || checkDuplication2 >= 1) {
-            throw new BaseException(RESERVATION_DUPLICATION);
+            if (checkDuplication1 >= 1 || checkDuplication2 >= 1) {
+                throw new BaseException(RESERVATION_DUPLICATION);
+            }
+
+            PostRezInfo postRezInfo = new PostRezInfo(userIdx, "Role_MEMBER", payPrice, postRezReq);
+            reservationMapper.postReservation(postRezInfo);
+            return;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw  e;
         }
-
-        PostRezInfo postRezInfo = new PostRezInfo(userIdx, postRezReq.getStoreIdx(), postRezReq.getReservationTime(), postRezReq.getUseTime(),
-                postRezReq.getNumberOfGame(), postRezReq.getSelectedHall(), postRezReq.getRequest(), postRezReq.getPersonCount(),
-                postRezReq.getPrice(), postRezReq.getDiscountPrice(), payPrice, postRezReq.getEndTime(), postRezReq.getRoomIdx());
-        reservationMapper.postReservation(postRezInfo);
-        return;
     }
 
     @Override

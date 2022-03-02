@@ -15,6 +15,18 @@ public enum RefundStatus {
         this.msg=msg;
     }
 
+    public static String getMsg(int value) {
+        switch (value){
+            case 0:
+                return NOT_REFUND.msg;
+            case 1:
+                return REQUEST_REFUND.msg;
+            case 2:
+                return COMPLETE.msg;
+        }
+        return "";
+    }
+
     @Override
     public String toString(){
         return this.msg;

@@ -39,6 +39,14 @@ public class PaymentController {
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
 
+    @PostMapping("/request_offlinePayment")
+    BaseResponse<PostClientPayRes> requestOfflinePayment(@RequestBody PostGeneralPayReq postGeneralPayReq)
+            throws Exception {
+        Long userIdx = checkUserService.getUserIdx();
+        PostClientPayRes result = paymentService.offlinePayment(postGeneralPayReq, userIdx);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
+    }
+
     @PostMapping("/request_refund")
     BaseResponse<PostReqRefundRes> requestRefund(@RequestBody PostReqRefundReq postReqRefundReq) throws Exception{
         Long userIdx = checkUserService.getUserIdx();

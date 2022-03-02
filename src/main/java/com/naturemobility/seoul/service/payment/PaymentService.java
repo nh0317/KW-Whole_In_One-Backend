@@ -19,6 +19,9 @@ public interface PaymentService {
     @Transactional
     PostClientPayRes billingKeyPayment(PostPayReq postPayReq, Long userIdx) throws Exception;
 
+    @Transactional
+    PostClientPayRes offlinePayment(PostGeneralPayReq postGeneralPayReq, Long userIdx) throws Exception;
+
     PostReqRefundRes requestRefund(PostReqRefundReq postRefundReq, Long userIdx) throws BaseException;
 
     @Transactional

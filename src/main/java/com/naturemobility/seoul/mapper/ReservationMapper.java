@@ -20,7 +20,9 @@ public interface ReservationMapper {
     List<GetRezTime> getReservationTime(@Param("storeIdx") Long storeIdx, @Param("reservationDay") String reservationDay,
                                         @Param("roomIdx") Long roomIdx);
     Integer checkDuplication1(@Param("startTime") String startTime,@Param("endTime") String endTime,
-                              @Param("storeIdx") Integer storeIdx,@Param("roomIdx") Long roomIdx);
+                              @Param("storeIdx") Long storeIdx,@Param("roomIdx") Long roomIdx);
     Integer checkDuplication2(@Param("startTime") String startTime,@Param("endTime") String endTime,
-                              @Param("storeIdx") Integer storeIdx,@Param("roomIdx") Long roomIdx);
+                              @Param("storeIdx") Long storeIdx,@Param("roomIdx") Long roomIdx);
+
+    int updateAlreadyUsed(@Param("alreadyUsed")Boolean alreadyUsed, @Param("merchantUid")String merchantUid);
 }

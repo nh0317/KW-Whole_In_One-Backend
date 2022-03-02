@@ -10,10 +10,12 @@
                r.useTime,
                r.selectedHall,
                r.personCount,
-               r.alreadyUsed
-        FROM Reservations r join Stores s on r.storeIdx=s.storeIdx
+               r.alreadyUsed,
+               p.refundStatus
+        FROM Reservations r left join Payment p  on strcmp(r.merchantUid, p.merchantUid) = 0
+            left join Stores s on r.storeIdx=s.storeIdx
         WHERE r.userIdx=#{userIdx}
-        Order By alreadyUsed, reservationTime DESC
+        Order By alreadyUsed, refundStatus, reservationTime DESC
             LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
     </select>
 
@@ -21,15 +23,19 @@
         select r.reservationIdx,
                s.storeName,
                r.reservationTIme,
-               r.paymentTime,
+               p.createdAt as paymentTime,
                r.useTime,
                r.selectedHall,
                r.personCount,
                r.alreadyUsed,
                r.reservePrice,
                r.discountPrice,
-               r.payPrice
-        FROM Reservations r join Stores s on r.storeIdx=s.storeIdx
+               r.payPrice,
+               r.createdAt,
+               p.payMethod,
+               p.refundStatus
+        FROM Reservations r left join Payment p on strcmp(r.merchantUid, p.merchantUid) = 0
+            left join Stores s on r.storeIdx=s.storeIdx
         WHERE r.reservationIdx=#{reservationIdx}
     </select>
 
@@ -52,9 +58,11 @@
 
     <insert id="postReservation" parameterType="PostRezInfo">
         INSERT INTO Reservations(storeIdx, userIdx, reservationTime, useTime, numberOfGame, selectedHall, request,
-                                 personCount, reservePrice, discountPrice, payPrice, endTime, roomIdx)
+                                 personCount, reservePrice, discountPrice, payPrice, endTime, roomIdx, merchantUid,
+                                 modiBy, modiRole)
         VALUES (#{storeIdx}, #{userIdx}, #{reservationTime}, #{useTime}, #{numberOfGame}, #{selectedHall}, #{request},
-                #{personCount}, #{price}, #{discountPrice}, #{payPrice}, #{endTime}, #{roomIdx});
+                #{personCount}, #{price}, #{discountPrice}, #{payPrice}, #{endTime}, #{roomIdx}, #{merchantUid},
+                #{modiBy},#{modiRole});
     </insert>
 
     <select id="getReservationTime" resultType="GetRezTime">
@@ -64,6 +72,7 @@
         WHERE storeIdx = #{storeIdx}
           AND DATE_FORMAT(reservationTime, '%Y-%m-%d') = #{reservationDay}
           AND roomIdx = #{roomIdx}
+          AND alreadyUsed = 0;
     </select>
 
     <select id="checkDuplication1" resultType="Integer">
@@ -72,7 +81,8 @@
         WHERE reservationTime >= #{startTime}
           AND reservationTime &lt;= #{endTime}
           AND storeIdx = #{storeIdx}
-          AND roomIdx = #{roomIdx};
+          AND roomIdx = #{roomIdx}
+          AND alreadyUsed = 0;
     </select>
 
     <select id="checkDuplication2" resultType="Integer">
@@ -81,7 +91,14 @@
         WHERE endTime >= #{startTime}
           AND endTime &lt;= #{endTime}
           AND storeIdx = #{storeIdx}
-          AND roomIdx = #{roomIdx};
+          AND roomIdx = #{roomIdx}
+          AND alreadyUsed = 0;
     </select>
+
+    <update id="updateAlreadyUsed">
+        UPDATE Reservations
+        SET alreadyUsed=#{alreadyUsed}
+        WHERE merchantUid=#{merchantUid}
+    </update>
     
 </mapper>

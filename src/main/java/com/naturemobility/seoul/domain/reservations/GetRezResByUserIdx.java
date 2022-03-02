@@ -2,6 +2,7 @@ package com.naturemobility.seoul.domain.reservations;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.text.SimpleDateFormat;
@@ -12,17 +13,19 @@ import java.util.Locale;
 
 
 @Getter
+@NoArgsConstructor
 public class GetRezResByUserIdx {
-    final Long reservationIdx;
-    final Long storeIdx;
-    final String storeName;
-    final String reservationTime;
-    final Integer useTime;
-    final Integer selectHall;
-    final Integer personCount;
-    final Boolean alreadyUsed;
+    private Long reservationIdx;
+    private Long storeIdx;
+    private String storeName;
+    private String reservationTime;
+    private Integer useTime;
+    private Integer selectHall;
+    private Integer personCount;
+    private Boolean alreadyUsed;
+    private String refundStatus;
 
-    public GetRezResByUserIdx(Long reservationIdx, Long storeIdx, String storeName, LocalDateTime reservationTime, Integer useTime, Integer selectHall, Integer personCount, Boolean alreadyUsed) {
+    public GetRezResByUserIdx(Long reservationIdx, Long storeIdx, String storeName, LocalDateTime reservationTime, Integer useTime, Integer selectHall, Integer personCount, Boolean alreadyUsed, String refundStatus) {
         this.reservationIdx = reservationIdx;
         this.storeIdx = storeIdx;
         this.storeName = storeName;
@@ -33,5 +36,6 @@ public class GetRezResByUserIdx {
         DateTimeFormatter format;
         format =  DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm");
         this.reservationTime = reservationTime.format(format);
+        this.refundStatus = refundStatus;
     }
 }

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class PostGeneralPayReq {
-    private Long reservationIdx;
     private Long storeIdx;
     private Long couponIdx;
     private String impUid;
@@ -14,4 +13,13 @@ public class PostGeneralPayReq {
     private String payMethod;
     private Integer amount;
     private Integer point;
+
+    private String reservationTime;
+    private Integer useTime;
+    private Long roomIdx;
+    private Integer selectedHall;
+    private String request;
+    private Integer personCount;
+    private Integer price;
+    private Integer discountPrice;
 }

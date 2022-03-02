@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.naturemobility.seoul.mapper.PaymentMapper">
     <insert id="savePayment" parameterType="PaymentInfo">
-        INSERT INTO Payment(reservationIdx,merchantUid, userIdx, storeIdx,couponIdx, payMethod, userPaymentIdx, impUid ,amount,name,point,refundStatus,modiBy,modiRole)
-        VALUES(#{reservationIdx},#{merchantUid},#{userIdx},#{storeIdx},#{couponIdx},#{payMethod},#{userPaymentIdx},#{impUid},#{amount},#{name},#{point},#{refundStatus},#{modiBy},#{modiRole})
+        INSERT INTO Payment(merchantUid, userIdx, storeIdx,couponIdx, payMethod, userPaymentIdx, impUid ,amount,name,point,refundStatus,modiBy,modiRole)
+        VALUES(#{merchantUid},#{userIdx},#{storeIdx},#{couponIdx},#{payMethod},#{userPaymentIdx},#{impUid},#{amount},#{name},#{point},#{refundStatus},#{modiBy},#{modiRole})
         ON DUPLICATE KEY UPDATE
             refundStatus=#{refundStatus},
             modiBy=#{modiBy},
@@ -36,8 +36,8 @@
         WHERE merchantUid=#{merchantUid}
     </update>
     <select id="findMerchantUidByRefundStatus" resultType="String">
-        SELECT merchantUid
-        FROM Payment
-        WHERE reservationIdx=#{reservationIdx} and refundStatus=#{refundStatus}
+        SELECT p.merchantUid
+        FROM Payment p left join Reservations r on strcmp(r.merchantUid, p.merchantUid) = 0
+        WHERE r.reservationIdx=#{reservationIdx} and p.refundStatus=#{refundStatus}
     </select>
 </mapper>

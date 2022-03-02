@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -14,6 +15,6 @@ import java.util.Date;
 public class DTOCommon extends Criteria {
     private PageInfo PageInfo;
     //원래 DB Table 타입은 Timestamp
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

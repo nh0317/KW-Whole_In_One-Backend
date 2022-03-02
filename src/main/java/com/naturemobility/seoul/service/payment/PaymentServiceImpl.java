@@ -12,10 +12,14 @@ import com.naturemobility.seoul.domain.payment.refund.PostReqRefundReq;
 import com.naturemobility.seoul.domain.payment.refund.PostReqRefundRes;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayRes;
+import com.naturemobility.seoul.domain.reservations.PostRezInfo;
+import com.naturemobility.seoul.domain.reservations.PostRezReq;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import com.naturemobility.seoul.mapper.PaymentMapper;
+import com.naturemobility.seoul.mapper.ReservationMapper;
 import com.naturemobility.seoul.mapper.StoresMapper;
 import com.naturemobility.seoul.mapper.UsersMapper;
+import com.naturemobility.seoul.service.reservations.ReservationsService;
 import com.naturemobility.seoul.utils.IMPService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     UsersMapper usersMapper;
     @Autowired
+    ReservationsService reservationsService;
+    @Autowired
+    ReservationMapper reservationMapper;
+    @Autowired
     IMPService impService;
 
     @Override
@@ -49,9 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
         String storeName = storesMapper.findStoreName(postGeneralPayReq.getStoreIdx()).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         String name = storeName + "_골프예약_" + LocalDateTime.now();
         PostPayRes postPayRes = new PostPayRes(postGeneralPayReq.getImpUid(), postGeneralPayReq.getMerchantUid());
-        PostPayReq postPayReq = new PostPayReq(postGeneralPayReq.getReservationIdx(),
-                postGeneralPayReq.getStoreIdx(), postGeneralPayReq.getCouponIdx(), null,
-                postGeneralPayReq.getPayMethod(), postGeneralPayReq.getAmount(), postGeneralPayReq.getPoint());
+        PostPayReq postPayReq = new PostPayReq(postGeneralPayReq);
         return validateAndSave(userIdx, name, postPayRes, postPayReq);
     }
 
@@ -66,27 +72,45 @@ public class PaymentServiceImpl implements PaymentService {
 
         return validateAndSave(userIdx, name, getPaymentData, postPayReq);
     }
+
+    @Transactional
+    @Override
+    public PostClientPayRes offlinePayment(PostGeneralPayReq postGeneralPayReq, Long userIdx) throws Exception{
+        String storeName = storesMapper.findStoreName(postGeneralPayReq.getStoreIdx()).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        String name = storeName + "_골프예약_" + LocalDateTime.now();
+        PostPayRes postPayRes = new PostPayRes(postGeneralPayReq.getImpUid(), postGeneralPayReq.getMerchantUid());
+        PostPayReq postPayReq = new PostPayReq(postGeneralPayReq);
+
+        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        int earnPoint = Double.valueOf(postPayReq.getAmount() * 0.03).intValue();
+        int point = earnPoint - postPayReq.getPoint();
+        if (userInfo.getUserPoint() - point < 0)
+            point = userInfo.getUserPoint();
+        usersMapper.updateUserPoint(userIdx, point);
+        reservationsService.postReservation(new PostRezReq(postPayReq, postPayRes.getMerchant_uid()), userIdx);
+        //TODO: 쿠폰 사용 상태 변경
+        return new PostClientPayRes(postPayRes.getMerchant_uid(), postPayReq.getAmount(),
+                earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());
+    }
+
     @Transactional
     public PostClientPayRes savePayment(PostPayRes getPaymentData, PostPayReq postPayReq,
                                         Long userIdx, String name) throws BaseException {
-        try{
-            UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-            int earnPoint = Double.valueOf(postPayReq.getAmount() * 0.03).intValue();
-            int point = earnPoint - postPayReq.getPoint();
-            if (userInfo.getUserPoint() - point < 0)
-                point = userInfo.getUserPoint();
+        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        int earnPoint = Double.valueOf(postPayReq.getAmount() * 0.03).intValue();
+        int point = earnPoint - postPayReq.getPoint();
+        if (userInfo.getUserPoint() - point < 0)
+            point = userInfo.getUserPoint();
 
-            paymentMapper.savePayment(new PaymentInfo(getPaymentData.getMerchant_uid(), postPayReq.getReservationIdx(),
-                    postPayReq.getUserPaymentIdx(), postPayReq.getCouponIdx(), getPaymentData.getImp_uid(),
-                    postPayReq.getPayMethod(), userIdx, postPayReq.getStoreIdx(), postPayReq.getAmount(), name,
-                    point, userIdx, "ROLE_MEMBER"));
-            usersMapper.updateUserPoint(userIdx, point);
-            return new PostClientPayRes(getPaymentData.getMerchant_uid(), postPayReq.getAmount(),
-                    earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }
+        paymentMapper.savePayment(new PaymentInfo(getPaymentData.getMerchant_uid(),
+                postPayReq.getUserPaymentIdx(), postPayReq.getCouponIdx(), getPaymentData.getImp_uid(),
+                postPayReq.getPayMethod(), userIdx, postPayReq.getStoreIdx(), postPayReq.getAmount(), name,
+                point, userIdx, "ROLE_MEMBER"));
+        usersMapper.updateUserPoint(userIdx, point);
+        reservationsService.postReservation(new PostRezReq(postPayReq, getPaymentData.getMerchant_uid()), userIdx);
+        //TODO: 쿠폰 사용 상태 변경
+        return new PostClientPayRes(getPaymentData.getMerchant_uid(), postPayReq.getAmount(),
+                earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());
     }
 
     public String validatePayment(PostPayRes getPaymentData, PostPayReq postPayReq) throws BaseException {
@@ -141,12 +165,14 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public PostReqRefundRes requestRefund(PostReqRefundReq postRefundReq, Long userIdx) throws BaseException {
         String merchantUid = paymentMapper.findMerchantUidByRefundStatus(postRefundReq.getReservationIdx(),RefundStatus.NOT_REFUND.getValue())
                 .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         paymentMapper.updateRefundInfo(merchantUid,postRefundReq.getRefundReason(), postRefundReq.getRefundHolder(),
                 postRefundReq.getRefundBank(),postRefundReq.getRefundAccount(),RefundStatus.REQUEST_REFUND.getValue(),
                 userIdx, "ROLE_MEMBER");
+        reservationMapper.updateAlreadyUsed(true, merchantUid);
         return new PostReqRefundRes(postRefundReq.getReservationIdx(), postRefundReq.getRefundReason(),
                 postRefundReq.getRefundHolder(), postRefundReq.getRefundBank(), postRefundReq.getRefundAccount(),
                 RefundStatus.REQUEST_REFUND.getMsg());
@@ -187,6 +213,7 @@ public class PaymentServiceImpl implements PaymentService {
         return status;
     }
 
+    @Transactional
     public PostApproveRefundRes saveRefund(PaymentInfo paymentInfo,PostApproveRefundReq postApproveRefund, Long partnerIdx)
             throws BaseException {
         usersMapper.updateUserPoint(paymentInfo.getUserIdx(), -paymentInfo.getPoint());
@@ -194,6 +221,8 @@ public class PaymentServiceImpl implements PaymentService {
                 postApproveRefund.getCancelAmount(), partnerIdx, "ROLE_ADMIN");
         paymentInfo = paymentMapper.findPayment(paymentInfo.getMerchantUid()).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         UserInfo userInfo = usersMapper.findByIdx(paymentInfo.getUserIdx()).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
+        //TODO: 쿠폰 사용 상태 변경
+        reservationMapper.updateAlreadyUsed(true, paymentInfo.getMerchantUid());
         return new PostApproveRefundRes(postApproveRefund.getReservationIdx(), paymentInfo.getRefundReason(),
                 paymentInfo.getCancelAmount(),userInfo.getUserPoint(), RefundStatus.COMPLETE.getMsg());
 

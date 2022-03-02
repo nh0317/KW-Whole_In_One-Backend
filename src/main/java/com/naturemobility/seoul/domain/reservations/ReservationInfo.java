@@ -61,6 +61,8 @@ public class ReservationInfo extends DTOCommon {
 
     //store join 시
     private String storeName;
+    private int refundStatus;
+    private String payMethod;
 
     public ReservationInfo(Long userIdx) {
         this.userIdx = userIdx;
