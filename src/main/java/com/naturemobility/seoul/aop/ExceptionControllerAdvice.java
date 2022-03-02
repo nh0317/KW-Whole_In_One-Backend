@@ -24,7 +24,8 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BaseException.class)
     public BaseResponse<Object> baseExceptionHandler(BaseException exception, HttpServletRequest req){
         if(exception.getStatus().equals(RESPONSE_ERROR) || exception.getStatus().equals(REQUEST_ERROR)){
-            printErrorLog(req, exception.getStackTrace());
+            log.info(exception.getStatus()+" "+exception.getMessage());
+            printErrorLog(req, exception);
         }else{
             log.warn("Message : {}", exception.getStatus().getMessage());
             log.warn("URI : {} Query : {}",req.getRequestURI(), req.getQueryString());
@@ -33,11 +34,12 @@ public class ExceptionControllerAdvice {
     }
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse<Object> runtimeExceptionHandler(RuntimeException exception, HttpServletRequest req){
-        printErrorLog(req, exception.getStackTrace());
+        log.info(exception.getMessage());
+        printErrorLog(req, exception);
         return new BaseResponse<>(RESPONSE_ERROR);
     }
 
-    private void printErrorLog(HttpServletRequest req, StackTraceElement[] stackTrace) {
+    private void printErrorLog(HttpServletRequest req, Exception exception) {
         String errorStack = "";
         errorStack += "URI : " + req.getRequestURI() + " Query : " + req.getQueryString()+"\n";
         if (req.getContentType()!=null && !req.getContentType().startsWith("multipart/form-data")) {
@@ -49,7 +51,7 @@ public class ExceptionControllerAdvice {
                 return;
             }
         }
-        Iterator<StackTraceElement> iterator = Arrays.stream(stackTrace).iterator();
+        Iterator<StackTraceElement> iterator = Arrays.stream(exception.getStackTrace()).iterator();
         while (iterator.hasNext())
             errorStack += iterator.next() + "\n";
         log.error(errorStack);
