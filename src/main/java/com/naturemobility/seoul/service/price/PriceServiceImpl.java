@@ -151,6 +151,7 @@ public class PriceServiceImpl implements PriceService{
             // 기존 가격 스키마를 찾는다.
             priceSchemeInfo.setPriceSchemeIdx(weekPriceMapper.findPriceSchemeByStoreIdx(storeIdx, storePriceIdx)
                     .orElseThrow(() -> new BaseException(RESPONSE_ERROR)));
+            weekPriceMapper.savePriceScheme(priceSchemeInfo);
         }
         //가격 저장
         StorePriceInfo storePriceInfo = new StorePriceInfo(priceSchemeInfo.getPriceSchemeIdx(), postPriceReq.getPrice(),
