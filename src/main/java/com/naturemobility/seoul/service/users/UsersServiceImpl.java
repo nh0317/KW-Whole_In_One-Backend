@@ -310,16 +310,18 @@ public class UsersServiceImpl implements UsersService {
     public PostLoginRes refreshToken(HttpServletRequest request, HttpServletResponse response) throws BaseException {
         Cookie refreshToken = cookieUtil.getCookie(request, JwtService.REFRESH_TOKEN);
         String refreshJwt=null;
+//        log.info(refreshToken.toString()," ");
         if(refreshToken!=null){
             refreshJwt = refreshToken.getValue();
+//            log.info(refreshJwt);
         }
         if (refreshJwt!=null && redisService.isExist(refreshJwt)){
             Authentication authentication = jwtService.getAuthenticationFromRefreshToken(refreshJwt);
             String newJwt = jwtService.createJwt(authentication);
-            String newRefreshJwt = jwtService.createRefreshJwt(authentication);
-            jwtService.setTokens(response,authentication,newJwt,newRefreshJwt);
-            redisService.deleteValues(refreshJwt);
-            return new PostLoginRes(authentication.getName(),newJwt, newRefreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
+//            String newRefreshJwt = jwtService.createRefreshJwt(authentication);
+            jwtService.setTokens(response,authentication,newJwt,refreshJwt);
+//            redisService.deleteValues(refreshJwt);
+            return new PostLoginRes(authentication.getName(),newJwt, refreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
         } else throw new BaseException(INVALID_JWT);
     }
 
