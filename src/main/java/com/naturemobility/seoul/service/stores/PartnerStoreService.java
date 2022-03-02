@@ -3,10 +3,7 @@ package com.naturemobility.seoul.service.stores;
 import com.naturemobility.seoul.config.BaseException;
 
 import com.naturemobility.seoul.domain.coupons.PostCouponReq;
-import com.naturemobility.seoul.domain.partnerStore.PostPartnerStoreRes;
-import com.naturemobility.seoul.domain.partnerStore.PostStoreImageRes;
-import com.naturemobility.seoul.domain.partnerStore.PostStoreReq;
-import com.naturemobility.seoul.domain.partnerStore.GetPartnerStoreRes;
+import com.naturemobility.seoul.domain.partnerStore.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,5 +17,8 @@ public interface PartnerStoreService {
 
     @Transactional
     PostStoreImageRes saveStoreImage(MultipartFile mainStoreImage, List<MultipartFile> storeImages, Long partnerIdx) throws BaseException;
+
+    GetStoreIdxRes getStoreIdx(Long partnerIdx) throws BaseException;
+
     void postCoupon(Long partnerIdx, PostCouponReq postCouponReq) throws BaseException;
 }

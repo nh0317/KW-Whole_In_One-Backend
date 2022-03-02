@@ -4,10 +4,7 @@ import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
 
 import com.naturemobility.seoul.domain.coupons.PostCouponReq;
-import com.naturemobility.seoul.domain.partnerStore.PostPartnerStoreRes;
-import com.naturemobility.seoul.domain.partnerStore.PostStoreImageRes;
-import com.naturemobility.seoul.domain.partnerStore.PostStoreReq;
-import com.naturemobility.seoul.domain.partnerStore.GetPartnerStoreRes;
+import com.naturemobility.seoul.domain.partnerStore.*;
 import com.naturemobility.seoul.service.s3.FileUploadService;
 
 import com.naturemobility.seoul.service.stores.PartnerStoreService;
@@ -54,6 +51,11 @@ public class PartnerStoresController {
         return new BaseResponse<>(SUCCESS, getPartnerStoreRes);
     }
 
+    @GetMapping("/get_storeIdx")
+    public BaseResponse<GetStoreIdxRes> getStoreIdx()
+            throws BaseException{
+        return new BaseResponse<>(SUCCESS, partnerStoreService.getStoreIdx(checkUserService.getPartnerIdx()));
+    }
     /**
      * 쿠폰등록 API
      * [POST] /partner/coupons

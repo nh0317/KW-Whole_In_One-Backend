@@ -25,7 +25,6 @@ public class StoreInfo extends DTOCommon {
     private String storePhoneNumber;
 
     // 골프장 브랜드
-    // TODO: 골프장 브랜드 수정
     private Long storeBrand;
 
     // 골프장 주소

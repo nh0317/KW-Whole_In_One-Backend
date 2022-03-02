@@ -5,10 +5,7 @@ import com.naturemobility.seoul.domain.brand.BrandInfo;
 import com.naturemobility.seoul.domain.coupons.PostCouponReq;
 import com.naturemobility.seoul.domain.coupons.PostCouponInfo;
 
-import com.naturemobility.seoul.domain.partnerStore.PostPartnerStoreRes;
-import com.naturemobility.seoul.domain.partnerStore.PostStoreImageRes;
-import com.naturemobility.seoul.domain.partnerStore.PostStoreReq;
-import com.naturemobility.seoul.domain.partnerStore.GetPartnerStoreRes;
+import com.naturemobility.seoul.domain.partnerStore.*;
 import com.naturemobility.seoul.domain.storeImage.StoreImageFileInfo;
 
 import com.naturemobility.seoul.domain.stores.StoreInfo;
@@ -116,6 +113,11 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
             images.add(filepath);
         }
         return new PostStoreImageRes(mainImgPath, images);
+    }
+
+    @Override
+    public GetStoreIdxRes getStoreIdx(Long partnerIdx) throws BaseException {
+        return new GetStoreIdxRes(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
     }
 
     @Override
