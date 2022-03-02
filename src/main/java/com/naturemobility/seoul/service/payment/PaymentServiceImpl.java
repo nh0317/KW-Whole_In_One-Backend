@@ -90,7 +90,7 @@ public class PaymentServiceImpl implements PaymentService {
         reservationsService.postReservation(new PostRezReq(postPayReq, postPayRes.getMerchant_uid()), userIdx);
         //TODO: 쿠폰 사용 상태 변경
         return new PostClientPayRes(postPayRes.getMerchant_uid(), postPayReq.getAmount(),
-                earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());
+                earnPoint,postPayReq.getPoint(), userInfo.getUserPoint(), "예약 성공");
     }
 
     @Transactional
