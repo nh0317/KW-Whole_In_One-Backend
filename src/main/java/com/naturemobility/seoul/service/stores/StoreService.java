@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.service.stores;
 
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.domain.coupons.CouponInfo;
 import com.naturemobility.seoul.domain.stores.*;
 import com.naturemobility.seoul.domain.users.GetUsersRes;
 
@@ -19,4 +20,5 @@ public interface StoreService {
     public List<GetBrandRes>retrieveBrandInfo() throws BaseException;
 
     public List <GetRoomIdxRes> retrieveRoomIdx(Long storeIdx) throws BaseException;
+    public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException;
 }

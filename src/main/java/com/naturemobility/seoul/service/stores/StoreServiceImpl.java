@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.service.stores;
 
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.domain.coupons.CouponInfo;
 import com.naturemobility.seoul.domain.stores.*;
 import com.naturemobility.seoul.domain.users.GetUsersRes;
 import com.naturemobility.seoul.domain.users.UserInfo;
@@ -51,7 +52,7 @@ public class StoreServiceImpl implements StoreService {
     public List<GetStoreResByMap> retrieveStoreInfoByMap(Double userLatitude, Double userLongitude, Integer orderRule) throws BaseException {
         List<GetStoreResByMap> storeInfoList;
         storesMapper.setOrderRule(orderRule);
-        storeInfoList = storesMapper.retrieveStoreInfoByMap(userLatitude,userLongitude);
+        storeInfoList = storesMapper.retrieveStoreInfoByMap(userLatitude, userLongitude);
         return storeInfoList;
     }
 
@@ -61,18 +62,18 @@ public class StoreServiceImpl implements StoreService {
         storesMapper.setOrderRule(storeInfoReqByMap.getOrderRule());
         storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap.getUserLatitude(), storeInfoReqByMap.getUserLongitude(), storeInfoReqByMap.getBrand()
                 , storeInfoReqByMap.getDistance(), storeInfoReqByMap.getFloorscreenStatus(), storeInfoReqByMap.getStorageStatus(), storeInfoReqByMap.getParkingStatus(), storeInfoReqByMap.getLessonStatus(),
-                storeInfoReqByMap.getGroupseatStatus(),storeInfoReqByMap.getLefthandStatus()
-                );
+                storeInfoReqByMap.getGroupseatStatus(), storeInfoReqByMap.getLefthandStatus()
+        );
         return storeInfoList;
     }
 
     @Override
-    public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(Double userLatitude, Double userLongitude, Integer orderRule, Integer []brand,
+    public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(Double userLatitude, Double userLongitude, Integer orderRule, Integer[] brand,
                                                                     Integer lefthandStatus, Integer parkingStauts, Integer groupseatStatus, Integer floorscreenStatus,
                                                                     Integer storageStatus, Integer lessonStatus, Integer distance) throws BaseException {
         List<GetStoreResByMap> storeInfoList;
         storesMapper.setOrderRule(orderRule);
-        storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude,brand, lefthandStatus, parkingStauts,
+        storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude, brand, lefthandStatus, parkingStauts,
                 groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
         return storeInfoList;
     }
@@ -92,6 +93,12 @@ public class StoreServiceImpl implements StoreService {
         partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
         roomIdxRes = storesMapper.retrieveRoomIdx(partnerIdx);
         return roomIdxRes;
+    }
+
+    @Override
+    public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException {
+        List<CouponInfo> couponInfos = storesMapper.retrieveCouponInfo(storeIdx);
+        return couponInfos;
     }
 }
 

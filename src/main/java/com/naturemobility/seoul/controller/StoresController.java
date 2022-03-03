@@ -2,6 +2,7 @@ package com.naturemobility.seoul.controller;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
+import com.naturemobility.seoul.domain.coupons.CouponInfo;
 import com.naturemobility.seoul.domain.stores.*;
 import com.naturemobility.seoul.mapper.VisitedMapper;
 import com.naturemobility.seoul.service.stores.StoreService;
@@ -174,6 +175,19 @@ public class StoresController {
     public BaseResponse<List<GetRoomIdxRes>> getRoomIdx(@RequestParam Long storeIdx) throws BaseException {
         List<GetRoomIdxRes> roomIdxRes = storeService.retrieveRoomIdx(storeIdx);
         return new BaseResponse<>(SUCCESS, roomIdxRes);
+    }
+
+    /**
+     * 매장 쿠폰 조회 API
+     * [GET] /stores/1/coupons
+     *
+     * @return BaseResponse<List<CouponInfo>>
+     */
+    @ResponseBody
+    @GetMapping("/coupons")
+    public BaseResponse<List<CouponInfo>> getCouponInfo(@RequestParam Long storeIdx) throws BaseException {
+        List<CouponInfo> couponInfo = storeService.retrieveCouponInfo(storeIdx);
+        return new BaseResponse<>(SUCCESS, couponInfo);
     }
 }
 
