@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.mapper;
 
+import com.naturemobility.seoul.domain.users.PostUserCoupon;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,4 +25,6 @@ public interface UsersMapper {
     Optional<Integer> cntReservation(@Param("userIdx") Long userIdx);
 
     int updateUserPoint(@Param("userIdx")Long userIdx, @Param("userPoint")int point);
+
+    void postCoupon(PostUserCoupon postUserCoupon);
 }
