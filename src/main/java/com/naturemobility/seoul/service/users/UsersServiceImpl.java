@@ -325,6 +325,13 @@ public class UsersServiceImpl implements UsersService {
         } else throw new BaseException(INVALID_JWT);
     }
 
+    @Override
+    public void postCoupon(Long userIdx, Long couponIdx) throws BaseException {
+        PostUserCoupon postUserCoupon = new PostUserCoupon(userIdx,couponIdx);
+        usersMapper.postCoupon(postUserCoupon);
+        return;
+    }
+
     /** 마이페이지
      * @param userIdx
      * @return GetMyPageRes

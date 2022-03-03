@@ -45,6 +45,7 @@ public class UsersController {
     /**
      * 마이페이지 API
      * [GET] /users/mypage
+     *
      * @return BaseResponse<GetMyPageRes>
      */
     @ResponseBody
@@ -58,6 +59,7 @@ public class UsersController {
     /**
      * 회원 개인 정보 조회 API
      * [GET] /users/mypage/edit
+     *
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
@@ -67,11 +69,13 @@ public class UsersController {
         GetUserRes getUserRes = usersService.findUserInfo(userIdx);
         return new BaseResponse<>(SUCCESS, getUserRes);
     }
+
     /**
      * 회원 정보 수정 API (id는 수정 불가, 비밀번호는 따로 수정)
      * [PATCH] /users/mypage/edit
-     * @RequestBody PatchUserReq
+     *
      * @return BaseResponse<PatchUserRe>
+     * @RequestBody PatchUserReq
      */
     @ResponseBody
     @PatchMapping("mypage/edit")
@@ -79,43 +83,48 @@ public class UsersController {
         UserInfo userInfo = checkUserService.getUser();
         return new BaseResponse<>(SUCCESS, usersService.updateUserInfo(userInfo, parameters));
     }
+
     /**
      * 비밀번호 수정 (개인정보 조회 및 수정 전 비밀번호 요구 시)
      * [Patch] /users/mypage/edit_password
-     * @RequestBody PatchPWReq
+     *
      * @return PostCheck
+     * @RequestBody PatchPWReq
      */
     @ResponseBody
     @PatchMapping("mypage/edit_password")
     public BaseResponse<Void> editPW(HttpServletResponse response, @RequestBody PatchPWReq patchPWReq) throws BaseException {
         // 2. Post UserInfo
         UserInfo userInfo = checkUserService.getUser();
-        usersService.updatePW(response,userInfo,patchPWReq);
+        usersService.updatePW(response, userInfo, patchPWReq);
         return new BaseResponse<>(SUCCESS);
     }
+
     /**
      * 이메일 중복 확인 API (반드시 회원 가입전 확인)
      * [Post] /users/sign_up/check_userEmail
-     * @RequestParam email
+     *
      * @return BaseResponse<String>
+     * @RequestParam email
      */
     @ResponseBody
     @PostMapping("sign_up/check_email")
-    public BaseResponse<String> checkEmail(@RequestParam("email") String userEmail) throws BaseException{
+    public BaseResponse<String> checkEmail(@RequestParam("email") String userEmail) throws BaseException {
         String check = usersService.checkEmail(userEmail);
         // 2. Post UserInfo
-        return new BaseResponse<>(SUCCESS,check);
+        return new BaseResponse<>(SUCCESS, check);
     }
 
     /**
      * 회원가입 API
      * [POST] /users/sign_up
-     * @RequestBody PostUserReq
+     *
      * @return BaseResponse<PostUserRes>
+     * @RequestBody PostUserReq
      */
     @ResponseBody
     @PostMapping("sign_up")
-    public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters)  throws BaseException {
+    public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) throws BaseException {
         // 1. Body Parameter Validation
         if (!isRegexEmail(parameters.getEmail()))
             return new BaseResponse<>(INVALID_EMAIL);
@@ -130,12 +139,13 @@ public class UsersController {
     /**
      * 비밀번호 확인 API (개인정보 조회 및 수정 전 비밀번호 요구 시)
      * [Post] /users/check_password
+     *
      * @RequestParam password
      * BaseResponse<PostLoginRes>
      */
     @ResponseBody
     @PostMapping("check_password")
-    public BaseResponse<PostLoginRes> confirmPW(HttpServletResponse response,@RequestParam("password") String password) throws BaseException {
+    public BaseResponse<PostLoginRes> confirmPW(HttpServletResponse response, @RequestParam("password") String password) throws BaseException {
         // 2. Post UserInfo
         PostLoginRes postLoginRes = usersService.checkPW(response,checkUserService.getEmail(),password);
         return new BaseResponse<>(SUCCESS,postLoginRes);
@@ -144,14 +154,15 @@ public class UsersController {
     /**
      * 로그인 API
      * [POST] /users/login
-     * @RequestBody PostLoginReq
+     *
      * @return BaseResponse<PostLoginRes>
+     * @RequestBody PostLoginReq
      */
     @ResponseBody
-    @PostMapping(value="login" )
-    public BaseResponse<PostLoginRes> login(HttpServletResponse response,@RequestBody PostLoginReq postLoginReq) throws BaseException {
-        log.info("아이디 : "+postLoginReq.getId());
-        log.info("패스워드 : "+postLoginReq.getPassword());
+    @PostMapping(value = "login")
+    public BaseResponse<PostLoginRes> login(HttpServletResponse response, @RequestBody PostLoginReq postLoginReq) throws BaseException {
+        log.info("아이디 : " + postLoginReq.getId());
+        log.info("패스워드 : " + postLoginReq.getPassword());
         // 1. Body Parameter Validation
         if (postLoginReq.getId() == null || postLoginReq.getId().length() == 0)
             return new BaseResponse<>(REQUEST_ERROR);
@@ -159,17 +170,18 @@ public class UsersController {
             return new BaseResponse<>(REQUEST_ERROR);
 
         // 2. Login
-        PostLoginRes postLoginRes = usersService.login(response,postLoginReq);
+        PostLoginRes postLoginRes = usersService.login(response, postLoginReq);
         return new BaseResponse<>(SUCCESS, postLoginRes);
     }
 
     /**
      * 회원 탈퇴 API
      * [DELETE] /users/withdraw
+     *
      * @return BaseResponse<Void>
      */
     @DeleteMapping("withdraw")
-    public BaseResponse<Void> deleteUsers()  throws BaseException {
+    public BaseResponse<Void> deleteUsers() throws BaseException {
         UserInfo userInfo = checkUserService.getUser();
         usersService.deleteUserInfo(userInfo);
         return new BaseResponse<>(SUCCESS);
@@ -178,6 +190,7 @@ public class UsersController {
     /**
      * JWT 검증 API
      * [GET] /users/jwt
+     *
      * @return BaseResponse<Void>
      */
 //    @GetMapping("/jwt")
@@ -190,12 +203,26 @@ public class UsersController {
 //            return new BaseResponse<>(exception.getStatus());
 //        }
 //    }
-
     @PostMapping("/refresh")
     public BaseResponse<PostLoginRes> refreshToken(HttpServletRequest request, HttpServletResponse response)
             throws BaseException {
         PostLoginRes result = usersService.refreshToken(request, response);
-        return new BaseResponse<>(SUCCESS,result);
+        return new BaseResponse<>(SUCCESS, result);
+    }
+
+    /**
+     * 쿠폰 받기 API
+     * [Post] /coupon?couponIdx=1
+     *
+     * @return BaseResponse
+     * @RequestParam couponIdx
+     */
+    @ResponseBody
+    @PostMapping("coupon")
+    public BaseResponse postCoupon(@RequestParam("couponIdx") Long couponIdx) throws BaseException {
+        Long userIdx = checkUserService.getUserIdx();
+        usersService.postCoupon(userIdx, couponIdx);
+        return new BaseResponse<>(SUCCESS);
     }
     @PostMapping("/logout")
     public BaseResponse<Void> logout(HttpServletRequest req, HttpServletResponse res) throws BaseException{

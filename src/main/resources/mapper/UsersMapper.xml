@@ -3,13 +3,20 @@
 <mapper namespace="com.naturemobility.seoul.mapper.UsersMapper">
 
     <sql id="insertUser">
-        userNickname,userName,userPassword,userEmail
+        userNickname
+        ,userName,userPassword,userEmail
     </sql>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="userIdx" parameterType="UserInfo">
+<<<<<<< HEAD
         INSERT INTO Users(userNickname,userName,userPassword,userEmail,userImage,userPhoneNumber)
         VALUES( #{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage},#{userPhoneNumber} )
         ON DUPLICATE KEY UPDATE
+=======
+        INSERT INTO Users(userNickname, userName, userPassword, userEmail, userImage)
+        VALUES (#{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage}) ON DUPLICATE KEY
+        UPDATE
+>>>>>>> lys
             userNickname = #{userNickname},
             userName = #{userName},
             userPassword = #{userPassword},
@@ -22,70 +29,77 @@
 
     <update id="update" parameterType="UserInfo">
         UPDATE Users
-        SET
-            userNickname = #{userNickname},
-            userName = #{userName},
+        SET userNickname = #{userNickname},
+            userName     = #{userName},
             userPassword = #{userPassword},
-            userStatus = #{userStatus},
-            userPoint = #{userPoint},
-            userEmail = #{userEmail},
-            userImage = #{userImage}
-        WHERE userIdx =#{userIdx}
+            userStatus   = #{userStatus},
+            userPoint    = #{userPoint},
+            userEmail    = #{userEmail},
+            userImage    = #{userImage}
+        WHERE userIdx = #{userIdx}
     </update>
 
     <select id="findByIdx" resultType="UserInfo">
         SELECT *
         FROM Users
-        WHERE userIdx=#{userIdx}
+        WHERE userIdx = #{userIdx}
     </select>
 
     <select id="findByEmail" resultType="UserInfo">
         SELECT *
         FROM Users
-        WHERE userEmail=#{email}
+        WHERE userEmail = #{email}
     </select>
 
     <delete id="delete" parameterType="UserInfo">
-        DELETE FROM Users
-        WHERE userIdx=#{userIdx}
+        DELETE
+        FROM Users
+        WHERE userIdx = #{userIdx}
     </delete>
 
     <select id="findByStatus" resultType="UserInfo">
         SELECT *
         FROM Users
-        WHERE userStatus=#{status}
+        WHERE userStatus = #{status}
     </select>
 
     <select id="findByEmailAndStatus" resultType="UserInfo">
         SELECT *
         FROM Users
-        WHERE userStatus=#{status} And userEmail=#{email}
+        WHERE userStatus = #{status}
+          And userEmail = #{email}
     </select>
 
     <select id="findByStatusAndNicknameIsContaining" resultType="UserInfo">
         SELECT *
         FROM Users
-        WHERE userStatus=#{status} And userNickname LIKE CONCAT('%',#{word},'%')
+        WHERE userStatus = #{status}
+          And userNickname LIKE CONCAT('%', #{word}, '%')
     </select>
 
     <select id="cntCoupon" resultType="Integer">
         SELECT count(*) as cntCoupon
-        FROM Users as u LEFT JOIN UserCoupons as uc ON u.userIdx=uc.userIdx
-        WHERE u.userIdx=#{userIdx} AND uc.couponStatus=0
+        FROM Users as u
+                 LEFT JOIN UserCoupons as uc ON u.userIdx = uc.userIdx
+        WHERE u.userIdx = #{userIdx}
+          AND uc.couponStatus = 0
         GROUP BY u.userIdx;
     </select>
 
     <select id="cntStoreLike" resultType="Integer">
         SELECT count(*) as cntLikeStore
-        FROM Users as u LEFT JOIN Visited as v ON u.userIdx = v.userIdx
-        WHERE u.userIdx=#{userIdx}
+        FROM Users as u
+                 LEFT JOIN Visited as v ON u.userIdx = v.userIdx
+        WHERE u.userIdx = #{userIdx}
         GROUP BY u.userIdx;
     </select>
 
     <select id="cntReservation" resultType="Integer">
         SELECT count(*) as cntReservation
-        FROM Users as u LEFT JOIN Reservations as r ON u.userIdx = r.userIdx
-        WHERE u.userIdx=#{userIdx} AND r.userIdx=#{userIdx}
+        FROM Users as u
+                 LEFT JOIN Reservations as r ON u.userIdx = r.userIdx
+        WHERE u.userIdx = #{userIdx}
+          AND r.userIdx = #{userIdx}
         GROUP BY u.userIdx;
     </select>
 
@@ -101,4 +115,10 @@
         FROM Users as u LEFT JOIN UserCoupons as uc ON u.userIdx=uc.userIdx
         WHERE u.userIdx=#{userIdx} AND uc.couponStatus=0
     </select>
+
+    <insert id="postCoupon" parameterType="PostUserCoupon">
+        INSERT INTO UserCoupons (userIdx, couponIdx)
+        VALUES (#{userIdx}, #{couponIdx});
+    </insert>
+
 </mapper>

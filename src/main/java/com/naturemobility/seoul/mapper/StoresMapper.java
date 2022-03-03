@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.mapper;
 
+import com.naturemobility.seoul.domain.coupons.CouponInfo;
 import com.naturemobility.seoul.domain.stores.*;
 import com.naturemobility.seoul.domain.visited.GetVisitedByUserIdx;
 import org.apache.ibatis.annotations.Mapper;
@@ -34,4 +35,5 @@ public interface StoresMapper {
 
     Long retrievePartnerIdx(@Param("storeIdx") Long storeIdx);
     List<GetRoomIdxRes> retrieveRoomIdx(Long partnerIdx);
+    List<CouponInfo> retrieveCouponInfo(@Param("storeIdx") Long storeIdx);
 }
