@@ -90,6 +90,7 @@ public class PriceServiceImpl implements PriceService{
         Long priceSchemeIdx = weekPriceMapper.findPriceSchemeByStoreIdx(storeIdx, storePriceIdx)
                 .orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         weekPriceMapper.deletePriceScheme(priceSchemeIdx);
+        weekPriceMapper.deleteStorePrice(storePriceIdx);
     }
 
     @Override

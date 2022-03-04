@@ -15,6 +15,7 @@ public interface WeekPriceMapper {
     int savePrice(StorePriceInfo storePriceInfo);
     int saveHolidayWeek(HolidayWeekInfo holidayWeekInfo);
     int deletePriceScheme(@Param("priceSchemeIdx")Long priceSchemeIdx);
+    int deleteStorePrice(@Param("storePriceIdx")Long storePriceIdx);
     Optional<String> findWeekByStoreIdx(@Param("isHoliday")Boolean isHoliday, @Param("storeIdx") Long storeIdx);
     List<GetPriceRes> findWeekPriceByStoreIdx(@Param("isHoliday") Boolean isHoliday, @Param("storeIdx") Long storeIdx);
     List<GetPriceRes> findPeriodPriceByStoreIdx(@Param("isHoliday") Boolean isHoliday, @Param("storeIdx") Long storeIdx);
