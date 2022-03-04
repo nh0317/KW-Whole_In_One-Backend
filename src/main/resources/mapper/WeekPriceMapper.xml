@@ -41,11 +41,11 @@
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
         <choose>
             <when test="isHoliday!=null">
-                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx} and sp.startDate is null and ps.deletedAt is null
+                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx} and sp.startDate is null and ps.deletedAt is null and sp.deletedAt is null
                 ORDER BY sp.startTime, sp.hole
             </when>
             <otherwise>
-                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is null and ps.deletedAt is null
+                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is null and ps.deletedAt is null and sp.deletedAt is null
                 ORDER BY sp.isHoliday, sp.startTime, sp.hole
             </otherwise>
         </choose>
@@ -55,11 +55,11 @@
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
         <choose>
             <when test="isHoliday!=null">
-                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null
+                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null and sp.deletedAt is null
                 ORDER BY sp.startTime, sp.hole
             </when>
             <otherwise>
-                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null
+                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null and sp.deletedAt is null
                 ORDER BY sp.isHoliday, sp.startTime, sp.hole
             </otherwise>
         </choose>
@@ -67,24 +67,31 @@
     <select id="findPriceSchemeByStoreIdx" resultType="Long">
         SELECT sp.storePriceIdx
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
-        WHERE ps.storeIdx =#{storeIdx} and storePriceIdx=#{storePriceIdx} and ps.deletedAt is null
+        WHERE ps.storeIdx =#{storeIdx} and storePriceIdx=#{storePriceIdx} and ps.deletedAt is null and sp.deletedAt is null
     </select>
     <update id="deletePriceScheme">
         UPDATE PriceScheme
             SET deletedAt=CURRENT_TIMESTAMP
         WHERE priceSchemeIdx=#{priceSchemeIdx}
     </update>
+
+    <update id="deleteStorePrice">
+        UPDATE StorePrice
+        SET deletedAt=CURRENT_TIMESTAMP
+        WHERE storePriceIdx=#{storePriceIdx}
+    </update>
+
     <select id="findCurrentPrice" resultType="Integer">
         SELECT sp.price
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
-        WHERE ps.storeIdx =#{storeIdx} and ps.deletedAt is null and sp.hole=#{hole} and sp.startDate is not null
+        WHERE ps.storeIdx =#{storeIdx} and ps.deletedAt is null and sp.deletedAt is null and sp.hole=#{hole} and sp.startDate is not null
           and (#{currentDate} between DATE_FORMAT(sp.startDate, '%m:%d') and DATE_FORMAT(sp.endDate, '%m:%d'))
           and (TIME_FORMAT(#{currentTime}, '%H:%i') between TIME_FORMAT(sp.startTime, '%H:%i') and TIME_FORMAT(sp.endTime, '%H:%i'))
     </select>
     <select id="findCurrentWeekPrice" resultType="Integer">
         SELECT sp.price
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
-        WHERE ps.storeIdx =#{storeIdx} and sp.isHoliday=#{isHoliday} and ps.deletedAt is null
+        WHERE ps.storeIdx =#{storeIdx} and sp.isHoliday=#{isHoliday} and ps.deletedAt is null and sp.deletedAt is null
           and sp.hole=#{hole} and sp.startDate is null
           and (TIME_FORMAT(#{currentTime}, '%H:%i') between TIME_FORMAT(sp.startTime, '%H:%i') and TIME_FORMAT(sp.endTime, '%H:%i'))
     </select>
