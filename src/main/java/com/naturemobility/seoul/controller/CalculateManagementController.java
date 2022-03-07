@@ -35,16 +35,32 @@ public class CalculateManagementController {
         return new BaseResponse<>(SUCCESS,calculateList);
     }
 
+    /*
     /**
      * 정산하기
      * [PATCH] /calculate-management/calculate?calculationIdx=11
      * @return BaseResponse
      */
+    /*
     @PatchMapping("/calculate")
     public BaseResponse calculate(@RequestParam("calculationIdx") Long calculationIdx) throws BaseException {
         Long partnerIdx=0L;
         partnerIdx = checkUserService.getPartnerIdx();
         calculateManagementService.calculate(partnerIdx,calculationIdx);
+        return new BaseResponse<>(SUCCESS);
+    }
+     */
+
+    /**
+     * 정산하기
+     * [POST] /calculate-management/calculation?calculationMonthDate="2022-02"
+     * @return BaseResponse
+     */
+    @PostMapping("/calculation")
+    public BaseResponse calculate(@RequestParam("calculationMonthDate") String calculationMonthDate) throws BaseException {
+        Long partnerIdx=0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        calculateManagementService.calculate(partnerIdx,calculationMonthDate);
         return new BaseResponse<>(SUCCESS);
     }
 }

@@ -38,4 +38,24 @@
         SET calculateStatus = 2
         WHERE reservationIdx = #{calculationIdx}
     </update>
+
+    <select id="getCalculatedAmount" resultType="Integer">
+        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{calculationMonthDate}), amount,
+                      0)) AS fee
+        FROM Payment
+        WHERE storeIdx = #{storeIdx};
+    </select>
+
+    <insert id="postCalculation" parameterType="PostCalculation">
+        INSERT INTO PartnerPayment (partnerIdx, sales, fees, price, calculateDate)
+        VALUES (#{partnerIdx}, #{sales}, #{fee}, #{price}, #{calculationMonthDate});
+    </insert>
+
+    <select id="checkDuplication" resultType="Integer">
+        SELECT COUNT(1)
+        FROM PartnerPayment
+        WHERE partnerIdx = #{partnerIdx}
+          AND calculateDate = #{calculationMonthDate}
+    </select>
+
 </mapper>
