@@ -63,7 +63,8 @@ public class ReservationsServiceImpl implements ReservationsService {
             return reservationList.stream().map( (r)->
                     new GetRezResByUserIdx(r.getReservationIdx(),r.getStoreIdx(),r.getStoreName(),
                             r.getReservationTime(), r.getUseTime(), r.getSelectedHall(),
-                            r.getPersonCount(), r.getAlreadyUsed(), RefundStatus.getMsg(r.getRefundStatus()))
+                            r.getPersonCount(), r.getAlreadyUsed(), RefundStatus.getMsg(r.getRefundStatus()),
+                            r.getScore())
             ).collect(Collectors.toList());
         }else if(page > total)
             return new ArrayList<>();

@@ -63,6 +63,7 @@ public class ReservationInfo extends DTOCommon {
     private String storeName;
     private int refundStatus;
     private String payMethod;
+    private Double score;
 
     public ReservationInfo(Long userIdx) {
         this.userIdx = userIdx;
