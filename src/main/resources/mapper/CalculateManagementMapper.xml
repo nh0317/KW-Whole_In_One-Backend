@@ -8,23 +8,21 @@
         WHERE partnerIdx = #{partnerIdx}
     </select>
 
-    <select id="getCalculateList" resultType="GetCalculateListRes">
-        SELECT reservationIdx AS calculationIdx,
-               reservePrice,
-               discountPrice,
-               payPrice,
+    <select id="getCalculateList" resultType="GetCalculationListRes">
+        SELECT sales,
+               price,
+               fees,
                (CASE calculateStatus
                     WHEN 0 THEN '정산 미완료'
                     WHEN 1 THEN '정산 완료'
-                    WHEN 2 THEN '정산 등록'
-                   END)       AS calculateStatus,
+                   END) AS calculateStatus
+                ,
+               calculateDate,
                createdAt,
-               paymentTime
-        FROM Reservations
-        WHERE paymentTime &gt;= #{startDay}
-          AND paymentTime &lt;= #{endDay}
-          AND storeIdx = #{storeIdx}
-        ORDER BY paymentTime DESC;
+               calculatedAt
+        FROM PartnerPayment
+        WHERE partnerIdx = #{partnerIdx}
+        ORDER BY createdAt DESC;
     </select>
 
     <select id="getStoreIdxByCalculationIdx" resultType="Long">

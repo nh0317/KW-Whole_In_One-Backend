@@ -24,7 +24,7 @@ public class PostCalculation {
     public PostCalculation(Long partnerIdx, Integer sales, String calculationMonthDate) {
         this.partnerIdx = partnerIdx;
         this.sales = sales;
-        this.fee = DEFAULTFEE;
+        this.fee = (int) Math.round(this.sales * DEFAULTFEE * 0.01);
         this.price = sales - (int) Math.round(this.sales * DEFAULTFEE * 0.01);
         this.calculationMonthDate = calculationMonthDate;
     }

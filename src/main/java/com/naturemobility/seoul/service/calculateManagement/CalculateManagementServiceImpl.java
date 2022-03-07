@@ -1,7 +1,7 @@
 package com.naturemobility.seoul.service.calculateManagement;
 
 import com.naturemobility.seoul.config.BaseException;
-import com.naturemobility.seoul.domain.calculateManagement.GetCalculateListRes;
+import com.naturemobility.seoul.domain.calculateManagement.GetCalculationListRes;
 import com.naturemobility.seoul.domain.calculateManagement.PostCalculation;
 import com.naturemobility.seoul.mapper.CalculateManagementMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.DUPLICATION_CALCULATION;
-import static com.naturemobility.seoul.config.BaseResponseStatus.NO_AUTHORITY;
 
 @Service
 @Slf4j
@@ -20,10 +19,9 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
     CalculateManagementMapper calculateManagementMapper;
 
     @Override
-    public List<GetCalculateListRes> getCalculateList(Long partnerIdx, String startDay, String endDay) throws BaseException {
-        List<GetCalculateListRes> calculationList = null;
-        Long storeIdx = calculateManagementMapper.getStoreIdx(partnerIdx);
-        calculationList = calculateManagementMapper.getCalculateList(storeIdx, startDay, endDay);
+    public List<GetCalculationListRes> getCalculateList(Long partnerIdx) throws BaseException {
+        //Long storeIdx = calculateManagementMapper.getStoreIdx(partnerIdx);
+        List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateList(partnerIdx);
         return calculationList;
     }
 
