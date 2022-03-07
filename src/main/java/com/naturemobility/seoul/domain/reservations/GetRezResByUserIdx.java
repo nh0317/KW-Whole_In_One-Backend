@@ -24,8 +24,11 @@ public class GetRezResByUserIdx {
     private Integer personCount;
     private Boolean alreadyUsed;
     private String refundStatus;
+    private Double score;
 
-    public GetRezResByUserIdx(Long reservationIdx, Long storeIdx, String storeName, LocalDateTime reservationTime, Integer useTime, Integer selectHall, Integer personCount, Boolean alreadyUsed, String refundStatus) {
+    public GetRezResByUserIdx(Long reservationIdx, Long storeIdx, String storeName, LocalDateTime reservationTime,
+                              Integer useTime, Integer selectHall, Integer personCount, Boolean alreadyUsed,
+                              String refundStatus, Double score) {
         this.reservationIdx = reservationIdx;
         this.storeIdx = storeIdx;
         this.storeName = storeName;
@@ -37,5 +40,6 @@ public class GetRezResByUserIdx {
         format =  DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm");
         this.reservationTime = reservationTime.format(format);
         this.refundStatus = refundStatus;
+        this.score = score;
     }
 }
