@@ -11,7 +11,10 @@
                r.selectedHall,
                r.personCount,
                r.alreadyUsed,
-               p.refundStatus
+               p.refundStatus,
+               (SELECT IFNULL(format(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1),1), 0)
+               FROM Reviews r
+               WHERE r.storeIdx = s.storeIdx) AS score
         FROM Reservations r left join Payment p  on strcmp(r.merchantUid, p.merchantUid) = 0
             left join Stores s on r.storeIdx=s.storeIdx
         WHERE r.userIdx=#{userIdx}
