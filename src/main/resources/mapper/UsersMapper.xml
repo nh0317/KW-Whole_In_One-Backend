@@ -115,4 +115,11 @@
         VALUES (#{userIdx}, #{couponIdx});
     </insert>
 
+    <update id="updateUserCoupon">
+        UPDATE UserCoupons
+        SET
+            couponStatus = #{couponStatus}
+        WHERE couponIdx =#{couponIdx} and userIdx = #{userIdx}
+    </update>
+
 </mapper>

@@ -30,7 +30,10 @@ public class PostRezReq {
         this.reservationTime = LocalDateTime.parse(postPayReq.getReservationTime(),
                 DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm")).toString();
         this.useTime = postPayReq.getUseTime();
-        this.numberOfGame = Double.valueOf((postPayReq.getUseTime()/60)).intValue();
+        if (postPayReq.getSelectedHall() == 18)
+            this.numberOfGame = Double.valueOf((postPayReq.getUseTime()/60)).intValue();
+        else if (postPayReq.getSelectedHall() == 9)
+            this.numberOfGame = Double.valueOf((postPayReq.getUseTime()/30)).intValue();
         this.useTime = postPayReq.getUseTime();
         this.endTime = LocalDateTime.parse(postPayReq.getReservationTime(),
                         DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm"))
