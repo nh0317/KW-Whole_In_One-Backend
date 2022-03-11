@@ -50,7 +50,7 @@
                (case
                    when r.reservePrice is null then 0
                    else r.reservePrice
-               end) as amount
+               end) as amount, r.reservationIdx
         FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
         WHERE p.storeIdx = #{storeIdx} and refundStatus = 1
         ORDER BY r.reservationTime
