@@ -5,6 +5,7 @@ import com.naturemobility.seoul.domain.users.PostUserCoupon;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +30,6 @@ public interface UsersMapper {
     List<GetCouponByUserIdx> getUserCoupons(@Param("userIdx") Long userIdx);
 
     void postCoupon(PostUserCoupon postUserCoupon);
+    void updateUserCoupon(@Param("userIdx")Long userIdx, @Param("couponIdx")Long couponIdx,
+                          @Param("couponStatus") Boolean couponStatus);
 }

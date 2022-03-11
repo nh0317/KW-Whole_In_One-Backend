@@ -103,5 +103,26 @@
         SET alreadyUsed=#{alreadyUsed}
         WHERE merchantUid=#{merchantUid}
     </update>
+
+    <select id="getCanRezTime" resultType="GetCanRezTimeRes">
+        with recursive hours as(
+        select time(#{firstTime}) as hour
+        union all
+        select date_add(time(hour),INTERVAL 30 MINUTE) as hour
+        from hours
+         where hour &lt; #{endTime}
+        )
+        select time_format(h.hour,"%H:%i") as time
+        from hours h
+        where h.hour not in (
+            select h.hour
+            from hours h left join Reservations r on time_format(h.hour,"%H:%i") = time_format(r.reservationTime,"%H:%i")
+            left join stores s on r.storeIdx = s.storeIdx
+            where (alreadyUsed = 1) and (date_format(r.reservationTime, "%Y-%m-%d") = #{rezDate}) and (s.storeIdx = #{storeIdx})
+            group by h.hour, r.alreadyUsed, r.reservationTime, s.storeIdx
+            )
+        group by h.hour
+        order by h.hour;
+    </select>
     
 </mapper>
