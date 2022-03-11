@@ -5,15 +5,14 @@ import com.naturemobility.seoul.config.BaseResponse;
 import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.payment.*;
 import com.naturemobility.seoul.domain.payment.general.PostGeneralPayReq;
-import com.naturemobility.seoul.domain.payment.refund.PostApproveRefundReq;
-import com.naturemobility.seoul.domain.payment.refund.PostApproveRefundRes;
-import com.naturemobility.seoul.domain.payment.refund.PostReqRefundReq;
-import com.naturemobility.seoul.domain.payment.refund.PostReqRefundRes;
+import com.naturemobility.seoul.domain.payment.refund.*;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import com.naturemobility.seoul.service.payment.PaymentService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("pay")
@@ -65,6 +64,13 @@ public class PaymentController {
     BaseResponse<GetUserInfoInPayment> getUserInfo() throws BaseException{
         Long userIdx = checkUserService.getUserIdx();
         GetUserInfoInPayment result = paymentService.getUserInfo(userIdx);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
+    }
+
+    @GetMapping("/refund-list")
+    BaseResponse<List<GetRefundsRes>> getRefundList() throws BaseException{
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        List<GetRefundsRes> result = paymentService.getRefundsList(partnerIdx);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
 }

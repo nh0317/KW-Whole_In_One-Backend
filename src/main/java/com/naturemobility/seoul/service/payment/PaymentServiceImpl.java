@@ -6,29 +6,25 @@ import com.naturemobility.seoul.domain.payment.*;
 import com.naturemobility.seoul.domain.payment.general.PostGeneralPayReq;
 import com.naturemobility.seoul.domain.payment.imp.PostIMPPayReq;
 import com.naturemobility.seoul.domain.payment.imp.PostIMPRefundReq;
-import com.naturemobility.seoul.domain.payment.refund.PostApproveRefundReq;
-import com.naturemobility.seoul.domain.payment.refund.PostApproveRefundRes;
-import com.naturemobility.seoul.domain.payment.refund.PostReqRefundReq;
-import com.naturemobility.seoul.domain.payment.refund.PostReqRefundRes;
+import com.naturemobility.seoul.domain.payment.refund.*;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayRes;
 import com.naturemobility.seoul.domain.reservations.PostRezInfo;
 import com.naturemobility.seoul.domain.reservations.PostRezReq;
 import com.naturemobility.seoul.domain.users.UserInfo;
-import com.naturemobility.seoul.mapper.PaymentMapper;
-import com.naturemobility.seoul.mapper.ReservationMapper;
-import com.naturemobility.seoul.mapper.StoresMapper;
-import com.naturemobility.seoul.mapper.UsersMapper;
+import com.naturemobility.seoul.mapper.*;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
 import com.naturemobility.seoul.utils.IMPService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -50,6 +46,8 @@ public class PaymentServiceImpl implements PaymentService {
     ReservationMapper reservationMapper;
     @Autowired
     IMPService impService;
+    @Autowired
+    PartnerMapper partnerMapper;
 
     @Override
     @Transactional
@@ -88,7 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
             point = userInfo.getUserPoint();
         usersMapper.updateUserPoint(userIdx, point);
         reservationsService.postReservation(new PostRezReq(postPayReq, postPayRes.getMerchant_uid()), userIdx);
-        //TODO: 쿠폰 사용 상태 변경
+        usersMapper.updateUserCoupon(userIdx, postGeneralPayReq.getCouponIdx(), Boolean.TRUE);
         return new PostClientPayRes(postPayRes.getMerchant_uid(), postPayReq.getAmount(),
                 earnPoint,postPayReq.getPoint(), userInfo.getUserPoint(), "예약 성공");
     }
@@ -108,7 +106,7 @@ public class PaymentServiceImpl implements PaymentService {
                 point, userIdx, "ROLE_MEMBER"));
         usersMapper.updateUserPoint(userIdx, point);
         reservationsService.postReservation(new PostRezReq(postPayReq, getPaymentData.getMerchant_uid()), userIdx);
-        //TODO: 쿠폰 사용 상태 변경
+        usersMapper.updateUserCoupon(userIdx, postPayReq.getCouponIdx(), Boolean.TRUE);
         return new PostClientPayRes(getPaymentData.getMerchant_uid(), postPayReq.getAmount(),
                 earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());
     }
@@ -221,7 +219,7 @@ public class PaymentServiceImpl implements PaymentService {
                 postApproveRefund.getCancelAmount(), partnerIdx, "ROLE_ADMIN");
         paymentInfo = paymentMapper.findPayment(paymentInfo.getMerchantUid()).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         UserInfo userInfo = usersMapper.findByIdx(paymentInfo.getUserIdx()).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
-        //TODO: 쿠폰 사용 상태 변경
+        usersMapper.updateUserCoupon(paymentInfo.getUserIdx(), paymentInfo.getCouponIdx(), Boolean.FALSE);
         reservationMapper.updateAlreadyUsed(true, paymentInfo.getMerchantUid());
         return new PostApproveRefundRes(postApproveRefund.getReservationIdx(), paymentInfo.getRefundReason(),
                 paymentInfo.getCancelAmount(),userInfo.getUserPoint(), RefundStatus.COMPLETE.getMsg());
@@ -235,5 +233,13 @@ public class PaymentServiceImpl implements PaymentService {
         getUserInfoInPayment.setUserCoupon(usersMapper.cntCoupon(userIdx).orElseGet(()->0));
         getUserInfoInPayment.setUserCoupons(usersMapper.getUserCoupons(userIdx));
         return getUserInfoInPayment;
+    }
+
+
+    @Override
+    public List<GetRefundsRes> getRefundsList(Long partnerIdx) throws BaseException{
+        Long store = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA));
+        List<GetRefundsRes> allRefunds = paymentMapper.findAllRefunds(store);
+        return allRefunds;
     }
 }

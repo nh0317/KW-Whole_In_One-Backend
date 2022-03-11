@@ -40,4 +40,19 @@
         FROM Payment p left join Reservations r on strcmp(r.merchantUid, p.merchantUid) = 0
         WHERE r.reservationIdx=#{reservationIdx} and p.refundStatus=#{refundStatus}
     </select>
+    <select id = "findAllRefunds" resultType="GetRefundsRes">
+        SELECT p.merchantUid, p.refundReason, u.userName, u.userPhoneNumber, p.refundStatus,
+               date_format(r.reservationTime,"%Y-%m-%d %H:%i") as reservationTime, r.selectedHall, r.useTime, r.personCount,
+               (case
+                   when r.createdAt is null then 0
+                   else 1
+               end) as isPaid,
+               (case
+                   when r.reservePrice is null then 0
+                   else r.reservePrice
+               end) as amount
+        FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
+        WHERE p.storeIdx = #{storeIdx} and refundStatus = 1
+        ORDER BY r.reservationTime
+    </select>
 </mapper>
