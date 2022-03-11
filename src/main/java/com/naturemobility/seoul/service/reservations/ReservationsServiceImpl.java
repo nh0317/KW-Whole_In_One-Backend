@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -133,5 +135,39 @@ public class ReservationsServiceImpl implements ReservationsService {
     public GetRezResByStoreIdx getStoreInfo(Long storeIdx){
         GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
         return new GetRezResByStoreIdx(getStoreRes.getStoreName(), getStoreRes.getStoreLocation());
+    }
+
+    @Override
+    public List<GetCanRezTimeRes> getCanRezTimeRes(String reservationDate, Long storeIdx, Integer playTime){
+        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
+        List<String> storeTimes = List.of(getStoreRes.getStoreTime().split("~"));
+        LocalTime startTime = LocalTime.parse(storeTimes.get(0).trim(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime endTime = LocalTime.parse(storeTimes.get(1).trim(), DateTimeFormatter.ofPattern("HH:mm"));
+        if (playTime != null) endTime = endTime.minusMinutes(playTime.longValue());
+        else endTime =endTime.minusMinutes(30);
+        log.info(storeTimes.get(0) + storeTimes.get(1));
+        log.info(reservationDate);
+        log.info("playTime : " + playTime + ", endTime : " + endTime);
+        LocalTime firstTime;
+        LocalTime secondTime;
+        if (startTime.getMinute() > 30) {
+            firstTime = LocalTime.of(startTime.getHour() + 1, 0);
+            secondTime = LocalTime.of(startTime.getHour() + 1, 30);
+        } else if (startTime.getMinute() > 0) {
+            firstTime = LocalTime.of(startTime.getHour(), 30);
+            secondTime = LocalTime.of(startTime.getHour() + 1, 0);
+        } else {
+            firstTime = LocalTime.of(startTime.getHour(), 0);
+            secondTime = LocalTime.of(startTime.getHour(), 30);
+        }
+        log.info("firstTime : " + firstTime + ", secondTime : " + secondTime);
+        try {
+            List<GetCanRezTimeRes> canRezTime = reservationMapper.getCanRezTime(firstTime, secondTime,
+                    reservationDate, endTime, storeIdx);
+            return canRezTime;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

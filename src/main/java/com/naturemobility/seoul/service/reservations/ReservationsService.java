@@ -17,4 +17,6 @@ public interface ReservationsService {
     Map<String,Integer> getTotalPage(Long userIdx);
 
     GetRezResByStoreIdx getStoreInfo(Long storeIdx);
+
+    List<GetCanRezTimeRes> getCanRezTimeRes(String reservationDate, Long storeIdx, Integer playTime);
 }

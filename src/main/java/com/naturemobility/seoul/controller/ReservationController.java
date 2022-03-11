@@ -98,4 +98,13 @@ public class ReservationController {
         GetRezResByStoreIdx result = reservationsService.getStoreInfo(storeIdx);
         return new BaseResponse<>(SUCCESS, result);
     }
+
+    @GetMapping("/get-can-reservation-time")
+    public BaseResponse<List<GetCanRezTimeRes>> getCanRezTime(@RequestParam("reservationDate") String reservationDate,
+                                                              @RequestParam("storeIdx")Long storeIdx,
+                                                              @RequestParam(value = "playTime", required = false)Integer playTime)
+            throws  BaseException{
+        List<GetCanRezTimeRes> result = reservationsService.getCanRezTimeRes(reservationDate, storeIdx, playTime);
+        return new BaseResponse<>(SUCCESS, result);
+    }
 }
