@@ -123,8 +123,8 @@ task installReact(type: Exec) {
 		commandLine "npm.cmd", "audit", "fix"
 		commandLine 'npm.cmd', 'install'
 	} else {
-		commandLine "npm", "audit", "fix"
-		commandLine 'npm', 'install'
+		commandLine "sudo","npm", "audit", "fix"
+		commandLine "sudo",'npm', 'install'
 	}
 }
 
