@@ -16,7 +16,8 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8080","http://localhost:8080","https://seoul.naturemobility.com:8080"));
+        config.setAllowedOrigins(List.of("http://localhost:8080","http://localhost:3000","https://seoul.naturemobility.com:18080",
+                "http://localhost:8083","https://seoul.naturemobility.com:18083"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
