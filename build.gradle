@@ -103,6 +103,11 @@ test {
 //cmd에서 gradlew clean build 후 실행하면 8080포트에서도 react view가 나타남
 def frontendDir = "$projectDir/../wholeinone-client"//react 프로젝트 주소
 
+node {
+	download = true
+	version = "16.14.0"
+}
+
 sourceSets {
 	main {
 		resources {
