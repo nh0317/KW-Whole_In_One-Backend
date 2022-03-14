@@ -21,4 +21,8 @@ public interface PartnerStoreMapper {
     int updateStoreImage(@Param("storeIdx") Long storeIdx, @Param("storeImage") String storeImage);
 
     void postRoomInfo(PostRoomInfo postRoomInfo);
+
+    Long getPartnerIdxByRoomIdx(@Param("roomIdx") Long roomIdx);
+
+    void deleteRoom(Long roomIdx);
 }

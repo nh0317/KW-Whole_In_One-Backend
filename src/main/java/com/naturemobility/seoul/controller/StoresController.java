@@ -168,7 +168,7 @@ public class StoresController {
      * 매장 roomIdx 조회 API
      * [GET] /stores/roomIdx?storeIdx=10
      *
-     * @return BaseResponse<List < GetRoomIdxRes>>
+     * @return BaseResponse<List<GetRoomIdxRes>>
      */
     @ResponseBody
     @GetMapping("/roomIdx")

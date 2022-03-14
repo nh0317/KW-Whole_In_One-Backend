@@ -29,7 +29,7 @@ public class PartnerStoresController {
     CheckUserService checkUserService;
 
     @GetMapping("/myStore")
-    public BaseResponse<GetPartnerStoreRes> getStore() throws BaseException{
+    public BaseResponse<GetPartnerStoreRes> getStore() throws BaseException {
         Long partnerIdx = checkUserService.getPartnerIdx();
         GetPartnerStoreRes getPartnerStoreRes = partnerStoreService.getStore(partnerIdx);
 //            log.info(commonStoreRes.get);
@@ -37,37 +37,39 @@ public class PartnerStoresController {
     }
 
     @PostMapping("/register")
-    public BaseResponse<PostPartnerStoreRes> registerStore(@RequestBody PostStoreReq postStoreReq) throws BaseException{
+    public BaseResponse<PostPartnerStoreRes> registerStore(@RequestBody PostStoreReq postStoreReq) throws BaseException {
         Long partnerIdx = checkUserService.getPartnerIdx();
         PostPartnerStoreRes result = partnerStoreService.saveStore(postStoreReq, partnerIdx);
         return new BaseResponse<>(SUCCESS, result);
     }
+
     @PostMapping("/register_image")
     public BaseResponse<PostStoreImageRes> registerStoreImages(@RequestPart("mainStoreImage") MultipartFile mainStoreImage,
-                                                                 @RequestPart("storeImages") List<MultipartFile> storeImages )
-            throws BaseException{
+                                                               @RequestPart("storeImages") List<MultipartFile> storeImages)
+            throws BaseException {
         Long partnerIdx = checkUserService.getPartnerIdx();
-        PostStoreImageRes getPartnerStoreRes = partnerStoreService.saveStoreImage(mainStoreImage,storeImages,partnerIdx);
+        PostStoreImageRes getPartnerStoreRes = partnerStoreService.saveStoreImage(mainStoreImage, storeImages, partnerIdx);
         return new BaseResponse<>(SUCCESS, getPartnerStoreRes);
     }
 
     @GetMapping("/get_storeIdx")
     public BaseResponse<GetStoreIdxRes> getStoreIdx()
-            throws BaseException{
+            throws BaseException {
         return new BaseResponse<>(SUCCESS, partnerStoreService.getStoreIdx(checkUserService.getPartnerIdx()));
     }
+
     /**
      * 쿠폰등록 API
      * [POST] /partner/coupons
-     * @RequestBody
-     * String couponName
+     *
+     * @return BaseResponse
+     * @RequestBody String couponName
      * Integer couponPercentage
      * String couponDeadline
-     * @return BaseResponse
      */
 
     @PostMapping("/coupon")
-    public BaseResponse postCouponInfo(@RequestBody PostCouponReq postCouponReq) throws BaseException{
+    public BaseResponse postCouponInfo(@RequestBody PostCouponReq postCouponReq) throws BaseException {
 
         Long partnerIdx = checkUserService.getPartnerIdx();
         partnerStoreService.postCoupon(partnerIdx, postCouponReq);
@@ -75,10 +77,18 @@ public class PartnerStoresController {
     }
 
     @PostMapping("/room")
-    public BaseResponse postRoomInfo(@RequestBody PostRoomInfoReq postRoomInfoReq) throws BaseException{
+    public BaseResponse postRoomInfo(@RequestBody PostRoomInfoReq postRoomInfoReq) throws BaseException {
 
         Long partnerIdx = checkUserService.getPartnerIdx();
-        partnerStoreService.postRoomInfo(partnerIdx,postRoomInfoReq);
+        partnerStoreService.postRoomInfo(partnerIdx, postRoomInfoReq);
+        return new BaseResponse<>(SUCCESS);
+    }
+
+    @DeleteMapping("/room")
+    public BaseResponse deleteRoom(@RequestParam("roomIdx") Long roomIdx) throws BaseException {
+
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        partnerStoreService.deleteRoom(partnerIdx,roomIdx);
         return new BaseResponse<>(SUCCESS);
     }
 }
