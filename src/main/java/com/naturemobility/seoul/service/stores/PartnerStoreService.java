@@ -21,4 +21,6 @@ public interface PartnerStoreService {
     GetStoreIdxRes getStoreIdx(Long partnerIdx) throws BaseException;
 
     void postCoupon(Long partnerIdx, PostCouponReq postCouponReq) throws BaseException;
+
+    void postRoomInfo(Long partnerIdx,PostRoomInfoReq postRoomInfoReq) throws BaseException;
 }

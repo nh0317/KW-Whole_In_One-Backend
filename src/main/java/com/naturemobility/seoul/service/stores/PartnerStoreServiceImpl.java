@@ -129,4 +129,12 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
         partnerStoreMapper.postCouponInfo(postcouponInfo);
         return;
     }
+
+    @Override
+    public void postRoomInfo(Long partnerIdx, PostRoomInfoReq postRoomInfoReq) throws BaseException {
+
+        PostRoomInfo postRoomInfo = new PostRoomInfo(postRoomInfoReq.getRoomName(),partnerIdx);
+        partnerStoreMapper.postRoomInfo(postRoomInfo);
+        return;
+    }
 }

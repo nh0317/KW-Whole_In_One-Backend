@@ -73,5 +73,13 @@ public class PartnerStoresController {
         partnerStoreService.postCoupon(partnerIdx, postCouponReq);
         return new BaseResponse<>(SUCCESS);
     }
+
+    @PostMapping("/room")
+    public BaseResponse postRoomInfo(@RequestBody PostRoomInfoReq postRoomInfoReq) throws BaseException{
+
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        partnerStoreService.postRoomInfo(partnerIdx,postRoomInfoReq);
+        return new BaseResponse<>(SUCCESS);
+    }
 }
 
