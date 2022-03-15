@@ -104,13 +104,18 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
     public PostStoreImageRes saveStoreImage(MultipartFile mainStoreImage, List<MultipartFile> storeImages, Long partnerIdx)
             throws BaseException {
         Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        String mainImgPath = fileUploadService.uploadImage(mainStoreImage);
-        partnerStoreMapper.updateStoreImage(storeIdx, mainImgPath);
+        String mainImgPath = "";
         List<String> images = new ArrayList<>();
-        for (MultipartFile img : storeImages) {
-            String filepath = fileUploadService.uploadImage(img);
-            storeImageFileMapper.save(new StoreImageFileInfo(storeIdx, filepath));
-            images.add(filepath);
+        if(mainStoreImage != null && !mainStoreImage.equals("")) {
+            mainImgPath = fileUploadService.uploadImage(mainStoreImage);
+            partnerStoreMapper.updateStoreImage(storeIdx, mainImgPath);
+        }
+        if (storeImages != null && !storeImages.isEmpty()) {
+            for (MultipartFile img : storeImages) {
+                String filepath = fileUploadService.uploadImage(img);
+                storeImageFileMapper.save(new StoreImageFileInfo(storeIdx, filepath));
+                images.add(filepath);
+            }
         }
         return new PostStoreImageRes(mainImgPath, images);
     }
