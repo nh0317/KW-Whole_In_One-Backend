@@ -120,7 +120,7 @@
         where h.hour not in (
             select h.hour
             from hours h left join Reservations r on time_format(h.hour,"%H:%i") = time_format(r.reservationTime,"%H:%i")
-            left join stores s on r.storeIdx = s.storeIdx
+            left join Stores s on r.storeIdx = s.storeIdx
             where (alreadyUsed = 0) and (date_format(r.reservationTime, "%Y-%m-%d") = #{rezDate}) and (s.storeIdx = #{storeIdx})
                     and r.roomIdx =#{roomIdx} and r.selectedHall = #{hall}
             group by h.hour, r.alreadyUsed, r.reservationTime, s.storeIdx
