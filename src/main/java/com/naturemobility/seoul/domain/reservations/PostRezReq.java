@@ -1,5 +1,7 @@
 package com.naturemobility.seoul.domain.reservations;
 
+import com.naturemobility.seoul.domain.payment.PaymentInfo;
+import com.naturemobility.seoul.domain.payment.general.PostGeneralPayReq;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -45,5 +47,28 @@ public class PostRezReq {
         this.price = postPayReq.getAmount();
         this.discountPrice = postPayReq.getDiscountPrice();
         this.merchantUid = merchantUid;
+    }
+
+    public PostRezReq(PostGeneralPayReq postGeneralPayReq, String merchantUid) {
+        this.storeIdx = postGeneralPayReq.getStoreIdx();
+        this.reservationTime = LocalDateTime.parse(postGeneralPayReq.getReservationTime(),
+                DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm")).toString();
+        this.useTime = postGeneralPayReq.getUseTime();
+        if (postGeneralPayReq.getSelectedHall() == 18)
+            this.numberOfGame = Double.valueOf((postGeneralPayReq.getUseTime()/60)).intValue();
+        else if (postGeneralPayReq.getSelectedHall() == 9)
+            this.numberOfGame = Double.valueOf((postGeneralPayReq.getUseTime()/30)).intValue();
+        this.useTime = postGeneralPayReq.getUseTime();
+        this.endTime = LocalDateTime.parse(postGeneralPayReq.getReservationTime(),
+                        DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm"))
+                .plusMinutes(postGeneralPayReq.getUseTime()).toString();
+        this.roomIdx = postGeneralPayReq.getRoomIdx();
+        this.selectedHall = postGeneralPayReq.getSelectedHall();
+        this.request = postGeneralPayReq.getRequest();
+        this.personCount = postGeneralPayReq.getPersonCount();
+        this.price = postGeneralPayReq.getAmount();
+        this.discountPrice = postGeneralPayReq.getDiscountPrice();
+        this.merchantUid = merchantUid;
+
     }
 }

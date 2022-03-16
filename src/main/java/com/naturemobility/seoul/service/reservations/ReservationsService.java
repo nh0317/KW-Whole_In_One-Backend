@@ -11,12 +11,14 @@ public interface ReservationsService {
     public Long getStoreIdx(Long reservationIdx) throws BaseException;
 
     public void postReservation(PostRezReq postRezReq,Long userIdx) throws BaseException;
-    
-    public List<GetRezTime> getReservationTime(Long storeIdx,String reservationDay,Long hallNumber) throws BaseException;
+
+    void checkDuplication(PostCheckReservationReq postCheckRez) throws  BaseException;
+
+    public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay, Long hallNumber) throws BaseException;
 
     Map<String,Integer> getTotalPage(Long userIdx);
 
     GetRezResByStoreIdx getStoreInfo(Long storeIdx);
 
-    List<GetCanRezTimeRes> getCanRezTimeRes(String reservationDate, Long storeIdx, Integer playTime);
+    List<GetCanRezTimeRes> getCanRezTimeRes(String reservationDate, Long storeIdx, Integer playTime, Long roomIdx, Integer hall);
 }

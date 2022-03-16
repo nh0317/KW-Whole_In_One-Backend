@@ -25,9 +25,10 @@ public interface ReservationMapper {
     Integer checkDuplication2(@Param("startTime") String startTime,@Param("endTime") String endTime,
                               @Param("storeIdx") Long storeIdx,@Param("roomIdx") Long roomIdx);
 
-    int updateAlreadyUsed(@Param("alreadyUsed")Boolean alreadyUsed, @Param("merchantUid")String merchantUid);
+    int updateAlreadyUsed(@Param("alreadyUsed")Boolean alreadyUsed, @Param("reservationIdx")Long reservationIdx);
 
-    List<GetCanRezTimeRes> getCanRezTime(@Param("firstTime") LocalTime firstTime, @Param("secondTime") LocalTime secondTime,
+    List<GetCanRezTimeRes> getCanRezTime(@Param("firstTime") LocalTime firstTime,
                                          @Param("rezDate") String rezDate, @Param("endTime") LocalTime endTime,
-                                         @Param("storeIdx")Long storeIdx);
+                                         @Param("storeIdx")Long storeIdx, @Param("roomIdx") Long roomIdx,
+                                         @Param("hall")Integer hall);
 }
