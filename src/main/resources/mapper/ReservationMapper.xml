@@ -116,7 +116,14 @@
          where hour &lt; #{endTime}
         )
         select time_format(h.hour,"%H:%i") as time
-        from hours h
+        from hours h left join
+            (StorePrice sp left join PriceScheme ps on ps.priceSchemeIdx = sp.priceSchemeIdx )
+        on h.hour
+            between TIME_FORMAT(sp.startTime, '%H:%i')
+            and (case
+            when time_format(sp.endTime, '%H:%i') = '00:00' then '24:00'
+            else time_format(sp.endTime, '%H:%i')
+            end)
         where h.hour not in (
             select h.hour
             from hours h left join Reservations r on time_format(h.hour,"%H:%i") = time_format(r.reservationTime,"%H:%i")
@@ -124,9 +131,8 @@
             where (alreadyUsed = 0) and (date_format(r.reservationTime, "%Y-%m-%d") = #{rezDate}) and (s.storeIdx = #{storeIdx})
                     and r.roomIdx =#{roomIdx} and r.selectedHall = #{hall}
             group by h.hour, r.alreadyUsed, r.reservationTime, s.storeIdx
-            )
+            )and ps.storeIdx = 1 and sp.deletedAt is null
         group by h.hour
         order by h.hour;
     </select>
-    
 </mapper>
