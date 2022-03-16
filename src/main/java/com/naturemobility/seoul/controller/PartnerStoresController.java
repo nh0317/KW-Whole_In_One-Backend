@@ -43,8 +43,8 @@ public class PartnerStoresController {
         return new BaseResponse<>(SUCCESS, result);
     }
     @PostMapping("/register_image")
-    public BaseResponse<PostStoreImageRes> registerStoreImages(@RequestPart("mainStoreImage") MultipartFile mainStoreImage,
-                                                                 @RequestPart("storeImages") List<MultipartFile> storeImages )
+    public BaseResponse<PostStoreImageRes> registerStoreImages(@RequestPart(value = "mainStoreImage", required = false) MultipartFile mainStoreImage,
+                                                                 @RequestPart(value = "storeImages", required = false) List<MultipartFile> storeImages )
             throws BaseException{
         Long partnerIdx = checkUserService.getPartnerIdx();
         PostStoreImageRes getPartnerStoreRes = partnerStoreService.saveStoreImage(mainStoreImage,storeImages,partnerIdx);

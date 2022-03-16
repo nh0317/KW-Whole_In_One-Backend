@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -107,6 +108,24 @@ public class ReservationsServiceImpl implements ReservationsService {
     }
 
     @Override
+    public void checkDuplication(PostCheckReservationReq postCheckRez) throws  BaseException{
+        String endTime
+                = LocalDateTime.parse(postCheckRez.getStartTime(), DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm"))
+                .plusMinutes(postCheckRez.getUseTime()).toString();
+        String startTime
+                = LocalDateTime.parse(postCheckRez.getStartTime(), DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm"))
+                .toString();
+        int checkDuplication1 = reservationMapper.checkDuplication1(startTime, endTime,
+                postCheckRez.getStoreIdx(), postCheckRez.getRoomIdx());
+        int checkDuplication2 = reservationMapper.checkDuplication2(startTime,endTime,
+                postCheckRez.getStoreIdx(), postCheckRez.getRoomIdx());
+        if (checkDuplication1 >= 1 || checkDuplication2 >= 1) {
+            throw new BaseException(RESERVATION_DUPLICATION);
+        }
+        return;
+    }
+
+    @Override
     public List<GetRezTime> getReservationTime(Long storeIdx, String reservationDay,Long roomIdx) throws BaseException {
         List<GetRezTime> getRezTime;
         getRezTime = reservationMapper.getReservationTime(storeIdx,reservationDay,roomIdx);
@@ -138,32 +157,29 @@ public class ReservationsServiceImpl implements ReservationsService {
     }
 
     @Override
-    public List<GetCanRezTimeRes> getCanRezTimeRes(String reservationDate, Long storeIdx, Integer playTime){
+    public List<GetCanRezTimeRes> getCanRezTimeRes(String reservationDate, Long storeIdx, Integer playTime,
+                                                   Long roomIdx, Integer hall){
         GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
         List<String> storeTimes = List.of(getStoreRes.getStoreTime().split("~"));
         LocalTime startTime = LocalTime.parse(storeTimes.get(0).trim(), DateTimeFormatter.ofPattern("HH:mm"));
         LocalTime endTime = LocalTime.parse(storeTimes.get(1).trim(), DateTimeFormatter.ofPattern("HH:mm"));
-        if (playTime != null) endTime = endTime.minusMinutes(playTime.longValue());
+        if (playTime != null && playTime != 0) endTime = endTime.minusMinutes(playTime.longValue());
         else endTime =endTime.minusMinutes(30);
         log.info(storeTimes.get(0) + storeTimes.get(1));
         log.info(reservationDate);
         log.info("playTime : " + playTime + ", endTime : " + endTime);
         LocalTime firstTime;
-        LocalTime secondTime;
         if (startTime.getMinute() > 30) {
             firstTime = LocalTime.of(startTime.getHour() + 1, 0);
-            secondTime = LocalTime.of(startTime.getHour() + 1, 30);
         } else if (startTime.getMinute() > 0) {
             firstTime = LocalTime.of(startTime.getHour(), 30);
-            secondTime = LocalTime.of(startTime.getHour() + 1, 0);
         } else {
             firstTime = LocalTime.of(startTime.getHour(), 0);
-            secondTime = LocalTime.of(startTime.getHour(), 30);
         }
-        log.info("firstTime : " + firstTime + ", secondTime : " + secondTime);
+        log.info("firstTime : " + firstTime);
         try {
-            List<GetCanRezTimeRes> canRezTime = reservationMapper.getCanRezTime(firstTime, secondTime,
-                    reservationDate, endTime, storeIdx);
+            List<GetCanRezTimeRes> canRezTime = reservationMapper.getCanRezTime(firstTime,
+                    reservationDate, endTime, storeIdx, roomIdx, hall);
             return canRezTime;
         }catch (Exception e){
             e.printStackTrace();

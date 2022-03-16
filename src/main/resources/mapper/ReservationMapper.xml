@@ -26,7 +26,6 @@
         select r.reservationIdx,
                s.storeName,
                r.reservationTIme,
-               p.createdAt as paymentTime,
                r.useTime,
                r.selectedHall,
                r.personCount,
@@ -36,7 +35,11 @@
                r.payPrice,
                r.createdAt,
                p.payMethod,
-               p.refundStatus
+               p.refundStatus,
+               (case
+                  when p.amount = 0 then null
+                    else p.createdAt
+               end) as paymentTime
         FROM Reservations r left join Payment p on strcmp(r.merchantUid, p.merchantUid) = 0
             left join Stores s on r.storeIdx=s.storeIdx
         WHERE r.reservationIdx=#{reservationIdx}
@@ -91,7 +94,7 @@
     <select id="checkDuplication2" resultType="Integer">
         SELECT COUNT(1)
         FROM Reservations
-        WHERE endTime >= #{startTime}
+        WHERE endTime > #{startTime}
           AND endTime &lt;= #{endTime}
           AND storeIdx = #{storeIdx}
           AND roomIdx = #{roomIdx}
@@ -101,7 +104,7 @@
     <update id="updateAlreadyUsed">
         UPDATE Reservations
         SET alreadyUsed=#{alreadyUsed}
-        WHERE merchantUid=#{merchantUid}
+        WHERE reservationIdx=#{reservationIdx}
     </update>
 
     <select id="getCanRezTime" resultType="GetCanRezTimeRes">
@@ -118,7 +121,8 @@
             select h.hour
             from hours h left join Reservations r on time_format(h.hour,"%H:%i") = time_format(r.reservationTime,"%H:%i")
             left join stores s on r.storeIdx = s.storeIdx
-            where (alreadyUsed = 1) and (date_format(r.reservationTime, "%Y-%m-%d") = #{rezDate}) and (s.storeIdx = #{storeIdx})
+            where (alreadyUsed = 0) and (date_format(r.reservationTime, "%Y-%m-%d") = #{rezDate}) and (s.storeIdx = #{storeIdx})
+                    and r.roomIdx =#{roomIdx} and r.selectedHall = #{hall}
             group by h.hour, r.alreadyUsed, r.reservationTime, s.storeIdx
             )
         group by h.hour
