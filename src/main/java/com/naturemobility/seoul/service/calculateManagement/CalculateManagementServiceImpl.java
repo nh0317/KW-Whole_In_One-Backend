@@ -43,6 +43,8 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
 
         Long storeIdx = calculateManagementMapper.getStoreIdx(partnerIdx);
         int amount = calculateManagementMapper.getCalculatedAmount(storeIdx, calculationMonthDate);
+        int canceledAmount = calculateManagementMapper.getCanceledAmount(storeIdx, calculationMonthDate);
+        amount -= canceledAmount;
 
         int duplicationVerification = calculateManagementMapper.checkDuplication(partnerIdx, calculationMonthDate);
         if (duplicationVerification == 1) {
