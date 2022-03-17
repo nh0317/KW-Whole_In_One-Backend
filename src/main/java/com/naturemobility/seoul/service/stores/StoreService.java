@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.service.stores;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.domain.coupons.CouponInfo;
 import com.naturemobility.seoul.domain.stores.*;
@@ -30,4 +31,6 @@ public interface StoreService {
     public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException;
 
     public List<Long> retrieveAvailableRoomIdx(Long storeIdx, String startTime, String endTime) throws BaseException;
+
+    public List<GetStoreImagesRes> getStoreImagesRes(Long storeIdx) throws BaseException;
 }

@@ -201,4 +201,10 @@
         FROM Rooms
         WHERE partnerIdx = #{partnerIdx};
     </select>
+
+    <select id="retrieveStoreImages" resultType="GetStoreImagesRes">
+        SELECT storeImage
+        From StoreImageFile
+        WHERE storeIdx = #{storeIdx}
+    </select>
 </mapper>

@@ -117,5 +117,11 @@ public class StoreServiceImpl implements StoreService {
 
         return roomIdxOnlyRes;
     }
+
+    @Override
+    public List<GetStoreImagesRes> getStoreImagesRes(Long storeIdx) throws BaseException {
+        List<GetStoreImagesRes> getStoreImagesRes = storesMapper.retrieveStoreImages(storeIdx);
+        return getStoreImagesRes;
+    }
 }
 

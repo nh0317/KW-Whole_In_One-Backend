@@ -194,10 +194,17 @@ public class StoresController {
 
     @GetMapping("availableRoomIdx")
     public BaseResponse<List<Long>> getAvailableRoom(@RequestParam Long storeIdx,
-                                                              @RequestParam String startTime, @RequestParam String endTime)
+                                                     @RequestParam String startTime, @RequestParam String endTime)
             throws BaseException {
-        List<Long> roomIdxRes = storeService.retrieveAvailableRoomIdx(storeIdx,startTime,endTime);
+        List<Long> roomIdxRes = storeService.retrieveAvailableRoomIdx(storeIdx, startTime, endTime);
         return new BaseResponse<>(SUCCESS, roomIdxRes);
+    }
+
+    @GetMapping("images/{storeIdx}")
+    public BaseResponse<List<GetStoreImagesRes>> getStoreImages(@PathVariable Long storeIdx)
+            throws BaseException {
+        List<GetStoreImagesRes> getStoreImagesRes = storeService.getStoreImagesRes(storeIdx);
+        return new BaseResponse<>(SUCCESS, getStoreImagesRes);
     }
 }
 
