@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,6 +100,22 @@ public class StoreServiceImpl implements StoreService {
     public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException {
         List<CouponInfo> couponInfos = storesMapper.retrieveCouponInfo(storeIdx);
         return couponInfos;
+    }
+
+    @Override
+    public List<Long> retrieveAvailableRoomIdx(Long storeIdx, String startTime, String endTime) throws BaseException {
+        Long partnerIdx = 0L;
+        partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
+
+        List<Long> roomIdxOnlyRes = storesMapper.retrieveRoomIdxOnly(partnerIdx);
+
+        List<Long> reservedRoomIdxRes = storesMapper.retrieveReservedRoomIdx(partnerIdx, startTime, endTime);
+        //List<Long> reservedRoomIdxRes2 = storesMapper.retrieveReservedRoomIdx2(partnerIdx, endTime);
+
+        roomIdxOnlyRes.removeAll(reservedRoomIdxRes);
+        //roomIdxOnlyRes.removeAll(reservedRoomIdxRes2);
+
+        return roomIdxOnlyRes;
     }
 }
 

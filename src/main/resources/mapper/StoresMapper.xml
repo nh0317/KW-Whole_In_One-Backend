@@ -176,4 +176,29 @@
           AND storeIdx = #{storeIdx}
     </select>
 
+    <select id="retrieveReservedRoomIdx" resultType="Long">
+        SELECT Rooms.roomIdx
+        FROM Rooms
+                 INNER JOIN Partner on Rooms.partnerIdx = Partner.partnerIdx
+                 INNER JOIN Reservations on Reservations.roomIdx = Rooms.roomIdx
+        WHERE Partner.partnerIdx = #{partnerIdx}
+          AND reservationTime >= #{startTime}
+          AND endTime &lt;= #{endTime};
+    </select>
+
+    <select id="retrieveReservedRoomIdx2" resultType="Long">
+        SELECT Rooms.roomIdx
+        FROM Rooms
+                 INNER JOIN Partner on Rooms.partnerIdx = Partner.partnerIdx
+                 INNER JOIN Reservations on Reservations.roomIdx = Rooms.roomIdx
+        WHERE Partner.partnerIdx = #{partnerIdx}
+          AND reservationTime >= #{endTime}
+          AND endTime &lt;= #{endTime};
+    </select>
+
+    <select id="retrieveRoomIdxOnly" resultType="Long">
+        SELECT roomIdx
+        FROM Rooms
+        WHERE partnerIdx = #{partnerIdx};
+    </select>
 </mapper>

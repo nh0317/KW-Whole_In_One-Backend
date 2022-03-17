@@ -3,6 +3,7 @@ package com.naturemobility.seoul.controller;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponse;
 import com.naturemobility.seoul.domain.coupons.CouponInfo;
+import com.naturemobility.seoul.domain.reservations.PostCheckReservationReq;
 import com.naturemobility.seoul.domain.stores.*;
 import com.naturemobility.seoul.mapper.VisitedMapper;
 import com.naturemobility.seoul.service.stores.StoreService;
@@ -12,6 +13,7 @@ import com.naturemobility.seoul.utils.CheckUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
@@ -34,16 +36,16 @@ public class StoresController {
      * 매장 검색 API
      * [GET] /stores?storeName=매장이름&userLatitude=37.5533535&userLongitude=127.0235435
      *
-     * @return BaseResponse<List<SearchStoreRes>>
+     * @return BaseResponse<List < SearchStoreRes>>
      */
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<List<SearchStoreRes>> getStores(@RequestParam String storeName, Double userLatitude, Double userLongitude)   throws BaseException{
-        if (storeName == null || userLatitude==null || userLatitude==null){
+    public BaseResponse<List<SearchStoreRes>> getStores(@RequestParam String storeName, Double userLatitude, Double userLongitude) throws BaseException {
+        if (storeName == null || userLatitude == null || userLatitude == null) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
-        List<SearchStoreRes> getStoreList = storeService.retrieveStoreList(storeName,userLatitude,userLongitude);
-        return new BaseResponse<>(SUCCESS,getStoreList);
+        List<SearchStoreRes> getStoreList = storeService.retrieveStoreList(storeName, userLatitude, userLongitude);
+        return new BaseResponse<>(SUCCESS, getStoreList);
     }
 
     /**
@@ -63,7 +65,7 @@ public class StoresController {
         try {
             Long userIdx = checkUserService.getUserIdx();
             visitedService.setVistiedStore(storeIdx, userIdx);
-        }catch (BaseException e){
+        } catch (BaseException e) {
             if (!e.getStatus().equals(NEED_LOGIN))
                 throw new BaseException(e.getStatus());
         }
@@ -80,9 +82,10 @@ public class StoresController {
     /**
      * 지도 매장 조회 API
      * [GET] /stores/map?userLatitude=37.5533535&userLongitude=127.0235435&orderRule=1
-     *
+     * <p>
      * Params : orderRule [1:거리 가까운 순, 2:리뷰 순]
-     * @return BaseResponse<List<GetStoreResByMap>>
+     *
+     * @return BaseResponse<List < GetStoreResByMap>>
      */
     @ResponseBody
     @GetMapping("/map")
@@ -92,11 +95,11 @@ public class StoresController {
         }
 
         //orderRule 1-거리 가까운순, 2-리뷰 별점 순, 추가 사항 있을 시 추가예정
-        if(orderRule != 1 && orderRule!=2){
+        if (orderRule != 1 && orderRule != 2) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
 
-        List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMap(userLatitude,userLongitude,orderRule);
+        List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMap(userLatitude, userLongitude, orderRule);
         return new BaseResponse<>(SUCCESS, storeResByMap);
     }
 
@@ -104,23 +107,22 @@ public class StoresController {
      * 지도 매장 조회 API 필터설정 기능 적용하기
      * [GET] /stores/map/filter?userLatitude=37.5533535&userLongitude=127.0235435&orderRule=1&brand=1&lefthandStatus=0&
      * parkingStatus=0&groupseatStatus=0&floorscreenStatus=0&storageStatus=0&lessonStatus=0&distance=10
-     *
+     * <p>
      * Params : orderRule [1:거리 가까운 순, 2:리뷰 순]
-     *          lefthandStatus  0,1
-     *          parkingStatus  0,1
-     *          groupseatStatus 0,1
-     *          floorscreenStatus 0,1
-     *          storageStatus 0,1
-     *          lessonStatus 0,1
-     *          brand [1:골프존, 2:골프존파크, 3:레드골프, 4:시티존, 5:오케이온, 6:프렌즈스크린, 7:프렌즈스크린G, 8:SG골프 9:프렌즈 스크린T]
-     *          distance [1~8 까지의 숫자 (KM 단위)]
+     * lefthandStatus  0,1
+     * parkingStatus  0,1
+     * groupseatStatus 0,1
+     * floorscreenStatus 0,1
+     * storageStatus 0,1
+     * lessonStatus 0,1
+     * brand [1:골프존, 2:골프존파크, 3:레드골프, 4:시티존, 5:오케이온, 6:프렌즈스크린, 7:프렌즈스크린G, 8:SG골프 9:프렌즈 스크린T]
+     * distance [1~8 까지의 숫자 (KM 단위)]
      *
-     *
-     * @return BaseResponse<List<GetStoreResByMap>>
+     * @return BaseResponse<List < GetStoreResByMap>>
      */
     @ResponseBody
     @GetMapping("/map/filter2")
-    public BaseResponse<List<GetStoreResByMap>> getStoresByMapWithFilter(@RequestParam StoreInfoReqByMap storeInfoReqByMap)  throws BaseException {
+    public BaseResponse<List<GetStoreResByMap>> getStoresByMapWithFilter(@RequestParam StoreInfoReqByMap storeInfoReqByMap) throws BaseException {
         if (storeInfoReqByMap.getLefthandStatus() == null || storeInfoReqByMap.getParkingStatus() == null || storeInfoReqByMap.getGroupseatStatus() == null ||
                 storeInfoReqByMap.getStorageStatus() == null || storeInfoReqByMap.getLessonStatus() == null || storeInfoReqByMap.getStorageStatus() == null ||
                 storeInfoReqByMap.getBrand() == null || storeInfoReqByMap.getDistance() == null) {
@@ -159,7 +161,7 @@ public class StoresController {
      */
     @ResponseBody
     @GetMapping("/brand")
-    public BaseResponse<List<GetBrandRes>> getStoresByMap()  throws BaseException{
+    public BaseResponse<List<GetBrandRes>> getStoresByMap() throws BaseException {
         List<GetBrandRes> brandRes = storeService.retrieveBrandInfo();
         return new BaseResponse<>(SUCCESS, brandRes);
     }
@@ -168,7 +170,7 @@ public class StoresController {
      * 매장 roomIdx 조회 API
      * [GET] /stores/roomIdx?storeIdx=10
      *
-     * @return BaseResponse<List<GetRoomIdxRes>>
+     * @return BaseResponse<List < GetRoomIdxRes>>
      */
     @ResponseBody
     @GetMapping("/roomIdx")
@@ -181,13 +183,21 @@ public class StoresController {
      * 매장 쿠폰 조회 API
      * [GET] /stores/1/coupons
      *
-     * @return BaseResponse<List<CouponInfo>>
+     * @return BaseResponse<List < CouponInfo>>
      */
     @ResponseBody
     @GetMapping("/coupons")
     public BaseResponse<List<CouponInfo>> getCouponInfo(@RequestParam Long storeIdx) throws BaseException {
         List<CouponInfo> couponInfo = storeService.retrieveCouponInfo(storeIdx);
         return new BaseResponse<>(SUCCESS, couponInfo);
+    }
+
+    @GetMapping("availableRoomIdx")
+    public BaseResponse<List<Long>> getAvailableRoom(@RequestParam Long storeIdx,
+                                                              @RequestParam String startTime, @RequestParam String endTime)
+            throws BaseException {
+        List<Long> roomIdxRes = storeService.retrieveAvailableRoomIdx(storeIdx,startTime,endTime);
+        return new BaseResponse<>(SUCCESS, roomIdxRes);
     }
 }
 
