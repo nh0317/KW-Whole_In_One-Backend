@@ -69,6 +69,17 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilterApplyAllBrand(StoreInfoReqByMap storeInfoReqByMap) throws BaseException {
+        List<GetStoreResByMap> storeInfoList;
+        storesMapper.setOrderRule(storeInfoReqByMap.getOrderRule());
+        storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap.getUserLatitude(), storeInfoReqByMap.getUserLongitude(), storeInfoReqByMap.getBrand()
+                , storeInfoReqByMap.getDistance(), storeInfoReqByMap.getFloorscreenStatus(), storeInfoReqByMap.getStorageStatus(), storeInfoReqByMap.getParkingStatus(), storeInfoReqByMap.getLessonStatus(),
+                storeInfoReqByMap.getGroupseatStatus(), storeInfoReqByMap.getLefthandStatus()
+        );
+        return storeInfoList;
+    }
+
+    @Override
     public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(Double userLatitude, Double userLongitude, Integer orderRule, Integer[] brand,
                                                                     Integer lefthandStatus, Integer parkingStauts, Integer groupseatStatus, Integer floorscreenStatus,
                                                                     Integer storageStatus, Integer lessonStatus, Integer distance) throws BaseException {

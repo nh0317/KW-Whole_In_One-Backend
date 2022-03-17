@@ -102,6 +102,29 @@ public class StoresController {
         List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMap(userLatitude, userLongitude, orderRule);
         return new BaseResponse<>(SUCCESS, storeResByMap);
     }
+/*
+    @ResponseBody
+    @GetMapping("/map/filter2")
+    public BaseResponse<List<GetStoreResByMap>> getStoresByMapWithFilter(@RequestParam StoreInfoReqByMap storeInfoReqByMap) throws BaseException {
+        if (storeInfoReqByMap.getLefthandStatus() == null || storeInfoReqByMap.getParkingStatus() == null || storeInfoReqByMap.getGroupseatStatus() == null ||
+                storeInfoReqByMap.getStorageStatus() == null || storeInfoReqByMap.getLessonStatus() == null || storeInfoReqByMap.getStorageStatus() == null ||
+                storeInfoReqByMap.getBrand() == null || storeInfoReqByMap.getDistance() == null) {
+            return new BaseResponse<>(REQUEST_ERROR);
+        }
+
+        //orderRule 1-거리 가까운순, 2-리뷰 별점 순
+        if (storeInfoReqByMap.getOrderRule() != 1 && storeInfoReqByMap.getOrderRule() != 2) {
+            return new BaseResponse<>(REQUEST_ERROR);
+        }
+        if (storeInfoReqByMap.getBrand() == 0){
+            List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilterApplyAllBrand(storeInfoReqByMap);
+            return new BaseResponse<>(SUCCESS, storeResByMap);
+        }
+
+        List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap);
+        return new BaseResponse<>(SUCCESS, storeResByMap);
+    }
+*/
 
     /**
      * 지도 매장 조회 API 필터설정 기능 적용하기
@@ -120,22 +143,6 @@ public class StoresController {
      *
      * @return BaseResponse<List < GetStoreResByMap>>
      */
-    @ResponseBody
-    @GetMapping("/map/filter2")
-    public BaseResponse<List<GetStoreResByMap>> getStoresByMapWithFilter(@RequestParam StoreInfoReqByMap storeInfoReqByMap) throws BaseException {
-        if (storeInfoReqByMap.getLefthandStatus() == null || storeInfoReqByMap.getParkingStatus() == null || storeInfoReqByMap.getGroupseatStatus() == null ||
-                storeInfoReqByMap.getStorageStatus() == null || storeInfoReqByMap.getLessonStatus() == null || storeInfoReqByMap.getStorageStatus() == null ||
-                storeInfoReqByMap.getBrand() == null || storeInfoReqByMap.getDistance() == null) {
-            return new BaseResponse<>(REQUEST_ERROR);
-        }
-
-        //orderRule 1-거리 가까운순, 2-리뷰 별점 순
-        if (storeInfoReqByMap.getOrderRule() != 1 && storeInfoReqByMap.getOrderRule() != 2) {
-            return new BaseResponse<>(REQUEST_ERROR);
-        }
-        List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap);
-        return new BaseResponse<>(SUCCESS, storeResByMap);
-    }
 
     @ResponseBody
     @GetMapping("/map/filter")
@@ -150,6 +157,7 @@ public class StoresController {
 
         List<GetStoreResByMap> storeResByMap = storeService.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude, orderRule, brand, lefthandStatus, parkingStatus, groupseatStatus,
                 floorscreenStatus, storageStatus, lessonStatus, distance);
+
         return new BaseResponse<>(SUCCESS, storeResByMap);
     }
 

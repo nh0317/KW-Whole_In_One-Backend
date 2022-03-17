@@ -207,4 +207,36 @@
         From StoreImageFile
         WHERE storeIdx = #{storeIdx}
     </select>
+
+    <select id="retrieveStoreInfoByMapWithFilterApplyAllBrand" resultType="GetStoreResByMap">
+        SELECT storeImage,
+               brandName                                  AS storeBrand,
+               storeName,
+               storeLatitude,
+               storeLongitude,
+               round((6371 *
+                      acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                          - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+                     1)                                   as distanceFromUser,
+               (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+                FROM Reviews
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+                 INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+        WHERE lefthandStatus = #{lefthandStatus}
+          AND parkingStatus = #{parkingStatus}
+          AND groupseatStatus = #{groupseatStatus}
+          AND floorscreenStatus = #{floorscreenStatus}
+          AND storageStatus = #{storageStatus}
+          AND lessonStatus = #{lessonStatus}
+        HAVING distanceFromUser &lt; #{distance}
+        ORDER BY CASE
+                     WHEN @orderRule = 1 THEN distanceFromUser
+                     END ASC,
+                 CASE
+                     WHEN @orderRule = 2 THEN reviewStar
+                     END DESC;
+
+    </select>
 </mapper>

@@ -20,6 +20,8 @@ public interface StoreService {
 
     public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter(StoreInfoReqByMap storeInfoReqByMap) throws BaseException;
 
+    public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilterApplyAllBrand(StoreInfoReqByMap storeInfoReqByMap) throws BaseException;
+
     public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(Double userLatitude, Double userLongitude, Integer orderRule, Integer[] brand, Integer lefthandStatus,
                                                                     Integer parkingStatus, Integer groupseatStatus,
                                                                     Integer floorscreenStatus, Integer storageStatus, Integer lessonStatus, Integer distance) throws BaseException;
