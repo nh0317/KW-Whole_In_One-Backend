@@ -1,15 +1,14 @@
 package com.naturemobility.seoul.domain.payment;
 
 import com.naturemobility.seoul.domain.DTOCommon;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.naturemobility.seoul.domain.payment.general.PostGeneralPayReq;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class PaymentInfo extends DTOCommon {
     // 주문 번호
     private String merchantUid;
@@ -63,5 +62,32 @@ public class PaymentInfo extends DTOCommon {
         this.modiBy = modiBy;
         this.modiRole = modiRole;
         this.refundStatus=0;
+    }
+
+    public PaymentInfo(Long couponIdx, Long userIdx, Integer point, String refundReason, int cancelAmount, Long modiBy, String modiRole) {
+        this.couponIdx = couponIdx;
+        this.userIdx = userIdx;
+        this.point = point;
+        this.refundReason = refundReason;
+        this.cancelAmount = cancelAmount;
+        this.modiBy = modiBy;
+        this.modiRole = modiRole;
+    }
+
+    public PaymentInfo(String merchantUid, PostGeneralPayReq postGeneralPayReq, Long userIdx, String modiRole,String name) {
+        this.merchantUid = merchantUid;
+        this.userPaymentIdx = null;
+        this.couponIdx = postGeneralPayReq.getCouponIdx();
+        this.impUid = postGeneralPayReq.getImpUid();
+        this.payMethod = postGeneralPayReq.getPayMethod();
+        this.userIdx = userIdx;
+        this.storeIdx = postGeneralPayReq.getStoreIdx();
+        this.amount = 0;
+        this.name = name;
+        this.point = postGeneralPayReq.getPoint();
+        this.modiBy = userIdx;
+        this.modiRole = modiRole;
+        this.refundStatus=0;
+
     }
 }

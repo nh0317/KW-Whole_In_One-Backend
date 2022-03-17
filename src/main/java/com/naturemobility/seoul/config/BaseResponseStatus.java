@@ -53,6 +53,7 @@ public enum BaseResponseStatus {
     PAYMENT_FAILED(false, 3021, "결제에 실패했습니다"),
     ALREADY_REFUND(false,3030,"이미 전액환불된 주문입니다"),
     NOT_REQUESTED_REFUND(false,3031,"환불 요청 상태가 아닙니다"),
+    NOT_PAID(false,3032,"결제 정보가 없습니다."),
 //    FAILED_TO_GET_USER(false, 3012, "회원 정보 조회에 실패하였습니다."),
 //    FAILED_TO_POST_USER(false, 3013, "회원가입에 실패하였습니다."),
 //    FAILED_TO_LOGIN(false, 3014, "로그인에 실패하였습니다."),

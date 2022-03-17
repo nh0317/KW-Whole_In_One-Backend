@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class GetRefundsRes {
+    private Long reservationIdx;
     private String merchantUid;
     private String refundReason;
     private int amount;

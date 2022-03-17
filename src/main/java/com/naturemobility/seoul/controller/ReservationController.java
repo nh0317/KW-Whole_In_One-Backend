@@ -102,9 +102,19 @@ public class ReservationController {
     @GetMapping("/get-can-reservation-time")
     public BaseResponse<List<GetCanRezTimeRes>> getCanRezTime(@RequestParam("reservationDate") String reservationDate,
                                                               @RequestParam("storeIdx")Long storeIdx,
+                                                              @RequestParam("roomIdx") Long roomIdx,
+                                                              @RequestParam("hall") Integer hall,
                                                               @RequestParam(value = "playTime", required = false)Integer playTime)
             throws  BaseException{
-        List<GetCanRezTimeRes> result = reservationsService.getCanRezTimeRes(reservationDate, storeIdx, playTime);
+        List<GetCanRezTimeRes> result = reservationsService.getCanRezTimeRes(reservationDate, storeIdx, playTime,
+                roomIdx, hall);
         return new BaseResponse<>(SUCCESS, result);
+    }
+
+    @PostMapping("check-duplicate-rez")
+    public BaseResponse<Void> checkDuplicate(@RequestBody PostCheckReservationReq postCheckReservationReq)
+            throws  BaseException{
+        reservationsService.checkDuplication(postCheckReservationReq);
+        return  new BaseResponse<>(SUCCESS);
     }
 }

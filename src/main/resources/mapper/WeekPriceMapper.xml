@@ -85,14 +85,24 @@
         SELECT sp.price
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
         WHERE ps.storeIdx =#{storeIdx} and ps.deletedAt is null and sp.deletedAt is null and sp.hole=#{hole} and sp.startDate is not null
-          and (#{currentDate} between DATE_FORMAT(sp.startDate, '%m:%d') and DATE_FORMAT(sp.endDate, '%m:%d'))
-          and (TIME_FORMAT(#{currentTime}, '%H:%i') between TIME_FORMAT(sp.startTime, '%H:%i') and TIME_FORMAT(sp.endTime, '%H:%i'))
+            and (DATE_FORMAT(#{currentDate}, '%m:%d') between DATE_FORMAT(sp.startDate, '%m:%d') and DATE_FORMAT(sp.endDate, '%m:%d'))
+            and (TIME_FORMAT(#{currentTime}, '%H:%i')
+                between TIME_FORMAT(sp.startTime, '%H:%i')
+                and (case
+                        when time_format(sp.endTime, '%H:%i') = '00:00' then '24:00'
+                        else time_format(sp.endTime, '%H:%i')
+                    end))
     </select>
     <select id="findCurrentWeekPrice" resultType="Integer">
         SELECT sp.price
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
         WHERE ps.storeIdx =#{storeIdx} and sp.isHoliday=#{isHoliday} and ps.deletedAt is null and sp.deletedAt is null
           and sp.hole=#{hole} and sp.startDate is null
-          and (TIME_FORMAT(#{currentTime}, '%H:%i') between TIME_FORMAT(sp.startTime, '%H:%i') and TIME_FORMAT(sp.endTime, '%H:%i'))
+          and (TIME_FORMAT(#{currentTime}, '%H:%i')
+              between TIME_FORMAT(sp.startTime, '%H:%i')
+                and (case
+                         when time_format(sp.endTime, '%H:%i') = '00:00' then '24:00'
+                         else time_format(sp.endTime, '%H:%i')
+                    end))
     </select>
 </mapper>

@@ -11,6 +11,7 @@ import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayRes;
 import com.naturemobility.seoul.domain.reservations.PostRezInfo;
 import com.naturemobility.seoul.domain.reservations.PostRezReq;
+import com.naturemobility.seoul.domain.reservations.ReservationInfo;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import com.naturemobility.seoul.mapper.*;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
@@ -70,45 +71,41 @@ public class PaymentServiceImpl implements PaymentService {
 
         return validateAndSave(userIdx, name, getPaymentData, postPayReq);
     }
-
+    private GetUserPoint updateUserPoint(Long userIdx, int amount, int usedPoint) throws BaseException {
+        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        int earnPoint = Double.valueOf(amount * 0.03).intValue();
+        int point = earnPoint - usedPoint;
+        if (userInfo.getUserPoint() - point < 0)
+            point = userInfo.getUserPoint();
+        usersMapper.updateUserPoint(userIdx, point);
+        userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        return new GetUserPoint(point, earnPoint, userInfo.getUserPoint());
+    }
     @Transactional
     @Override
     public PostClientPayRes offlinePayment(PostGeneralPayReq postGeneralPayReq, Long userIdx) throws Exception{
         String storeName = storesMapper.findStoreName(postGeneralPayReq.getStoreIdx()).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         String name = storeName + "_골프예약_" + LocalDateTime.now();
-        PostPayRes postPayRes = new PostPayRes(postGeneralPayReq.getImpUid(), postGeneralPayReq.getMerchantUid());
-        PostPayReq postPayReq = new PostPayReq(postGeneralPayReq);
 
-        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        int earnPoint = Double.valueOf(postPayReq.getAmount() * 0.03).intValue();
-        int point = earnPoint - postPayReq.getPoint();
-        if (userInfo.getUserPoint() - point < 0)
-            point = userInfo.getUserPoint();
-        usersMapper.updateUserPoint(userIdx, point);
-        reservationsService.postReservation(new PostRezReq(postPayReq, postPayRes.getMerchant_uid()), userIdx);
-        usersMapper.updateUserCoupon(userIdx, postGeneralPayReq.getCouponIdx(), Boolean.TRUE);
-        return new PostClientPayRes(postPayRes.getMerchant_uid(), postPayReq.getAmount(),
-                earnPoint,postPayReq.getPoint(), userInfo.getUserPoint(), "예약 성공");
+        GetUserPoint getUserPoint = updateUserPoint(userIdx, postGeneralPayReq.getAmount(), postGeneralPayReq.getPoint());
+        PaymentInfo paymentInfo = new PaymentInfo("현장_결제_"+LocalDateTime.now(),postGeneralPayReq,
+                userIdx,"ROLE_MEMBER", name);
+        paymentInfo.setCreatedAt(null);
+        PostRezReq postRezReq = new PostRezReq(postGeneralPayReq, paymentInfo.getMerchantUid());
+
+        PostClientPayRes postClientPayRes = savePayment(paymentInfo, getUserPoint, postRezReq, userIdx);
+        postClientPayRes.setStatus("결제 성공");
+        return postClientPayRes;
     }
 
     @Transactional
-    public PostClientPayRes savePayment(PostPayRes getPaymentData, PostPayReq postPayReq,
-                                        Long userIdx, String name) throws BaseException {
-        UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        int earnPoint = Double.valueOf(postPayReq.getAmount() * 0.03).intValue();
-        int point = earnPoint - postPayReq.getPoint();
-        if (userInfo.getUserPoint() - point < 0)
-            point = userInfo.getUserPoint();
-
-        paymentMapper.savePayment(new PaymentInfo(getPaymentData.getMerchant_uid(),
-                postPayReq.getUserPaymentIdx(), postPayReq.getCouponIdx(), getPaymentData.getImp_uid(),
-                postPayReq.getPayMethod(), userIdx, postPayReq.getStoreIdx(), postPayReq.getAmount(), name,
-                point, userIdx, "ROLE_MEMBER"));
-        usersMapper.updateUserPoint(userIdx, point);
-        reservationsService.postReservation(new PostRezReq(postPayReq, getPaymentData.getMerchant_uid()), userIdx);
-        usersMapper.updateUserCoupon(userIdx, postPayReq.getCouponIdx(), Boolean.TRUE);
-        return new PostClientPayRes(getPaymentData.getMerchant_uid(), postPayReq.getAmount(),
-                earnPoint,postPayReq.getPoint(), userInfo.getUserPoint());
+    public PostClientPayRes savePayment(PaymentInfo paymentInfo,GetUserPoint getUserPoint, PostRezReq postRezReq,
+                                        Long userIdx) throws BaseException {
+        paymentMapper.savePayment(paymentInfo);
+        reservationsService.postReservation(postRezReq, userIdx);
+        usersMapper.updateUserCoupon(userIdx, paymentInfo.getCouponIdx(), Boolean.TRUE);
+        return new PostClientPayRes(paymentInfo.getMerchantUid(), paymentInfo.getAmount(),
+                getUserPoint.getEarnPoint(),getUserPoint.getPoint(), getUserPoint.getUserPoint());
     }
 
     public String validatePayment(PostPayRes getPaymentData, PostPayReq postPayReq) throws BaseException {
@@ -139,15 +136,22 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public PostClientPayRes validateAndSave(Long userIdx, String name, PostPayRes postPayRes, PostPayReq postPayReq) throws BaseException {
         String status = validatePayment(postPayRes, postPayReq);
+
+        GetUserPoint getUserPoint = updateUserPoint(userIdx, postPayReq.getAmount(), postPayReq.getPoint());
+        PaymentInfo paymentInfo = new PaymentInfo(postPayRes.getMerchant_uid(),
+                postPayReq.getUserPaymentIdx(), postPayReq.getCouponIdx(), postPayRes.getImp_uid(),
+                postPayReq.getPayMethod(), userIdx, postPayReq.getStoreIdx(), postPayReq.getAmount(), name,
+                getUserPoint.getPoint(), userIdx, "ROLE_MEMBER");
+        PostRezReq postRezReq = new PostRezReq(postPayReq, postPayRes.getMerchant_uid());
         PostClientPayRes postClientPayRes;
         switch (status) {
             case "ready":
-                postClientPayRes = savePayment(postPayRes, postPayReq, userIdx, name);
+                postClientPayRes = savePayment(paymentInfo,getUserPoint,postRezReq, userIdx);
                 postClientPayRes.setStatus("가상계좌 발급 성공(미결제)");
                 log.info("가상계좌 발급 성공(미결제)");
                 return postClientPayRes;
             case "paid":
-                postClientPayRes = savePayment(postPayRes, postPayReq, userIdx, name);
+                postClientPayRes = savePayment(paymentInfo,getUserPoint,postRezReq, userIdx);
                 postClientPayRes.setStatus("결제 성공");
                 log.info("결제 성공");
                 return postClientPayRes;
@@ -166,11 +170,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public PostReqRefundRes requestRefund(PostReqRefundReq postRefundReq, Long userIdx) throws BaseException {
         String merchantUid = paymentMapper.findMerchantUidByRefundStatus(postRefundReq.getReservationIdx(),RefundStatus.NOT_REFUND.getValue())
-                .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+                .orElseGet(() -> null);
         paymentMapper.updateRefundInfo(merchantUid,postRefundReq.getRefundReason(), postRefundReq.getRefundHolder(),
                 postRefundReq.getRefundBank(),postRefundReq.getRefundAccount(),RefundStatus.REQUEST_REFUND.getValue(),
                 userIdx, "ROLE_MEMBER");
-        reservationMapper.updateAlreadyUsed(true, merchantUid);
+        reservationMapper.updateAlreadyUsed(true, postRefundReq.getReservationIdx());
         return new PostReqRefundRes(postRefundReq.getReservationIdx(), postRefundReq.getRefundReason(),
                 postRefundReq.getRefundHolder(), postRefundReq.getRefundBank(), postRefundReq.getRefundAccount(),
                 RefundStatus.REQUEST_REFUND.getMsg());
@@ -180,7 +184,20 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PostApproveRefundRes approveRefund(PostApproveRefundReq postApproveRefund, Long partnerIdx) throws BaseException{
         //환불 가능 여부 검토
-        PaymentInfo paymentInfo = validateRefund(postApproveRefund);
+        PaymentInfo paymentInfo = new PaymentInfo();
+        try {
+            paymentInfo = validateRefund(postApproveRefund);
+        }
+        catch (BaseException e){
+            e.printStackTrace();
+            if (e.getStatus()==NOT_PAID) {
+                String merchantUid = paymentMapper.findMerchantUidByRefundStatus(postApproveRefund.getReservationIdx(),
+                        RefundStatus.REQUEST_REFUND.getValue()).orElseThrow(() -> new BaseException(NOT_REQUESTED_REFUND));
+                paymentInfo = paymentMapper.findPayment(merchantUid).orElseThrow(() -> new BaseException(NOT_REQUESTED_REFUND));
+                return saveRefund(paymentInfo, postApproveRefund, partnerIdx);
+            }
+            else throw e;
+        }
         int status = requestRefund(paymentInfo,postApproveRefund);
         if (status==0) {
             return saveRefund(paymentInfo,postApproveRefund, partnerIdx);
@@ -191,9 +208,12 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentInfo validateRefund(PostApproveRefundReq postApproveRefund) throws BaseException {
         String merchantUid = paymentMapper.findMerchantUidByRefundStatus(postApproveRefund.getReservationIdx(),
                 RefundStatus.REQUEST_REFUND.getValue()).orElseThrow(() -> new BaseException(NOT_REQUESTED_REFUND));
-        PaymentInfo paymentInfo = paymentMapper.findPayment(merchantUid).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        if (!paymentInfo.getRefundStatus().equals(RefundStatus.REQUEST_REFUND))
+        PaymentInfo paymentInfo = paymentMapper.findPayment(merchantUid).orElseThrow(() -> new BaseException(NOT_REQUESTED_REFUND));
+        log.info(paymentInfo.toString());
+        if (!paymentInfo.getRefundStatus().equals(RefundStatus.REQUEST_REFUND.getValue()))
             throw new BaseException(NOT_REQUESTED_REFUND);
+        if (paymentInfo.getAmount() == 0)
+            throw new BaseException(NOT_PAID);
         int cancelableAmount = paymentInfo.getAmount() - paymentInfo.getCancelAmount();
         if (cancelableAmount <= 0)
             throw new BaseException(ALREADY_REFUND);
@@ -220,7 +240,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentInfo = paymentMapper.findPayment(paymentInfo.getMerchantUid()).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         UserInfo userInfo = usersMapper.findByIdx(paymentInfo.getUserIdx()).orElseThrow(()->new BaseException(NOT_FOUND_DATA));
         usersMapper.updateUserCoupon(paymentInfo.getUserIdx(), paymentInfo.getCouponIdx(), Boolean.FALSE);
-        reservationMapper.updateAlreadyUsed(true, paymentInfo.getMerchantUid());
+        reservationMapper.updateAlreadyUsed(true, paymentInfo.getReservationIdx());
         return new PostApproveRefundRes(postApproveRefund.getReservationIdx(), paymentInfo.getRefundReason(),
                 paymentInfo.getCancelAmount(),userInfo.getUserPoint(), RefundStatus.COMPLETE.getMsg());
 
