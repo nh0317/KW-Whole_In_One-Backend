@@ -76,6 +76,14 @@ public class PartnerStoresController {
         return new BaseResponse<>(SUCCESS);
     }
 
+    @DeleteMapping("/coupon/{couponIdx}")
+    public BaseResponse deleteCouponInfo(@PathVariable Long couponIdx) throws BaseException {
+
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        partnerStoreService.deleteCoupon(partnerIdx, couponIdx);
+        return new BaseResponse<>(SUCCESS);
+    }
+
     @PostMapping("/room")
     public BaseResponse postRoomInfo(@RequestBody PostRoomInfoReq postRoomInfoReq) throws BaseException {
 

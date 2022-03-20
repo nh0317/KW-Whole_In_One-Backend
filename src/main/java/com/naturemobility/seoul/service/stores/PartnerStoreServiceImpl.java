@@ -104,7 +104,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
         Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         String mainImgPath = "";
         List<String> images = new ArrayList<>();
-        if(mainStoreImage != null && !mainStoreImage.equals("")) {
+        if (mainStoreImage != null && !mainStoreImage.equals("")) {
             mainImgPath = fileUploadService.uploadImage(mainStoreImage);
             partnerStoreMapper.updateStoreImage(storeIdx, mainImgPath);
         }
@@ -131,6 +131,19 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
         PostCouponInfo postcouponInfo = new PostCouponInfo(storeIdx, postCouponReq.getCouponName(),
                 postCouponReq.getCouponPercentage(), postCouponReq.getCouponDeadline());
         partnerStoreMapper.postCouponInfo(postcouponInfo);
+        return;
+    }
+
+    @Override
+    public void deleteCoupon(Long partnerIdx, Long couponIdx) throws BaseException {
+
+        Long storeIdxFromCouponIdx = partnerStoreMapper.getStoreIdxByCouponIdx(couponIdx);
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+
+        if (storeIdxFromCouponIdx != storeIdx) {
+            throw new BaseException(NO_AUTHORITY);
+        }
+        partnerStoreMapper.deleteCouponInfo(couponIdx);
         return;
     }
 

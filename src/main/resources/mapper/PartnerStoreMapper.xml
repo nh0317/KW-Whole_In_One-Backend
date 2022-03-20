@@ -83,11 +83,27 @@
     </insert>
 
     <select id="getPartnerIdxByRoomIdx" resultType="Long">
-        SELECT partnerIdx FROM Rooms WHERE roomIdx = #{roomIdx}
+        SELECT partnerIdx
+        FROM Rooms
+        WHERE roomIdx = #{roomIdx}
     </select>
 
     <delete id="deleteRoom">
-        DELETE FROM Rooms WHERE roomIdx = #{roomIdx}
+        DELETE
+        FROM Rooms
+        WHERE roomIdx = #{roomIdx}
+    </delete>
+
+    <select id="getStoreIdxByCouponIdx" resultType="Long">
+        SELECT storeIdx
+        FROM Coupons
+        WHERE couponIdx = #{couponIdx}
+    </select>
+
+    <delete id="deleteCouponInfo">
+        DELETE
+        FROM Coupons
+        WHERE couponIdx = #{couponIdx}
     </delete>
 
 </mapper>

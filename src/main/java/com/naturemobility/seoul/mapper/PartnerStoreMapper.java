@@ -18,6 +18,10 @@ public interface PartnerStoreMapper {
 
     void postCouponInfo(PostCouponInfo postcouponInfo);
 
+    Long getStoreIdxByCouponIdx(@Param("couponIdx") Long couponIdx);
+
+    void deleteCouponInfo(@Param("couponIdx") Long couponIdx);
+
     int updateStoreImage(@Param("storeIdx") Long storeIdx, @Param("storeImage") String storeImage);
 
     void postRoomInfo(PostRoomInfo postRoomInfo);
