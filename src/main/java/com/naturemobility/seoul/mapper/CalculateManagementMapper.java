@@ -25,4 +25,6 @@ public interface CalculateManagementMapper {
     void postCalculation(PostCalculation postCalculation);
 
     int checkDuplication(@Param("partnerIdx") Long partnerIdx, @Param("calculationMonthDate") String calculationMonthDate);
+
+    int getCanceledAmount(@Param("storeIdx") Long storeIdx, @Param("calculationMonthDate") String calculationMonthDate);
 }

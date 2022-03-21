@@ -56,4 +56,11 @@
           AND calculateDate = #{calculationMonthDate}
     </select>
 
+    <select id="getCanceledAmount" resultType="Integer">
+        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{calculationMonthDate}), cancelAmount,
+                      0)) AS cancelAmount
+        FROM Payment
+        WHERE storeIdx = #{storeIdx};
+    </select>
+
 </mapper>
