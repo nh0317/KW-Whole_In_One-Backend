@@ -238,7 +238,7 @@ public class UsersServiceImpl implements UsersService {
         if (refreshJwt!=null && redisService.isExist(refreshJwt)){
             redisService.deleteValues(refreshJwt);
             jwtService.expireTokens(res,refreshToken);
-        } else throw new BaseException(INVALID_JWT);
+        } else throw new BaseException(NEED_LOGIN);
     }
     /**
      * 비밀번호 확인
@@ -322,7 +322,7 @@ public class UsersServiceImpl implements UsersService {
             jwtService.setTokens(response,authentication,newJwt,refreshJwt);
 //            redisService.deleteValues(refreshJwt);
             return new PostLoginRes(authentication.getName(),newJwt, refreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
-        } else throw new BaseException(INVALID_JWT);
+        } else throw new BaseException(NEED_LOGIN);
     }
 
     @Override
