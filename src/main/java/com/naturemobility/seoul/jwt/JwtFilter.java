@@ -58,18 +58,23 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private void validateJwt(HttpServletRequest httpServletRequest, HttpServletResponse servletResponse, String requestURI, String refreshJwt) {
-        Cookie refreshToken = cookieUtil.getCookie(httpServletRequest, JwtService.REFRESH_TOKEN);
-        if (refreshToken!=null) {
-            refreshJwt = refreshToken.getValue();
-        }
-        if(refreshJwt !=null && jwtService.isTokenExist(refreshJwt)){
-            Authentication authentication = jwtService.getAuthenticationFromRefreshToken(refreshJwt);
-            String newJwt = jwtService.createJwt(authentication);
-            jwtService.setTokens(servletResponse,authentication,newJwt, refreshJwt);
-            logger.debug("권한 {}", authentication.getAuthorities().toString());
-            logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
-        } else {
-            logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
+        try {
+            Cookie refreshToken = cookieUtil.getCookie(httpServletRequest, JwtService.REFRESH_TOKEN);
+            if (refreshToken != null) {
+                refreshJwt = refreshToken.getValue();
+            }
+            if (refreshJwt != null && jwtService.isTokenExist(refreshJwt)) {
+                Authentication authentication = jwtService.getAuthenticationFromRefreshToken(refreshJwt);
+                String newJwt = jwtService.createJwt(authentication);
+                jwtService.setTokens(servletResponse, authentication, newJwt, refreshJwt);
+                logger.debug("권한 {}", authentication.getAuthorities().toString());
+                logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+            } else {
+                logger.debug("유효한 Refresh 토큰이 없습니다, uri: {}", requestURI);
+            }
+        }catch (ExpiredJwtException e){
+            logger.debug("유효한 Refresh 토큰이 없습니다, uri: {}", requestURI);
+
         }
     }
 
