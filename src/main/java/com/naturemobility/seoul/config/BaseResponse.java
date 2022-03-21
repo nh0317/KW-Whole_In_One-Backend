@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class BaseResponse<T> {
     }
 
     public void writeError(HttpServletResponse response) throws IOException {
+        try {
         ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, Object> responseMap = new HashMap<>();
@@ -48,8 +50,7 @@ public class BaseResponse<T> {
         responseMap.put("message", this.message);
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-        response.setStatus(this.code);
-        try {
+        response.setStatus(HttpStatus.OK.value());
             PrintWriter out = response.getWriter();
             out.write(objectMapper.writeValueAsString(responseMap));
         }catch (Exception ignore){
