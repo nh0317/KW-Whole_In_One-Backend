@@ -53,10 +53,10 @@ public class CheckUserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal().equals("anonymousUser")) {
             log.info(authentication.getPrincipal().toString());
-//            throw new BaseException(NEED_LOGIN);
+            throw new BaseException(NEED_LOGIN);
 //            CustomUserDetails details = (CustomUserDetails) authentication.getDetails();
-            PartnerInfo partnerInfo = partnerService.retrievePartnerInfoByPartnerIdx(1L);
-            return partnerInfo;
+//            PartnerInfo partnerInfo = partnerService.retrievePartnerInfoByPartnerIdx(1L);
+//            return partnerInfo;
         }
         else{
             PartnerInfo partnerInfo = partnerService.retrievePartnerInfoByEmail(authentication.getName());
@@ -80,8 +80,8 @@ public class CheckUserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal().equals("anonymousUser")) {
             log.info(authentication.getPrincipal().toString());
-            return 1L;
-//            throw new BaseException(NEED_LOGIN);
+//            return 1L;
+            throw new BaseException(NEED_LOGIN);
         }
         else{
             PartnerInfo partnerInfo = partnerService.retrievePartnerInfoByEmail(authentication.getName());
