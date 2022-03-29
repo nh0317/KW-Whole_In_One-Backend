@@ -130,4 +130,10 @@
         WHERE userIdx = #{userIdx};
     </select>
 
+    <select id="postCouponCheck" resultType="Integer">
+        SELECT COUNT(1) AS couponCheck
+        FROM UserCoupons
+        WHERE userIdx = #{userIdx}
+          AND couponIdx = #{couponIdx};
+    </select>
 </mapper>
