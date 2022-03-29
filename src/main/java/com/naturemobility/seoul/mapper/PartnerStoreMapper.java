@@ -29,4 +29,8 @@ public interface PartnerStoreMapper {
     Long getPartnerIdxByRoomIdx(@Param("roomIdx") Long roomIdx);
 
     void deleteRoom(Long roomIdx);
+
+    Long getStoreIdxByImgFileIdx(@Param("imgFileIdx") Long imgFileIdx);
+
+    void deleteImgFile(@Param("imgFileIdx") Long imgFileIdx);
 }

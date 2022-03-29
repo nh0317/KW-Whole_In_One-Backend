@@ -106,4 +106,16 @@
         WHERE couponIdx = #{couponIdx}
     </delete>
 
+    <select id="getStoreIdxByImgFileIdx" resultType="Long">
+        SELECT storeIdx
+        FROM StoreImageFile
+        WHERE imgFileIdx = #{imgFileIdx}
+    </select>
+
+    <delete id="deleteImgFile">
+        DELETE
+        FROM StoreImageFile
+        WHERE imgFileIdx = #{imgFileIdx};
+    </delete>
+
 </mapper>

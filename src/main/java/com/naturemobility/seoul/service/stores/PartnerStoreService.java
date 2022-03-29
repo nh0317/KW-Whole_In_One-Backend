@@ -28,4 +28,6 @@ public interface PartnerStoreService {
     void postRoomInfo(Long partnerIdx,PostRoomInfoReq postRoomInfoReq) throws BaseException;
 
     void deleteRoom(Long partnerIdx,Long roomIdx) throws BaseException;
+
+    void deleteStoreImg(Long partnerIdx,Long imgFileIdx) throws BaseException;
 }

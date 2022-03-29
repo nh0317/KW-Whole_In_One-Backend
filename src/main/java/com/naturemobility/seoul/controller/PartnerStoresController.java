@@ -99,5 +99,13 @@ public class PartnerStoresController {
         partnerStoreService.deleteRoom(partnerIdx,roomIdx);
         return new BaseResponse<>(SUCCESS);
     }
+
+    @DeleteMapping("/image/{imgFileIdx}")
+    public BaseResponse deleteStoreImg(@PathVariable("imgFileIdx") Long imgFileIdx) throws BaseException {
+
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        partnerStoreService.deleteStoreImg(partnerIdx,imgFileIdx);
+        return new BaseResponse<>(SUCCESS);
+    }
 }
 

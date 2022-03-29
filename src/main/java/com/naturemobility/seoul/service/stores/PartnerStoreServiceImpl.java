@@ -164,4 +164,16 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
         }
         partnerStoreMapper.deleteRoom(roomIdx);
     }
+
+    @Override
+    public void deleteStoreImg(Long partnerIdx, Long imgFileIdx) throws BaseException {
+
+        Long storeIdxFromImgFileIdx = partnerStoreMapper.getStoreIdxByImgFileIdx(imgFileIdx);
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        if (storeIdx != storeIdxFromImgFileIdx) {
+            throw new BaseException(NO_AUTHORITY);
+        }
+        partnerStoreMapper.deleteImgFile(imgFileIdx);
+        return;
+    }
 }
