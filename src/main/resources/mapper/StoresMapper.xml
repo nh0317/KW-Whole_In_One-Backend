@@ -164,7 +164,7 @@
     </select>
 
     <select id="retrieveRoomIdx" resultType="GetRoomIdxRes">
-        SELECT roomIdx, roomName
+        SELECT DISTINCT roomName
         FROM Rooms
         WHERE partnerIdx = #{partnerIdx};
     </select>
@@ -238,5 +238,12 @@
                      WHEN @orderRule = 2 THEN reviewStar
                      END DESC;
 
+    </select>
+
+    <select id="getRoomIdx" resultType="Long">
+        SELECT roomIdx
+        FROM Rooms
+        WHERE roomName = #{roomName}
+          AND partnerIdx = #{partnerIdx}
     </select>
 </mapper>

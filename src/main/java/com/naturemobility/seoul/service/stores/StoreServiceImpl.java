@@ -104,6 +104,11 @@ public class StoreServiceImpl implements StoreService {
         List<GetRoomIdxRes> roomIdxRes;
         partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
         roomIdxRes = storesMapper.retrieveRoomIdx(partnerIdx);
+
+        for (GetRoomIdxRes i:roomIdxRes) {
+            i.roomIdx = storesMapper.getRoomIdx(partnerIdx,i.getRoomName());
+        }
+
         return roomIdxRes;
     }
 
