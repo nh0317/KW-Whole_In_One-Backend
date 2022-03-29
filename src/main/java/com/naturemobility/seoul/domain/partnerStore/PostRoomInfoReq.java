@@ -9,4 +9,5 @@ import lombok.Setter;
 @Setter
 public class PostRoomInfoReq {
     private String roomName;
+    private Integer count;
 }

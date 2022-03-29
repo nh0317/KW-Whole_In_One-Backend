@@ -151,7 +151,10 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
     public void postRoomInfo(Long partnerIdx, PostRoomInfoReq postRoomInfoReq) throws BaseException {
 
         PostRoomInfo postRoomInfo = new PostRoomInfo(postRoomInfoReq.getRoomName(), partnerIdx);
-        partnerStoreMapper.postRoomInfo(postRoomInfo);
+
+        for(int i=0;i<postRoomInfoReq.getCount();i++){
+            partnerStoreMapper.postRoomInfo(postRoomInfo);
+        }
         return;
     }
 
