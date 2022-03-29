@@ -8,9 +8,10 @@
     </sql>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="userIdx" parameterType="UserInfo">
-        INSERT INTO Users(userNickname,userName,userPassword,userEmail,userImage,userPhoneNumber)
-        VALUES( #{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage},#{userPhoneNumber} )
-        ON DUPLICATE KEY UPDATE
+        INSERT INTO Users(userNickname, userName, userPassword, userEmail, userImage, userPhoneNumber)
+        VALUES (#{userNickname}, #{userName}, #{userPassword}, #{userEmail}, #{userImage},
+                #{userPhoneNumber}) ON DUPLICATE KEY
+        UPDATE
             userNickname = #{userNickname},
             userName = #{userName},
             userPassword = #{userPassword},
@@ -98,16 +99,16 @@
     </select>
 
     <update id="updateUserPoint">
-            UPDATE Users
-            SET
-                userPoint = userPoint + #{userPoint}
-            WHERE userIdx =#{userIdx}
-        </update>
+        UPDATE Users
+        SET userPoint = userPoint + #{userPoint}
+        WHERE userIdx = #{userIdx}
+    </update>
 
     <select id="getUserCoupons" resultType="GetCouponByUserIdx">
         SELECT uc.couponIdx, uc.couponStatus as isUsable
         FROM UserCoupons uc
-        WHERE uc.userIdx=#{userIdx} AND uc.couponStatus=0
+        WHERE uc.userIdx = #{userIdx}
+          AND uc.couponStatus = 0
     </select>
 
     <insert id="postCoupon" parameterType="PostUserCoupon">
@@ -117,9 +118,16 @@
 
     <update id="updateUserCoupon">
         UPDATE UserCoupons
-        SET
-            couponStatus = #{couponStatus}
-        WHERE couponIdx =#{couponIdx} and userIdx = #{userIdx}
+        SET couponStatus = #{couponStatus}
+        WHERE couponIdx = #{couponIdx}
+          and userIdx = #{userIdx}
     </update>
+
+    <select id="getUserCouponsList" resultType="GetUserCoupon">
+        SELECT UserCoupons.couponIdx, couponName, couponPercentage, couponStatus
+        FROM UserCoupons
+                 INNER JOIN Coupons ON Coupons.couponIdx = UserCoupons.couponIdx
+        WHERE userIdx = #{userIdx};
+    </select>
 
 </mapper>

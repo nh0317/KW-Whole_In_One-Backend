@@ -27,4 +27,6 @@ public interface UsersService {
     PostLoginRes refreshToken(HttpServletRequest request, HttpServletResponse response) throws BaseException;
 
     void postCoupon(Long userIdx,Long couponIdx) throws BaseException;
+
+    List<GetUserCoupon> getUserCoupon (Long userIdx) throws BaseException;
 }

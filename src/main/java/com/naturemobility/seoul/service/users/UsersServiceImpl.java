@@ -332,6 +332,12 @@ public class UsersServiceImpl implements UsersService {
         return;
     }
 
+    @Override
+    public List<GetUserCoupon> getUserCoupon(Long userIdx) throws BaseException {
+        List<GetUserCoupon> getUserCoupons = usersMapper.getUserCouponsList(userIdx);
+        return getUserCoupons;
+    }
+
     /** 마이페이지
      * @param userIdx
      * @return GetMyPageRes
