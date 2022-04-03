@@ -203,7 +203,7 @@
     </select>
 
     <select id="retrieveStoreImages" resultType="GetStoreImagesRes">
-        SELECT storeImage
+        SELECT imgFileIdx,storeImage
         From StoreImageFile
         WHERE storeIdx = #{storeIdx}
     </select>

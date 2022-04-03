@@ -8,5 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetStoreImagesRes {
+    private final Long imgFileIdx;
     private final String storeImage;
 }
