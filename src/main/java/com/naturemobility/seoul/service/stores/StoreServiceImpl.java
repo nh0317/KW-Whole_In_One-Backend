@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +69,17 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilterApplyAllBrand(StoreInfoReqByMap storeInfoReqByMap) throws BaseException {
+        List<GetStoreResByMap> storeInfoList;
+        storesMapper.setOrderRule(storeInfoReqByMap.getOrderRule());
+        storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter(storeInfoReqByMap.getUserLatitude(), storeInfoReqByMap.getUserLongitude(), storeInfoReqByMap.getBrand()
+                , storeInfoReqByMap.getDistance(), storeInfoReqByMap.getFloorscreenStatus(), storeInfoReqByMap.getStorageStatus(), storeInfoReqByMap.getParkingStatus(), storeInfoReqByMap.getLessonStatus(),
+                storeInfoReqByMap.getGroupseatStatus(), storeInfoReqByMap.getLefthandStatus()
+        );
+        return storeInfoList;
+    }
+
+    @Override
     public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(Double userLatitude, Double userLongitude, Integer orderRule, Integer[] brand,
                                                                     Integer lefthandStatus, Integer parkingStauts, Integer groupseatStatus, Integer floorscreenStatus,
                                                                     Integer storageStatus, Integer lessonStatus, Integer distance) throws BaseException {
@@ -92,6 +104,11 @@ public class StoreServiceImpl implements StoreService {
         List<GetRoomIdxRes> roomIdxRes;
         partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
         roomIdxRes = storesMapper.retrieveRoomIdx(partnerIdx);
+
+        for (GetRoomIdxRes i:roomIdxRes) {
+            i.roomIdx = storesMapper.getRoomIdx(partnerIdx,i.getRoomName());
+        }
+
         return roomIdxRes;
     }
 
@@ -99,6 +116,28 @@ public class StoreServiceImpl implements StoreService {
     public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException {
         List<CouponInfo> couponInfos = storesMapper.retrieveCouponInfo(storeIdx);
         return couponInfos;
+    }
+
+    @Override
+    public List<Long> retrieveAvailableRoomIdx(Long storeIdx, String startTime, String endTime) throws BaseException {
+        Long partnerIdx = 0L;
+        partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
+
+        List<Long> roomIdxOnlyRes = storesMapper.retrieveRoomIdxOnly(partnerIdx);
+
+        List<Long> reservedRoomIdxRes = storesMapper.retrieveReservedRoomIdx(partnerIdx, startTime, endTime);
+        //List<Long> reservedRoomIdxRes2 = storesMapper.retrieveReservedRoomIdx2(partnerIdx, endTime);
+
+        roomIdxOnlyRes.removeAll(reservedRoomIdxRes);
+        //roomIdxOnlyRes.removeAll(reservedRoomIdxRes2);
+
+        return roomIdxOnlyRes;
+    }
+
+    @Override
+    public List<GetStoreImagesRes> getStoreImagesRes(Long storeIdx) throws BaseException {
+        List<GetStoreImagesRes> getStoreImagesRes = storesMapper.retrieveStoreImages(storeIdx);
+        return getStoreImagesRes;
     }
 }
 

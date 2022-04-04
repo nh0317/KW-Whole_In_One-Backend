@@ -327,9 +327,19 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public void postCoupon(Long userIdx, Long couponIdx) throws BaseException {
+        if (usersMapper.postCouponCheck(userIdx,couponIdx)!=0){
+            throw new BaseException(NO_AUTHORITY);
+        }
+        
         PostUserCoupon postUserCoupon = new PostUserCoupon(userIdx,couponIdx);
         usersMapper.postCoupon(postUserCoupon);
         return;
+    }
+
+    @Override
+    public List<GetUserCoupon> getUserCoupon(Long userIdx) throws BaseException {
+        List<GetUserCoupon> getUserCoupons = usersMapper.getUserCouponsList(userIdx);
+        return getUserCoupons;
     }
 
     /** 마이페이지

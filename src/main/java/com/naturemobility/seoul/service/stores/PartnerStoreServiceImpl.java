@@ -29,7 +29,7 @@ import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 @Service
 @Slf4j
-public class PartnerStoreServiceImpl implements PartnerStoreService{
+public class PartnerStoreServiceImpl implements PartnerStoreService {
     @Autowired
     PartnerStoreMapper partnerStoreMapper;
     @Autowired
@@ -47,35 +47,33 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
     @Transactional
     public PostPartnerStoreRes saveStore(PostStoreReq postStoreReq, Long partnerIdx) throws BaseException {
         Map<String, Double> coords = geocoderService.getGeoDataByAddress(postStoreReq.getStoreLocation());
-        if(coords==null){
+        if (coords == null) {
             throw new BaseException(REQUEST_ERROR);
         }
-        StoreInfo storeInfo = new StoreInfo(postStoreReq,coords.get("latitude"),coords.get("longitude"));
-        if(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).isPresent()){
+        StoreInfo storeInfo = new StoreInfo(postStoreReq, coords.get("latitude"), coords.get("longitude"));
+        if (brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).isPresent()) {
             storeInfo.setStoreBrand(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
-        }
-        else if (postStoreReq.getStoreBrand().equals("미설정")|| postStoreReq.getStoreBrand()==null || postStoreReq.getStoreBrand().equals(""))
+        } else if (postStoreReq.getStoreBrand().equals("미설정") || postStoreReq.getStoreBrand() == null || postStoreReq.getStoreBrand().equals(""))
             storeInfo.setStoreBrand(null);
         else {
             BrandInfo brandInfo = new BrandInfo(postStoreReq.getStoreBrand());
             brandMapper.save(brandInfo);
             storeInfo.setStoreBrand(brandInfo.getBrandIdx());
         }
-        if(partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
-            storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA)));
+        if (partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
+            storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
             partnerStoreMapper.update(storeInfo);
-        }
-        else {
+        } else {
             partnerStoreMapper.save(storeInfo);
             partnerMapper.saveStoreIdx(partnerIdx, storeInfo.getStoreIdx());
         }
 
-        return new PostPartnerStoreRes(storeInfo,postStoreReq.getStoreBrand());
+        return new PostPartnerStoreRes(storeInfo, postStoreReq.getStoreBrand());
     }
 
     @Override
     public GetPartnerStoreRes getStore(Long partnerIdx) throws BaseException {
-        try{
+        try {
             if (partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
                 Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
                 StoreInfo storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
@@ -93,7 +91,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
             } else {
                 return new GetPartnerStoreRes(new StoreInfo(), null, new ArrayList<>());
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -106,7 +104,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
         Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         String mainImgPath = "";
         List<String> images = new ArrayList<>();
-        if(mainStoreImage != null && !mainStoreImage.equals("")) {
+        if (mainStoreImage != null && !mainStoreImage.equals("")) {
             mainImgPath = fileUploadService.uploadImage(mainStoreImage);
             partnerStoreMapper.updateStoreImage(storeIdx, mainImgPath);
         }
@@ -128,10 +126,57 @@ public class PartnerStoreServiceImpl implements PartnerStoreService{
     @Override
     public void postCoupon(Long partnerIdx, PostCouponReq postCouponReq) throws BaseException {
 
-        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA));;
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        ;
         PostCouponInfo postcouponInfo = new PostCouponInfo(storeIdx, postCouponReq.getCouponName(),
                 postCouponReq.getCouponPercentage(), postCouponReq.getCouponDeadline());
         partnerStoreMapper.postCouponInfo(postcouponInfo);
+        return;
+    }
+
+    @Override
+    public void deleteCoupon(Long partnerIdx, Long couponIdx) throws BaseException {
+
+        Long storeIdxFromCouponIdx = partnerStoreMapper.getStoreIdxByCouponIdx(couponIdx);
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+
+        if (storeIdxFromCouponIdx != storeIdx) {
+            throw new BaseException(NO_AUTHORITY);
+        }
+        partnerStoreMapper.deleteCouponInfo(couponIdx);
+        return;
+    }
+
+    @Override
+    public void postRoomInfo(Long partnerIdx, PostRoomInfoReq postRoomInfoReq) throws BaseException {
+
+        PostRoomInfo postRoomInfo = new PostRoomInfo(postRoomInfoReq.getRoomName(), partnerIdx);
+
+        for(int i=0;i<postRoomInfoReq.getCount();i++){
+            partnerStoreMapper.postRoomInfo(postRoomInfo);
+        }
+        return;
+    }
+
+    @Override
+    public void deleteRoom(Long partnerIdx, Long roomIdx) throws BaseException {
+
+        Long partnerIdxByRoomIdx = partnerStoreMapper.getPartnerIdxByRoomIdx(roomIdx);
+        if (partnerIdx != partnerIdxByRoomIdx) {
+            throw new BaseException(NO_AUTHORITY);
+        }
+        partnerStoreMapper.deleteRoom(roomIdx);
+    }
+
+    @Override
+    public void deleteStoreImg(Long partnerIdx, Long imgFileIdx) throws BaseException {
+
+        Long storeIdxFromImgFileIdx = partnerStoreMapper.getStoreIdxByImgFileIdx(imgFileIdx);
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        if (storeIdx != storeIdxFromImgFileIdx) {
+            throw new BaseException(NO_AUTHORITY);
+        }
+        partnerStoreMapper.deleteImgFile(imgFileIdx);
         return;
     }
 }

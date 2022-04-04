@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.service.stores;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.naturemobility.seoul.config.BaseException;
 
 import com.naturemobility.seoul.domain.coupons.PostCouponReq;
@@ -21,4 +22,12 @@ public interface PartnerStoreService {
     GetStoreIdxRes getStoreIdx(Long partnerIdx) throws BaseException;
 
     void postCoupon(Long partnerIdx, PostCouponReq postCouponReq) throws BaseException;
+
+    void deleteCoupon(Long partnerIdx, Long couponIdx) throws BaseException;
+
+    void postRoomInfo(Long partnerIdx,PostRoomInfoReq postRoomInfoReq) throws BaseException;
+
+    void deleteRoom(Long partnerIdx,Long roomIdx) throws BaseException;
+
+    void deleteStoreImg(Long partnerIdx,Long imgFileIdx) throws BaseException;
 }

@@ -13,27 +13,52 @@ import java.util.Optional;
 @Mapper
 public interface StoresMapper {
 
-    List<SearchStoreRes> findBySearch(@Param("storeName") String storeName, @Param("userLatitude") Double userLatitude, @Param("userLongitude")Double userLongitude);
+    List<SearchStoreRes> findBySearch(@Param("storeName") String storeName, @Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude);
+
     GetStoreRes retrieveStoreInfoByStoreIdx(@PathVariable("storeIdx") Long storeIdx);
-    Integer checkStoreIdx (@PathVariable("storeIdx") Long storeIdx);
-    List<GetStoreResByMap> retrieveStoreInfoByMap(@Param("userLatitude")Double userLatitude,@Param("userLongitude")Double userLongitude);
-    void setOrderRule(@Param("orderRule")Integer orderRule);
-    List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter(@Param("userLatitude")Double userLatitude,@Param("userLongitude")Double userLongitude,@Param("brand")Integer brand,
-    @Param("lefthandStatus")Integer lefthandStatus,@Param("parkingStatus")Integer parkingStatus,@Param("groupseatStatus")Integer groupseatStatus,
-                                                            @Param("groupseatStatus")Integer groupStatus,@Param("floorscreenStatus")Integer floorscreenStatus,
-                                                            @Param("storageStatus")Integer storageStatus,@Param("distance")Integer distance);
+
+    Integer checkStoreIdx(@PathVariable("storeIdx") Long storeIdx);
+
+    List<GetStoreResByMap> retrieveStoreInfoByMap(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude);
+
+    void setOrderRule(@Param("orderRule") Integer orderRule);
+
+    List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude, @Param("brand") Integer brand,
+                                                            @Param("lefthandStatus") Integer lefthandStatus, @Param("parkingStatus") Integer parkingStatus, @Param("groupseatStatus") Integer groupseatStatus,
+                                                            @Param("groupseatStatus") Integer groupStatus, @Param("floorscreenStatus") Integer floorscreenStatus,
+                                                            @Param("storageStatus") Integer storageStatus, @Param("distance") Integer distance);
+
+    List<GetStoreResByMap> retrieveStoreInfoByMapWithFilterApplyAllBrand(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude, @Param("brand") Integer brand,
+                                                            @Param("lefthandStatus") Integer lefthandStatus, @Param("parkingStatus") Integer parkingStatus, @Param("groupseatStatus") Integer groupseatStatus,
+                                                            @Param("groupseatStatus") Integer groupStatus, @Param("floorscreenStatus") Integer floorscreenStatus,
+                                                            @Param("storageStatus") Integer storageStatus, @Param("distance") Integer distance);
 
     List<GetVisitedByUserIdx> retriveStoreInfoByUserIdx(@Param("userIdx") Long userIdx);
 
-    List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(@Param("userLatitude")Double userLatitude,@Param("userLongitude")Double userLongitude,@Param("brand")Integer []brand,
-                                                            @Param("lefthandStatus")Integer lefthandStatus,@Param("parkingStatus")Integer parkingStatus,@Param("groupseatStatus")Integer groupseatStatus,
-                                                            @Param("floorscreenStatus")Integer floorscreenStatus,@Param("storageStatus")Integer storageStatus,@Param("lessonStatus")Integer lessonStatus,
-                                                             @Param("distance")Integer distance);
+    List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude, @Param("brand") Integer[] brand,
+                                                             @Param("lefthandStatus") Integer lefthandStatus, @Param("parkingStatus") Integer parkingStatus, @Param("groupseatStatus") Integer groupseatStatus,
+                                                             @Param("floorscreenStatus") Integer floorscreenStatus, @Param("storageStatus") Integer storageStatus, @Param("lessonStatus") Integer lessonStatus,
+                                                             @Param("distance") Integer distance);
+
     List<GetBrandRes> retrieveBrandInfo();
 
     Optional<String> findStoreName(@Param("storeIdx") Long storeIdx);
 
     Long retrievePartnerIdx(@Param("storeIdx") Long storeIdx);
+
     List<GetRoomIdxRes> retrieveRoomIdx(Long partnerIdx);
+
     List<CouponInfo> retrieveCouponInfo(@Param("storeIdx") Long storeIdx);
+
+    List<Long> retrieveReservedRoomIdx(@Param("partnerIdx") Long partnerIdx,
+                                       @Param("startTime") String startTime, @Param("endTime") String endTime);
+
+    List<Long> retrieveReservedRoomIdx2(@Param("partnerIdx") Long partnerIdx,
+                                        @Param("endTime") String endTime);
+
+    List<Long> retrieveRoomIdxOnly(@Param("partnerIdx") Long partnerIdx);
+
+    List<GetStoreImagesRes> retrieveStoreImages(@PathVariable("storeIdx") Long storeIdx);
+
+    List<Long> getRoomIdx(@Param("partnerIdx") Long partnerIdx,@Param("roomName") String roomName);
 }

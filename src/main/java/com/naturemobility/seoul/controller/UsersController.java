@@ -147,8 +147,8 @@ public class UsersController {
     @PostMapping("check_password")
     public BaseResponse<PostLoginRes> confirmPW(HttpServletResponse response, @RequestParam("password") String password) throws BaseException {
         // 2. Post UserInfo
-        PostLoginRes postLoginRes = usersService.checkPW(response,checkUserService.getEmail(),password);
-        return new BaseResponse<>(SUCCESS,postLoginRes);
+        PostLoginRes postLoginRes = usersService.checkPW(response, checkUserService.getEmail(), password);
+        return new BaseResponse<>(SUCCESS, postLoginRes);
     }
 
     /**
@@ -224,9 +224,17 @@ public class UsersController {
         usersService.postCoupon(userIdx, couponIdx);
         return new BaseResponse<>(SUCCESS);
     }
+
     @PostMapping("/logout")
-    public BaseResponse<Void> logout(HttpServletRequest req, HttpServletResponse res) throws BaseException{
+    public BaseResponse<Void> logout(HttpServletRequest req, HttpServletResponse res) throws BaseException {
         usersService.logout(req, res);
         return new BaseResponse<>(SUCCESS);
+    }
+
+    @GetMapping("coupon")
+    public BaseResponse<List<GetUserCoupon>> getUserCoupon() throws BaseException {
+        Long userIdx = checkUserService.getUserIdx();
+        List<GetUserCoupon> getUserCoupons = usersService.getUserCoupon(userIdx);
+        return new BaseResponse<>(SUCCESS,getUserCoupons);
     }
 }

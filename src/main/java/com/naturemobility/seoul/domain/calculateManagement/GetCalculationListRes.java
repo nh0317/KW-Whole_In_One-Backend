@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class GetCalculateListRes {
-   final Long calculationIdx;
-    final Integer reservePrice;
-    final Integer discountPrice;
-    final Integer payPrice;
+public class GetCalculationListRes {
+    final Integer sales;
+    final Integer fees;
+    final Integer price;
     final String calculateStatus;
+    final String calculateDate;
     final String createdAt;
-    final String paymentTime;
+    final String calculatedAt;
 }

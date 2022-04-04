@@ -19,7 +19,7 @@
                             lessonStatus,
                             reserveStatus,
                             couponStatus)
-        VALUES ( #{storeName},
+        VALUES (#{storeName},
                 #{storeInfo},
                 #{storePhoneNumber},
                 #{storeBrand},
@@ -40,8 +40,7 @@
 
     <update id="update" parameterType="StoreInfo">
         UPDATE Stores
-        SET
-            storeName=#{storeName},
+        SET storeName=#{storeName},
             storeInfo=#{storeInfo},
             storePhoneNumber=#{storePhoneNumber},
             storeLocation=#{storeLocation},
@@ -57,13 +56,14 @@
             lessonStatus=#{lessonStatus},
             reserveStatus=#{reserveStatus},
             couponStatus=#{couponStatus}
-        WHERE storeIdx=#{storeIdx}
+        WHERE storeIdx = #{storeIdx}
     </update>
 
     <select id="findByStoreIdx" resultType="StoreInfo">
         SELECT *
-        FROM Stores s LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
-        WHERE storeIdx=#{storeIdx}
+        FROM Stores s
+                 LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
+        WHERE storeIdx = #{storeIdx}
     </select>
 
     <insert id="postCouponInfo" parameterType="PostCouponInfo">
@@ -76,4 +76,46 @@
         SET storeImage = #{storeImage}
         WHERE storeIdx = #{storeIdx}
     </update>
+
+    <insert id="postRoomInfo" parameterType="PostRoomInfo">
+        INSERT INTO Rooms (partnerIdx, roomName)
+        VALUES (#{partnerIdx}, #{roomName});
+    </insert>
+
+    <select id="getPartnerIdxByRoomIdx" resultType="Long">
+        SELECT partnerIdx
+        FROM Rooms
+        WHERE roomIdx = #{roomIdx}
+    </select>
+
+    <delete id="deleteRoom">
+        DELETE
+        FROM Rooms
+        WHERE roomIdx = #{roomIdx}
+    </delete>
+
+    <select id="getStoreIdxByCouponIdx" resultType="Long">
+        SELECT storeIdx
+        FROM Coupons
+        WHERE couponIdx = #{couponIdx}
+    </select>
+
+    <delete id="deleteCouponInfo">
+        DELETE
+        FROM Coupons
+        WHERE couponIdx = #{couponIdx}
+    </delete>
+
+    <select id="getStoreIdxByImgFileIdx" resultType="Long">
+        SELECT storeIdx
+        FROM StoreImageFile
+        WHERE imgFileIdx = #{imgFileIdx}
+    </select>
+
+    <delete id="deleteImgFile">
+        DELETE
+        FROM StoreImageFile
+        WHERE imgFileIdx = #{imgFileIdx};
+    </delete>
+
 </mapper>

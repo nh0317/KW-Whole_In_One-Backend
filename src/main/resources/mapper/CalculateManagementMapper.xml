@@ -8,23 +8,21 @@
         WHERE partnerIdx = #{partnerIdx}
     </select>
 
-    <select id="getCalculateList" resultType="GetCalculateListRes">
-        SELECT reservationIdx AS calculationIdx,
-               reservePrice,
-               discountPrice,
-               payPrice,
+    <select id="getCalculateList" resultType="GetCalculationListRes">
+        SELECT sales,
+               price,
+               fees,
                (CASE calculateStatus
                     WHEN 0 THEN '정산 미완료'
                     WHEN 1 THEN '정산 완료'
-                    WHEN 2 THEN '정산 등록'
-                   END)       AS calculateStatus,
+                   END) AS calculateStatus
+                ,
+               calculateDate,
                createdAt,
-               paymentTime
-        FROM Reservations
-        WHERE paymentTime &gt;= #{startDay}
-          AND paymentTime &lt;= #{endDay}
-          AND storeIdx = #{storeIdx}
-        ORDER BY paymentTime DESC;
+               calculatedAt
+        FROM PartnerPayment
+        WHERE partnerIdx = #{partnerIdx}
+        ORDER BY createdAt DESC;
     </select>
 
     <select id="getStoreIdxByCalculationIdx" resultType="Long">
@@ -38,4 +36,31 @@
         SET calculateStatus = 2
         WHERE reservationIdx = #{calculationIdx}
     </update>
+
+    <select id="getCalculatedAmount" resultType="Integer">
+        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{calculationMonthDate}), amount,
+                      0)) AS fee
+        FROM Payment
+        WHERE storeIdx = #{storeIdx};
+    </select>
+
+    <insert id="postCalculation" parameterType="PostCalculation">
+        INSERT INTO PartnerPayment (partnerIdx, sales, fees, price, calculateDate)
+        VALUES (#{partnerIdx}, #{sales}, #{fee}, #{price}, #{calculationMonthDate});
+    </insert>
+
+    <select id="checkDuplication" resultType="Integer">
+        SELECT COUNT(1)
+        FROM PartnerPayment
+        WHERE partnerIdx = #{partnerIdx}
+          AND calculateDate = #{calculationMonthDate}
+    </select>
+
+    <select id="getCanceledAmount" resultType="Integer">
+        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{calculationMonthDate}), cancelAmount,
+                      0)) AS cancelAmount
+        FROM Payment
+        WHERE storeIdx = #{storeIdx};
+    </select>
+
 </mapper>
