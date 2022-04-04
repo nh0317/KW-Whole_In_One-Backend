@@ -34,6 +34,9 @@ public enum BaseResponseStatus {
 
     RESERVATION_DUPLICATION(false, 2033, "중복된 예약입니다."),
     DUPLICATION_CALCULATION(false, 2034, "중복된 정산 입니다."),
+
+
+    INVALID_TIME(false, 2050, "영업시간 내의 시간을 입력해주세요"),
 //    EMPTY_EMAIL(false, 2020, "이메일을 입력해주세요."),
 //    EMPTY_PASSWORD(false, 2030, "비밀번호를 입력해주세요."),
 //    EMPTY_CONFIRM_PASSWORD(false, 2031, "비밀번호 확인을 입력해주세요."),

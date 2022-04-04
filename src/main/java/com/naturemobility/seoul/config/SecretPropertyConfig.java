@@ -40,4 +40,7 @@ public class SecretPropertyConfig {
 
     @Value("${spring.redis.host}")
     private String redisHost;
+
+    @Value("${openapi.SpcdeInfoService.serviceKey}")
+    private String openAPIServiceKey;
 }
