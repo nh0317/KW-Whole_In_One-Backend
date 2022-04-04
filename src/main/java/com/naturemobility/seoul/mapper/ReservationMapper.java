@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +28,8 @@ public interface ReservationMapper {
 
     int updateAlreadyUsed(@Param("alreadyUsed")Boolean alreadyUsed, @Param("reservationIdx")Long reservationIdx);
 
-    List<GetCanRezTimeRes> getCanRezTime(@Param("firstTime") LocalTime firstTime,
-                                         @Param("rezDate") String rezDate, @Param("endTime") LocalTime endTime,
+    List<GetCanRezTimeRes> getCanRezTime(@Param("firstTime") LocalDateTime firstTime,
+                                         @Param("rezDate") String rezDate, @Param("endTime") LocalDateTime endTime,
                                          @Param("storeIdx")Long storeIdx, @Param("roomIdx") Long roomIdx,
                                          @Param("hall")Integer hall);
 }

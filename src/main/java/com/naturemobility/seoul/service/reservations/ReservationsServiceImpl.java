@@ -15,6 +15,7 @@ import com.naturemobility.seoul.mapper.ReservationMapper;
 import com.naturemobility.seoul.mapper.StoresMapper;
 import com.naturemobility.seoul.mapper.WeekPriceMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -167,7 +168,14 @@ public class ReservationsServiceImpl implements ReservationsService {
         GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
         List<String> storeTimes = List.of(getStoreRes.getStoreTime().split("~"));
         LocalTime startTime = LocalTime.parse(storeTimes.get(0).trim(), DateTimeFormatter.ofPattern("HH:mm"));
-        LocalTime endTime = LocalTime.parse(storeTimes.get(1).trim(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime endLocalTime = LocalTime.parse(storeTimes.get(1).trim(),DateTimeFormatter.ofPattern("HH:mm"));
+        LocalDate reservationLocalDate = LocalDate.parse(reservationDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDateTime endTime;
+        if(endLocalTime.isBefore(startTime)){
+            endTime = LocalDateTime.of(reservationLocalDate.plusDays(1),endLocalTime);
+        }else{
+            endTime = LocalDateTime.of(reservationLocalDate, endLocalTime);
+        }
         if (playTime != null && playTime != 0)
             endTime = endTime.minusMinutes(playTime.longValue());
         else endTime =endTime.minusMinutes(30);
@@ -176,22 +184,18 @@ public class ReservationsServiceImpl implements ReservationsService {
         log.info(reservationDate);
         log.info("playTime : " + playTime + ", endTime : " + endTime);
 
-        LocalTime firstTime;
         if (startTime.getMinute() > 30) {
-            firstTime = LocalTime.of(startTime.getHour() + 1, 0);
+            startTime = LocalTime.of(startTime.getHour() + 1, 0);
         } else if (startTime.getMinute() > 0) {
-            firstTime = LocalTime.of(startTime.getHour(), 30);
+            startTime = LocalTime.of(startTime.getHour(), 30);
         } else {
-            firstTime = LocalTime.of(startTime.getHour(), 0);
+            startTime = LocalTime.of(startTime.getHour(), 0);
         }
+
+        LocalDateTime firstTime = LocalDateTime.parse(reservationDate+" "+startTime.toString(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         log.info("firstTime : " + firstTime);
 
-//        if (weekPriceMapper.findCurrentPrice(storeIdx, hall,
-//                LocalDate.parse(reservationDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")), null)
-//                .isPresent()){
-//            return reservationMapper.getPeriodCanRezTime(firstTime,
-//                    reservationDate, endTime, storeIdx, roomIdx, hall);
-//        }else
             return reservationMapper.getCanRezTime(firstTime,
                     reservationDate, endTime, storeIdx, roomIdx, hall);
     }

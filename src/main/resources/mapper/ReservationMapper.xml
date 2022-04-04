@@ -109,30 +109,32 @@
 
     <select id="getCanRezTime" resultType="GetCanRezTimeRes">
         with recursive hours as(
-        select time(#{firstTime}) as hour
-        union all
-        select date_add(time(hour),INTERVAL 30 MINUTE) as hour
-        from hours
-         where hour &lt; #{endTime}
+            select str_to_date(#{firstTime},'%Y-%m-%d %H:%i:%s') as hour
+                union all
+                    select date_add(hour,INTERVAL 30 MINUTE) as hour
+                from hours
+            where hour &lt; #{endTime}
         )
         select time_format(h.hour,"%H:%i") as time
         from hours h left join
             (StorePrice sp left join PriceScheme ps on ps.priceSchemeIdx = sp.priceSchemeIdx )
-        on h.hour
-            between TIME_FORMAT(sp.startTime, '%H:%i')
-            and (case
-            when time_format(sp.endTime, '%H:%i') = '00:00' then '24:00'
-            else time_format(sp.endTime, '%H:%i')
-            end)
-        where h.hour not in (
-            select h.hour
-            from hours h left join Reservations r on time_format(h.hour,"%H:%i") = time_format(r.reservationTime,"%H:%i")
-            left join Stores s on r.storeIdx = s.storeIdx
-            where (alreadyUsed = 0) and (date_format(r.reservationTime, "%Y-%m-%d") = #{rezDate}) and (s.storeIdx = #{storeIdx})
-                    and r.roomIdx =#{roomIdx} and r.selectedHall = #{hall}
-            group by h.hour, r.alreadyUsed, r.reservationTime, s.storeIdx
-            )and ps.storeIdx = 1 and sp.deletedAt is null
-        group by h.hour
-        order by h.hour;
+            on h.hour
+                between str_to_date(concat(#{rezDate},' ',sp.startTime), '%Y-%m-%d %H:%i')
+                    and (case
+                        when time_format(sp.endTime, '%H:%i') &lt; time_format(sp.startTime, '%H:%i')
+                            then date_add(str_to_date(concat( #{rezDate},' ',sp.endTime), '%Y-%m-%d %H:%i'), INTERVAL 1 DAY)
+                        else str_to_date(concat( #{rezDate},' ',sp.endTime), '%Y-%m-%d %H:%i')
+                    end)
+            where h.hour not in (
+                select h.hour
+                from hours h join Reservations r
+                on h.hour between r.reservationTime and r.endTime
+                left join Stores s on r.storeIdx = s.storeIdx
+                where (alreadyUsed = 0) and (s.storeIdx = #{storeIdx})
+                        and r.roomIdx = #{roomIdx} and r.selectedHall = #{hall}
+                group by h.hour
+            )and ps.storeIdx = #{storeIdx} and sp.deletedAt is null
+            group by h.hour
+            order by h.hour;
     </select>
 </mapper>

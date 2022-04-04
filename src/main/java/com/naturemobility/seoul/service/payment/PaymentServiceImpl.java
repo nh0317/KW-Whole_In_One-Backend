@@ -221,6 +221,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public int requestRefund(PaymentInfo paymentInfo,PostApproveRefundReq postApproveRefund) throws BaseException {
+        try{
         int cancelableAmount = paymentInfo.getAmount() - paymentInfo.getCancelAmount();
         String url = "https://api.iamport.kr/payments/cancel";
         PostIMPRefundReq postIMPRefundReq =
@@ -228,7 +229,13 @@ public class PaymentServiceImpl implements PaymentService {
                         cancelableAmount,paymentInfo.getRefundHolder(),paymentInfo.getRefundBank(),paymentInfo.getRefundAccount());
         Map<String, Object> response = getResponse(impService.getIMPToken(), HttpMethod.POST, postIMPRefundReq, url);
         int status = ((Double)response.get("code")).intValue();
-        return status;
+        log.info(response.toString());
+        return status;}
+        catch (Exception e){
+            e.printStackTrace();
+            throw e;
+
+        }
     }
 
     @Transactional
