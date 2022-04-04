@@ -55,11 +55,15 @@
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
         <choose>
             <when test="isHoliday!=null">
-                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null and sp.deletedAt is null
+                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx}
+                  and sp.startDate is not null and ps.deletedAt is null and sp.deletedAt is null
+                  and now() between sp.startDate and sp.endDate
                 ORDER BY sp.startDate, sp.startTime, sp.hole
             </when>
             <otherwise>
-                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null and sp.deletedAt is null
+                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null
+                    and sp.deletedAt is null
+                    and now() between sp.startDate and sp.endDate
                 ORDER BY sp.isHoliday,sp.startDate, sp.startTime, sp.hole
             </otherwise>
         </choose>
