@@ -2,68 +2,76 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.naturemobility.seoul.mapper.PartnerMapper">
     <sql id="insertPartner">
-        partnerName,partnerPassword,partnerEmail
+        partnerName
+        ,partnerPassword,partnerEmail
     </sql>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="partnerIdx" parameterType="PartnerInfo">
-        INSERT INTO Partner(partnerName,partnerPassword,partnerEmail)
-        VALUES(#{partnerName}, #{partnerPassword}, #{partnerEmail})
-            ON DUPLICATE KEY UPDATE
-                                 partnerName = #{partnerName},
-                                 partnerPassword = #{partnerPassword},
-                                 partnerStatus = #{partnerStatus},
-                                 partnerEmail = #{partnerEmail}
-    </insert>
-
-    <update id="update" parameterType="PartnerInfo">
-        UPDATE Partner
-        SET
+        INSERT INTO Partner(partnerName, partnerPassword, partnerEmail)
+        VALUES (#{partnerName}, #{partnerPassword}, #{partnerEmail}) ON DUPLICATE KEY
+        UPDATE
             partnerName = #{partnerName},
             partnerPassword = #{partnerPassword},
             partnerStatus = #{partnerStatus},
             partnerEmail = #{partnerEmail}
-        WHERE partnerIdx =#{partnerIdx}
+    </insert>
+
+    <update id="update" parameterType="PartnerInfo">
+        UPDATE Partner
+        SET partnerName     = #{partnerName},
+            partnerPassword = #{partnerPassword},
+            partnerStatus   = #{partnerStatus},
+            partnerEmail    = #{partnerEmail}
+        WHERE partnerIdx = #{partnerIdx}
     </update>
 
     <select id="findByIdx" resultType="PartnerInfo">
         SELECT *
         FROM Partner
-        WHERE partnerIdx=#{partnerIdx}
+        WHERE partnerIdx = #{partnerIdx}
     </select>
 
     <select id="findByEmail" resultType="PartnerInfo">
         SELECT *
         FROM Partner
-        WHERE partnerEmail=#{email}
+        WHERE partnerEmail = #{email}
     </select>
 
     <delete id="delete" parameterType="PartnerInfo">
-        DELETE FROM Partner
-        WHERE partnerIdx=#{partnerIdx}
+        DELETE
+        FROM Partner
+        WHERE partnerIdx = #{partnerIdx}
     </delete>
 
     <select id="findByStatus" resultType="PartnerInfo">
         SELECT *
         FROM Partner
-        WHERE partnerStatus=#{status}
+        WHERE partnerStatus = #{status}
     </select>
 
     <select id="findByEmailAndStatus" resultType="PartnerInfo">
         SELECT *
         FROM Partner
-        WHERE partnerStatus=#{status} And partnerEmail=#{email}
+        WHERE partnerStatus = #{status}
+          And partnerEmail = #{email}
     </select>
 
     <select id="findStoreIdx" resultType="Long">
         SELECT storeIdx
         FROM Partner
-        WHERE partnerStatus=0 And partnerIdx=#{partnerIdx}
+        WHERE partnerStatus = 0
+          And partnerIdx = #{partnerIdx}
     </select>
 
     <update id="saveStoreIdx" parameterType="PartnerInfo">
         UPDATE Partner
-        SET
-            storeIdx = #{storeIdx}
-        WHERE partnerIdx =#{partnerIdx}
+        SET storeIdx = #{storeIdx}
+        WHERE partnerIdx = #{partnerIdx}
     </update>
+
+    <select id="getStoreStarPoint" resultType="GetStoreStarPointRes">
+        SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0) AS starPoint
+        FROM Reviews
+        WHERE storeIdx = #{storeIdx};
+    </select>
 </mapper>

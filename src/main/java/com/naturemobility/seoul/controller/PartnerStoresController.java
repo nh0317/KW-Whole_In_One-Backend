@@ -107,5 +107,12 @@ public class PartnerStoresController {
         partnerStoreService.deleteStoreImg(partnerIdx,imgFileIdx);
         return new BaseResponse<>(SUCCESS);
     }
+
+    @GetMapping("/star_point")
+    public BaseResponse<GetStoreStarPointRes> getStarPoint() throws BaseException {
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        GetStoreStarPointRes getStoreStarPointRes = partnerStoreService.getStoreStarPoint(partnerIdx);
+        return new BaseResponse<>(SUCCESS, getStoreStarPointRes);
+    }
 }
 

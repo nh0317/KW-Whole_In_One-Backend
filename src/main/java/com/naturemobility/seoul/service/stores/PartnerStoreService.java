@@ -30,4 +30,6 @@ public interface PartnerStoreService {
     void deleteRoom(Long partnerIdx,Long roomIdx) throws BaseException;
 
     void deleteStoreImg(Long partnerIdx,Long imgFileIdx) throws BaseException;
+
+    GetStoreStarPointRes getStoreStarPoint(Long partnerIdx) throws BaseException;
 }

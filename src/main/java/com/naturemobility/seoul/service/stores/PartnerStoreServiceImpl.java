@@ -152,7 +152,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
 
         PostRoomInfo postRoomInfo = new PostRoomInfo(postRoomInfoReq.getRoomName(), partnerIdx);
 
-        for(int i=0;i<postRoomInfoReq.getCount();i++){
+        for (int i = 0; i < postRoomInfoReq.getCount(); i++) {
             partnerStoreMapper.postRoomInfo(postRoomInfo);
         }
         return;
@@ -178,5 +178,13 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
         }
         partnerStoreMapper.deleteImgFile(imgFileIdx);
         return;
+    }
+
+    @Override
+    public GetStoreStarPointRes getStoreStarPoint(Long partnerIdx) throws BaseException {
+        
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        GetStoreStarPointRes getStoreStarPointRes = partnerMapper.getStoreStarPoint(storeIdx);
+        return getStoreStarPointRes;
     }
 }

@@ -1,8 +1,10 @@
 package com.naturemobility.seoul.mapper;
 
+import com.naturemobility.seoul.domain.partnerStore.GetStoreStarPointRes;
 import com.naturemobility.seoul.domain.partners.PartnerInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +21,5 @@ public interface PartnerMapper {
 
     Optional<Long> findStoreIdx(@Param("partnerIdx")Long partnerIdx);
     Long saveStoreIdx(@Param("partnerIdx") Long partnerIdx, @Param("storeIdx") Long storeIdx);
+    GetStoreStarPointRes getStoreStarPoint(Long storeIdx);
 }
