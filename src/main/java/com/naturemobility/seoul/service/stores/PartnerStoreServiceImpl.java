@@ -150,9 +150,9 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
     @Override
     public void postRoomInfo(Long partnerIdx, PostRoomInfoReq postRoomInfoReq) throws BaseException {
 
-        PostRoomInfo postRoomInfo = new PostRoomInfo(postRoomInfoReq.getRoomName(), partnerIdx);
-
         for (int i = 0; i < postRoomInfoReq.getCount(); i++) {
+            String roomName = postRoomInfoReq.getRoomType() + (i+1);
+            PostRoomInfo postRoomInfo = new PostRoomInfo(roomName, postRoomInfoReq.getRoomType(), partnerIdx);
             partnerStoreMapper.postRoomInfo(postRoomInfo);
         }
         return;
@@ -182,7 +182,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
 
     @Override
     public GetStoreStarPointRes getStoreStarPoint(Long partnerIdx) throws BaseException {
-        
+
         Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         GetStoreStarPointRes getStoreStarPointRes = partnerMapper.getStoreStarPoint(storeIdx);
         return getStoreStarPointRes;

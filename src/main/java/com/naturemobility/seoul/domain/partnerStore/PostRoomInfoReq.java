@@ -8,6 +8,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 public class PostRoomInfoReq {
-    private String roomName;
+    private String roomType;
     private Integer count;
 }

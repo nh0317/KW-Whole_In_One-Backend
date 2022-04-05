@@ -78,8 +78,8 @@
     </update>
 
     <insert id="postRoomInfo" parameterType="PostRoomInfo">
-        INSERT INTO Rooms (partnerIdx, roomName)
-        VALUES (#{partnerIdx}, #{roomName});
+        INSERT INTO Rooms (partnerIdx, roomName, roomType)
+        VALUES (#{partnerIdx}, #{roomName}, #{roomType});
     </insert>
 
     <select id="getPartnerIdxByRoomIdx" resultType="Long">
