@@ -164,7 +164,7 @@
     </select>
 
     <select id="retrieveRoomIdx" resultType="GetRoomIdxRes">
-        SELECT DISTINCT roomName
+        SELECT DISTINCT roomType
         FROM Rooms
         WHERE partnerIdx = #{partnerIdx};
     </select>
@@ -243,7 +243,7 @@
     <select id="getRoomIdx" resultType="Long">
         SELECT roomIdx
         FROM Rooms
-        WHERE roomName = #{roomName}
+        WHERE roomType = #{roomType}
           AND partnerIdx = #{partnerIdx}
     </select>
 </mapper>

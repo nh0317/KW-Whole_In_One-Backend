@@ -60,5 +60,5 @@ public interface StoresMapper {
 
     List<GetStoreImagesRes> retrieveStoreImages(@PathVariable("storeIdx") Long storeIdx);
 
-    List<Long> getRoomIdx(@Param("partnerIdx") Long partnerIdx,@Param("roomName") String roomName);
+    List<Long> getRoomIdx(@Param("partnerIdx") Long partnerIdx,@Param("roomType") String roomName);
 }

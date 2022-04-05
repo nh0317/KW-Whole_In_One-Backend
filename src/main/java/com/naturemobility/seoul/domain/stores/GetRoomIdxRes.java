@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class GetRoomIdxRes {
-    public String roomName;
+    public String roomType;
     public List<Long> roomIdx;
 
     GetRoomIdxRes() {
