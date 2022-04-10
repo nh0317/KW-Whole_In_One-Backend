@@ -34,6 +34,7 @@ public enum BaseResponseStatus {
 
     RESERVATION_DUPLICATION(false, 2033, "중복된 예약입니다."),
     DUPLICATION_CALCULATION(false, 2034, "중복된 정산 입니다."),
+    CANNOT_CHANGE_LOCATION(false, 2035, "주소를 위도/경도로 변환할 수 없습니다."),
 
 
     INVALID_TIME(false, 2050, "영업시간 내의 시간을 입력해주세요"),

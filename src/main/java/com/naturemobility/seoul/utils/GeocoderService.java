@@ -37,7 +37,7 @@ public class GeocoderService {
             coords.put("longitude", Double.valueOf(result.getBody().getAddresses().get(0).getX()));
             log.info("주소 : "+address+" -> 위도 : "+coords.get("latitude") +" 경도 : "+coords.get("longitude"));
         }catch (Exception e){
-            throw new BaseException(BaseResponseStatus.RESPONSE_ERROR);
+            throw new BaseException(BaseResponseStatus.CANNOT_CHANGE_LOCATION);
         }
         return coords;
 
