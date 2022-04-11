@@ -195,8 +195,11 @@ public class ReservationsServiceImpl implements ReservationsService {
         LocalDateTime firstTime = LocalDateTime.parse(reservationDate+" "+startTime.toString(),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         log.info("firstTime : " + firstTime);
-
-            return reservationMapper.getCanRezTime(firstTime,
-                    reservationDate, endTime, storeIdx, roomIdx, hall);
+        List<GetRezTimes> canRezTime = reservationMapper.getCanRezTime(firstTime,
+                reservationDate, endTime, storeIdx, roomIdx, hall);
+        log.info(canRezTime.toString());
+        return canRezTime.stream().filter((items)->items.isValid(playTime))
+                .map((items)-> new GetCanRezTimeRes(items.getTime()))
+                .collect(Collectors.toList());
     }
 }

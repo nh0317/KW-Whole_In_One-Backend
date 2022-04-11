@@ -178,11 +178,17 @@ public class PriceServiceImpl implements PriceService{
             response = ExternalAPI.getXmlResponse(null,HttpMethod.GET,null, stringUrl);
         } catch (Exception e) {e.printStackTrace();}
         log.info(response.toString());
-        ArrayList<Map<String, Object>> holidays = (ArrayList) ((Map) ((Map) ((Map) response.
-                getOrDefault("response", "none"))
-                .getOrDefault("body", "none"))
-                .getOrDefault("items", "none"))
-                .getOrDefault("item", new ArrayList<>());
+        ArrayList<Map<String, Object>> holidays;
+        try{
+            holidays = (ArrayList) ((Map) ((Map) ((Map) response.
+                    getOrDefault("response", "none"))
+                    .getOrDefault("body", "none"))
+                    .getOrDefault("items", "none"))
+                    .getOrDefault("item", new ArrayList<>());
+        }catch (Exception e){
+            //이번 달에 공휴일이 없는 경우
+            return false;
+        }
 
         for (Map h : holidays){
             String locdate = String.valueOf(((Double) h.getOrDefault("locdate", "none")).intValue());

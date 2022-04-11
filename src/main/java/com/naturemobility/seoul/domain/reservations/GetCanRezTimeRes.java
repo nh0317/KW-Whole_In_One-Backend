@@ -1,14 +1,12 @@
 package com.naturemobility.seoul.domain.reservations;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString

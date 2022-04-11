@@ -28,7 +28,7 @@ public interface ReservationMapper {
 
     int updateAlreadyUsed(@Param("alreadyUsed")Boolean alreadyUsed, @Param("reservationIdx")Long reservationIdx);
 
-    List<GetCanRezTimeRes> getCanRezTime(@Param("firstTime") LocalDateTime firstTime,
+    List<GetRezTimes> getCanRezTime(@Param("firstTime") LocalDateTime firstTime,
                                          @Param("rezDate") String rezDate, @Param("endTime") LocalDateTime endTime,
                                          @Param("storeIdx")Long storeIdx, @Param("roomIdx") Long roomIdx,
                                          @Param("hall")Integer hall);

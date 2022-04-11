@@ -107,7 +107,7 @@
         WHERE reservationIdx=#{reservationIdx}
     </update>
 
-    <select id="getCanRezTime" resultType="GetCanRezTimeRes">
+    <select id="getCanRezTime" resultType="GetRezTimes">
         with recursive hours as(
             select str_to_date(#{firstTime},'%Y-%m-%d %H:%i:%s') as hour
                 union all
@@ -115,8 +115,9 @@
                 from hours
             where hour &lt; #{endTime}
         )
-        select time_format(h.hour,"%H:%i") as time
-        from hours h left join
+        select time_format(h.hour,"%H:%i") as time,
+                timestampdiff(minute,h.hour,LEAD(r.reservationTime,1)OVER(ORDER BY h.hour)) as period
+        from hours h left join Reservations r on h.hour = r.endTime left join
             (StorePrice sp left join PriceScheme ps on ps.priceSchemeIdx = sp.priceSchemeIdx )
             on h.hour
                 between str_to_date(concat(#{rezDate},' ',sp.startTime), '%Y-%m-%d %H:%i')
@@ -128,13 +129,13 @@
             where h.hour not in (
                 select h.hour
                 from hours h join Reservations r
-                on h.hour between r.reservationTime and r.endTime
+                on h.hour >= r.reservationTime and  r.endTime > h.hour
                 left join Stores s on r.storeIdx = s.storeIdx
                 where (alreadyUsed = 0) and (s.storeIdx = #{storeIdx})
                         and r.roomIdx = #{roomIdx} and r.selectedHall = #{hall}
                 group by h.hour
             )and ps.storeIdx = #{storeIdx} and sp.deletedAt is null
-            group by h.hour
+            group by h.hour, r.reservationTime
             order by h.hour;
     </select>
 </mapper>
