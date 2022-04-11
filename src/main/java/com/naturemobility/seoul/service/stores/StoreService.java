@@ -30,6 +30,8 @@ public interface StoreService {
 
     public List<GetRoomIdxRes> retrieveRoomIdx(Long storeIdx) throws BaseException;
 
+    List<GetRoomNameRes> retrieveRoomName(Long storeIdx, String roomType) throws BaseException;
+
     public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException;
 
     public List<Long> retrieveAvailableRoomIdx(Long storeIdx, String startTime, String endTime) throws BaseException;

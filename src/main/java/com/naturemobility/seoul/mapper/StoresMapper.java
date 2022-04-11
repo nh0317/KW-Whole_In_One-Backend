@@ -47,6 +47,7 @@ public interface StoresMapper {
     Long retrievePartnerIdx(@Param("storeIdx") Long storeIdx);
 
     List<GetRoomIdxRes> retrieveRoomIdx(Long partnerIdx);
+    List<GetRoomNameRes> retrieveRoomName(Long partnerIdx);
 
     List<CouponInfo> retrieveCouponInfo(@Param("storeIdx") Long storeIdx);
 
@@ -61,4 +62,6 @@ public interface StoresMapper {
     List<GetStoreImagesRes> retrieveStoreImages(@PathVariable("storeIdx") Long storeIdx);
 
     List<Long> getRoomIdx(@Param("partnerIdx") Long partnerIdx,@Param("roomType") String roomName);
+
+    List<GetRoomNameRes> retrieveRoomNameByRoomType(@Param("partnerIdx")Long partnerIdx, @Param("roomType")String roomType);
 }

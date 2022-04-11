@@ -246,4 +246,16 @@
         WHERE roomType = #{roomType}
           AND partnerIdx = #{partnerIdx}
     </select>
+
+    <select id="retrieveRoomName" resultType="GetRoomNameRes">
+        SELECT roomIdx, roomType, roomName
+        FROM Rooms
+        WHERE partnerIdx = #{partnerIdx}
+    </select>
+
+    <select id="retrieveRoomNameByRoomType" resultType="GetRoomNameRes">
+        SELECT roomIdx, roomType, roomName
+        FROM Rooms
+        WHERE partnerIdx = #{partnerIdx} and roomType = #{roomType}
+    </select>
 </mapper>

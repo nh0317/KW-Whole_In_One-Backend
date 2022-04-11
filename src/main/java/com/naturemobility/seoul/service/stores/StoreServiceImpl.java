@@ -114,6 +114,14 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public List<GetRoomNameRes> retrieveRoomName(Long storeIdx, String roomType) throws BaseException {
+        Long partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
+
+        if (roomType== null || roomType.equals(""))
+            return storesMapper.retrieveRoomName(partnerIdx);
+        else return storesMapper.retrieveRoomNameByRoomType(partnerIdx, roomType);
+    }
+    @Override
     public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException {
         List<CouponInfo> couponInfos = storesMapper.retrieveCouponInfo(storeIdx);
         return couponInfos;

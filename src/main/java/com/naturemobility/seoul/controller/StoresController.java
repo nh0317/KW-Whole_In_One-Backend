@@ -188,6 +188,19 @@ public class StoresController {
     }
 
     /**
+     * 매장 roomName 조회 API
+     * [GET] /stores/roomName?storeIdx=10
+     *
+     * @return BaseResponse<List < GetRoomIdxRes>>
+     */
+    @ResponseBody
+    @GetMapping("/roomName")
+    public BaseResponse<List<GetRoomNameRes>> getRoomName(@RequestParam Long storeIdx, @RequestParam(required = false) String roomType) throws BaseException {
+        List<GetRoomNameRes> roomIdxRes = storeService.retrieveRoomName(storeIdx, roomType);
+        return new BaseResponse<>(SUCCESS, roomIdxRes);
+    }
+
+    /**
      * 매장 쿠폰 조회 API
      * [GET] /stores/1/coupons
      *
