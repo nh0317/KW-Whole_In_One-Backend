@@ -80,7 +80,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
                 List<String> storeImages = storeImageFileMapper.findByStoreIdx(storeIdx);
 
                 if (storeInfo.getStoreImage() == null || storeInfo.getStoreImage().length() == 0)
-                    storeInfo.setStoreInfo("https://i.ibb.co/9hL4Cxk/default-image.jpg");
+                    storeInfo.setStoreImage("https://i.ibb.co/9hL4Cxk/default-image.jpg");
 
                 String storeBrand = "";
                 if (storeInfo.getStoreBrand() == null)
