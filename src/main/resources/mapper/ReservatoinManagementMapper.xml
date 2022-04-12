@@ -10,7 +10,8 @@
 
     <select id="getRezList" resultType="GetRezListByManagementRes">
         SELECT reservationIdx,
-               DATE_FORMAT(reservationTime, '%H:%i') AS reservationTime,
+               roomIdx,
+               reservationTime,
                endTime,
                selectedHall,
                personCount,

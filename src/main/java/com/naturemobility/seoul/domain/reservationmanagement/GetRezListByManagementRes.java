@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class GetRezListByManagementRes {
     final Long reservationIdx;
+    final Long roomIdx;
     final String reservationTime;
     final String endTime;
     final Integer selectedHall;
