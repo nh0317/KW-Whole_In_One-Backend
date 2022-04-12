@@ -97,7 +97,7 @@ public class CalculateManagementController {
     @GetMapping("/calculation-list")
     public BaseResponse<List<GetCalculationListRes>> getCalculationListWithFilter(
             @RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate,
-            @RequestParam("calculationStatus") Integer calculationStatus) throws BaseException {
+            @RequestParam("calculationStatus") Integer [] calculationStatus) throws BaseException {
         Long partnerIdx = 0L;
         partnerIdx = checkUserService.getPartnerIdx();
         List<GetCalculationListRes> calculateList = calculateManagementService.getCalculateListWithFilter(

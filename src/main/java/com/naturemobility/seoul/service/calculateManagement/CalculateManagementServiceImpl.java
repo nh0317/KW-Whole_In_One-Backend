@@ -26,7 +26,7 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
 
     @Override
     public List<GetCalculationListRes> getCalculateListWithFilter(
-            Long partnerIdx, String startDate, String endDate, Integer calculationStatus) throws BaseException {
+            Long partnerIdx, String startDate, String endDate, Integer [] calculationStatus) throws BaseException {
 
         //현재 날짜를 기준으로 한달전을 string 값으로 가져옴
         String getCheckMonthRes = calculateManagementMapper.getCheckMonth();

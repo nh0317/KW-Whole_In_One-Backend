@@ -16,7 +16,7 @@ public interface CalculateManagementMapper {
 
     List<GetCalculationListRes> getCalculateListWithFilter(
             @Param("partnerIdx")Long partnerIdx,@Param("startDate") String startDate,@Param("endDate")String endDate,
-            @Param("calculationStatus") Integer calculationStatus);
+            @Param("calculationStatus") Integer [] calculationStatus);
 
     Long getStoreIdxByCalculationIdx(@PathVariable("calculationIdx") Long calculationIdx);
 

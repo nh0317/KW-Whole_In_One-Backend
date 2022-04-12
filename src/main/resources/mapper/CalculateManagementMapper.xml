@@ -43,7 +43,10 @@
         WHERE partnerIdx = #{partnerIdx}
           AND createdAt >= #{startDate}
           AND createdAt &lt;= #{endDate}
-          AND calculateStatus = #{calculationStatus}
+          AND calculateStatus IN (
+        <foreach collection="calculationStatus" item="calculationStatus" index="index" separator=",">
+            ${calculationStatus}
+        </foreach>)
         ORDER BY createdAt DESC;
     </select>
 
