@@ -104,4 +104,19 @@ public class CalculateManagementController {
                 partnerIdx, startDate, endDate, calculationStatus);
         return new BaseResponse<>(SUCCESS, calculateList);
     }
+
+    /**
+     * 정산요청
+     * [POST] /calculate-management/calculation?partnerPaymentIdx=1
+     *
+     * @return BaseResponse<List < GetCalculateListRes>>
+     */
+    @PostMapping("/calculation")
+    public BaseResponse postCalculation(
+            @RequestParam("partnerPaymentIdx") Long partnerPaymentIdx) throws BaseException {
+        Long partnerIdx = 0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        calculateManagementService.postCalculation(partnerIdx, partnerPaymentIdx);
+        return new BaseResponse<>(SUCCESS);
+    }
 }

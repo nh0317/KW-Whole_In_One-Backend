@@ -12,5 +12,7 @@ public interface CalculateManagementService {
     public List<GetCalculationListRes> getCalculateListWithFilter(
             Long partnerIdx, String startDate, String endDate, Integer calculationStatus) throws BaseException;
 
+    public void postCalculation(Long partnerIdx,Long partnerPaymentIdx) throws BaseException;
+
     //public void calculate(Long partnerIdx, String calculationMonthDate) throws BaseException;
 }

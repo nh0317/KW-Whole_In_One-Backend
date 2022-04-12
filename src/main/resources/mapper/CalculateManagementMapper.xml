@@ -54,9 +54,9 @@
     </select>
 
     <update id="changeCalculateStatus">
-        UPDATE Reservations
-        SET calculateStatus = 2
-        WHERE reservationIdx = #{calculationIdx}
+        UPDATE PartnerPayment
+        SET calculateStatus = 1
+        WHERE partnerPaymentIdx = #{partnerPaymentIdx}
     </update>
 
     <select id="getCalculatedAmount" resultType="Integer">
@@ -87,6 +87,19 @@
 
     <select id="getCheckMonth" resultType="String">
         SELECT DATE_FORMAT(date_add(now(), INTERVAL -1 MONTH), '%Y-%m')AS month
+    </select>
+
+    <select id="getPartnerIdxFromPartnerPaymentIdx" resultType="Long">
+        SELECT partnerIdx
+        FROM PartnerPayment
+        WHERE partnerPaymentIdx = #{partnerPaymentIdx}
+    </select>
+
+    <select id="checkCalculationDuplication" resultType="Integer">
+        SELECT COUNT(1) AS checkDuplication
+        FROM PartnerPayment
+        WHERE partnerPaymentIdx = #{partnerPaymentIdx}
+          AND calculateStatus = 1;
     </select>
 
 </mapper>

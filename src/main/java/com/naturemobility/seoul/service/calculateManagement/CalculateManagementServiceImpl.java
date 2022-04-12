@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.service.calculateManagement;
 
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.calculateManagement.GetCalculationListRes;
 import com.naturemobility.seoul.domain.calculateManagement.PostCalculation;
 import com.naturemobility.seoul.mapper.CalculateManagementMapper;
@@ -53,6 +54,23 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
 
             return calculationList;
         }
+    }
+
+    @Override
+    public void postCalculation(Long partnerIdx, Long partnerPaymentIdx) throws BaseException {
+
+        Long partnerIdxFromPartnerPaymentIdx = calculateManagementMapper.getPartnerIdxFromPartnerPaymentIdx(partnerPaymentIdx);
+        if(partnerIdx != partnerIdxFromPartnerPaymentIdx){
+            throw new BaseException(BaseResponseStatus.NO_AUTHORITY);
+        }
+
+        int checkCalculationDuplication = calculateManagementMapper.checkCalculationDuplication(partnerPaymentIdx);
+        if(checkCalculationDuplication == 1){
+            throw new BaseException(BaseResponseStatus.DUPLICATION_CALCULATION);
+        }
+
+        calculateManagementMapper.changeCalculateStatus(partnerPaymentIdx);
+        return;
     }
 
     /*

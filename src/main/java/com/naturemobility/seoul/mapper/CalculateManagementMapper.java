@@ -20,8 +20,6 @@ public interface CalculateManagementMapper {
 
     Long getStoreIdxByCalculationIdx(@PathVariable("calculationIdx") Long calculationIdx);
 
-    void changeCalculateStatus(@Param("calculationIdx") Long calculationIdx);
-
     Integer getCalculatedAmount(@Param("storeIdx") Long storeIdx, @Param("getCheckMonthRes") String getCheckMonthRes);
 
     void postCalculation(PostCalculation postCalculation);
@@ -31,4 +29,10 @@ public interface CalculateManagementMapper {
     int getCanceledAmount(@Param("storeIdx") Long storeIdx, @Param("getCheckMonthRes") String getCheckMonthRes);
 
     String getCheckMonth();
+
+    Long getPartnerIdxFromPartnerPaymentIdx(@Param("partnerPaymentIdx") Long partnerPaymentIdx);
+
+    void changeCalculateStatus(@Param("partnerPaymentIdx") Long partnerPaymentIdx);
+
+    int checkCalculationDuplication(@Param("partnerPaymentIdx") Long partnerPaymentIdx);
 }
