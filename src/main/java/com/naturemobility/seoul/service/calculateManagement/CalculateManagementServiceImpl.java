@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.naturemobility.seoul.config.BaseResponseStatus.DUPLICATION_CALCULATION;
-
 @Service
 @Slf4j
 public class CalculateManagementServiceImpl implements CalculateManagementService {
@@ -29,10 +27,32 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
     public List<GetCalculationListRes> getCalculateListWithFilter(
             Long partnerIdx, String startDate, String endDate, Integer calculationStatus) throws BaseException {
 
-        List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateListWithFilter(
-                partnerIdx,startDate,endDate,calculationStatus);
+        //현재 날짜를 기준으로 한달전을 string 값으로 가져옴
+        String getCheckMonthRes = calculateManagementMapper.getCheckMonth();
+        //전달에 정산된 기록 체크
+        int duplicationVerification = calculateManagementMapper.checkDuplication(partnerIdx, getCheckMonthRes);
 
-        return calculationList;
+        //정산된 기록이 있다면 calculationList 반환
+        if (duplicationVerification == 1) {
+            List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateListWithFilter(
+                    partnerIdx, startDate, endDate, calculationStatus);
+
+            return calculationList;
+
+            //없다면 전달 정산을 해준후 calculationList 반환
+        } else {
+            Long storeIdx = calculateManagementMapper.getStoreIdx(partnerIdx);
+            int amount = calculateManagementMapper.getCalculatedAmount(storeIdx, getCheckMonthRes);
+            int canceledAmount = calculateManagementMapper.getCanceledAmount(storeIdx, getCheckMonthRes);
+            amount -= canceledAmount;
+            PostCalculation postCalculation = new PostCalculation(partnerIdx, amount, getCheckMonthRes);
+            calculateManagementMapper.postCalculation(postCalculation);
+
+            List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateListWithFilter(
+                    partnerIdx, startDate, endDate, calculationStatus);
+
+            return calculationList;
+        }
     }
 
     /*
@@ -48,6 +68,7 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
     }
      */
 
+    /* 2022-04-12 코드 수정
     @Override
     public void calculate(Long partnerIdx, String calculationMonthDate) throws BaseException {
 
@@ -65,4 +86,5 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
             return;
         }
     }
+     */
 }

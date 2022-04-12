@@ -58,7 +58,7 @@
     </update>
 
     <select id="getCalculatedAmount" resultType="Integer">
-        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{calculationMonthDate}), amount,
+        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{getCheckMonthRes}), amount,
                       0)) AS fee
         FROM Payment
         WHERE storeIdx = #{storeIdx};
@@ -66,21 +66,25 @@
 
     <insert id="postCalculation" parameterType="PostCalculation">
         INSERT INTO PartnerPayment (partnerIdx, sales, fees, price, calculateDate)
-        VALUES (#{partnerIdx}, #{sales}, #{fee}, #{price}, #{calculationMonthDate});
+        VALUES (#{partnerIdx}, #{sales}, #{fee}, #{price}, #{getCheckMonthRes});
     </insert>
 
     <select id="checkDuplication" resultType="Integer">
         SELECT COUNT(1)
         FROM PartnerPayment
         WHERE partnerIdx = #{partnerIdx}
-          AND calculateDate = #{calculationMonthDate}
+          AND calculateDate = #{getCheckMonthRes}
     </select>
 
     <select id="getCanceledAmount" resultType="Integer">
-        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{calculationMonthDate}), cancelAmount,
+        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{getCheckMonthRes}), cancelAmount,
                       0)) AS cancelAmount
         FROM Payment
         WHERE storeIdx = #{storeIdx};
+    </select>
+
+    <select id="getCheckMonth" resultType="String">
+        SELECT DATE_FORMAT(date_add(now(), INTERVAL -1 MONTH), '%Y-%m')AS month
     </select>
 
 </mapper>

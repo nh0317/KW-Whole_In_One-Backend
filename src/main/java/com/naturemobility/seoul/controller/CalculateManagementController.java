@@ -57,19 +57,22 @@ public class CalculateManagementController {
     }
      */
 
+    /*
     /**
      * 정산하기
      * [POST] /calculate-management/calculation?calculationMonthDate= 2022-02
      *
      * @return BaseResponse
      */
+    /*
+    2022-04-12 정산하기 부분 코드를 월말에 정산 내역조회 시 DB를 확인 후 따라서 자동으로 정산하기가 되도록 변경
     @PostMapping("/calculation")
     public BaseResponse calculate(@RequestParam("calculationMonthDate") String calculationMonthDate) throws BaseException {
         Long partnerIdx = 0L;
         partnerIdx = checkUserService.getPartnerIdx();
         calculateManagementService.calculate(partnerIdx, calculationMonthDate);
         return new BaseResponse<>(SUCCESS);
-    }
+    }*/
 
     /**
      * 정산관리 내역 조회

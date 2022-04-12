@@ -19,13 +19,13 @@ public class PostCalculation {
     // 정산 금액
     private Integer price;
     //정산 요청 월
-    private String calculationMonthDate;
+    private String getCheckMonthRes;
 
-    public PostCalculation(Long partnerIdx, Integer sales, String calculationMonthDate) {
+    public PostCalculation(Long partnerIdx, Integer sales, String getCheckMonthRes) {
         this.partnerIdx = partnerIdx;
         this.sales = sales;
         this.fee = (int) Math.round(this.sales * DEFAULTFEE * 0.01);
         this.price = sales - (int) Math.round(this.sales * DEFAULTFEE * 0.01);
-        this.calculationMonthDate = calculationMonthDate;
+        this.getCheckMonthRes = getCheckMonthRes;
     }
 }
