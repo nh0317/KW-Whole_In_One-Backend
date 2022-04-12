@@ -2,6 +2,7 @@ package com.naturemobility.seoul.service.payment;
 
 
 import com.naturemobility.seoul.config.BaseException;
+import com.naturemobility.seoul.domain.paging.PageInfo;
 import com.naturemobility.seoul.domain.payment.*;
 import com.naturemobility.seoul.domain.payment.general.PostGeneralPayReq;
 import com.naturemobility.seoul.domain.payment.imp.PostIMPPayReq;
@@ -9,9 +10,7 @@ import com.naturemobility.seoul.domain.payment.imp.PostIMPRefundReq;
 import com.naturemobility.seoul.domain.payment.refund.*;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayRes;
-import com.naturemobility.seoul.domain.reservations.PostRezInfo;
 import com.naturemobility.seoul.domain.reservations.PostRezReq;
-import com.naturemobility.seoul.domain.reservations.ReservationInfo;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import com.naturemobility.seoul.mapper.*;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
@@ -19,15 +18,16 @@ import com.naturemobility.seoul.utils.IMPService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 import static com.naturemobility.seoul.utils.ExternalAPI.getResponse;
@@ -258,15 +258,57 @@ public class PaymentServiceImpl implements PaymentService {
         UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         GetUserInfoInPayment getUserInfoInPayment = new GetUserInfoInPayment(userInfo.getUserPhoneNumber(), userInfo.getUserName(), userInfo.getUserEmail(), userInfo.getUserPoint());
         getUserInfoInPayment.setUserCoupon(usersMapper.cntCoupon(userIdx).orElseGet(()->0));
-        getUserInfoInPayment.setUserCoupons(usersMapper.getUserCoupons(userIdx));
+        getUserInfoInPayment.setUserCoupons(usersMapper.getUserCouponsList(userIdx).stream().filter((items)->items.getCouponStatus()==0).collect(Collectors.toList()));
         return getUserInfoInPayment;
     }
 
 
     @Override
     public List<GetRefundsRes> getRefundsList(Long partnerIdx) throws BaseException{
+
         Long store = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA));
         List<GetRefundsRes> allRefunds = paymentMapper.findAllRefunds(store);
         return allRefunds;
+    }
+
+    @Override
+    public GetPagingRefunds getPagingRefundsList(Long partnerIdx, Integer page, String status) throws BaseException{
+
+        Long store = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA));
+        GetPagingRefunds getPagingRefunds = new GetPagingRefunds();
+        GetRefundsRes getRefundsRes = new GetRefundsRes(store);
+        int total = 0;
+        if (status.equals("Requesting"))
+            total=paymentMapper.cntTotalRequesting(store);
+        else if(status.equals("Approved"))
+            total = paymentMapper.cntTotalApproved(store);
+        else return getPagingRefunds;
+
+        getPagingRefunds.setRefunds(getRefundsList(page, status, getRefundsRes, total));
+        getPagingRefunds.setTotalPage(getRefundsRes.getPageInfo().getTotalPage());
+        getPagingRefunds.setItemsPerPage(getRefundsRes.getRecordsPerPage());
+        return getPagingRefunds;
+    }
+
+    private List<GetRefundsRes> getRefundsList(Integer page, String status, GetRefundsRes getRefundsRes, Integer total) {
+        if (total != null && total > 0) {
+            if (page != null && page >= 1) {
+                getRefundsRes.setPage(page);
+            }
+            PageInfo pageInfo = new PageInfo(getRefundsRes);
+            pageInfo.SetTotalData(total);
+            getRefundsRes.setPageInfo(pageInfo);
+
+            if (page!=null && page > getRefundsRes.getPageInfo().getTotalPage()) {
+                return new ArrayList<>();
+            }
+            if(status.equals("Requesting"))
+                return paymentMapper.findAllRequestingRefunds(getRefundsRes);
+            else if(status.equals("Approved"))
+                return  paymentMapper.findAllApprovedRefunds(getRefundsRes);
+            else return new ArrayList<>();
+        } else if (page > total)
+            return new ArrayList<>();
+        else return new ArrayList<>();
     }
 }

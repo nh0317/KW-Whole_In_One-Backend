@@ -1,6 +1,7 @@
 package com.naturemobility.seoul.domain.payment;
 
 import com.naturemobility.seoul.domain.userCoupons.GetCouponByUserIdx;
+import com.naturemobility.seoul.domain.users.GetUserCoupon;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class GetUserInfoInPayment {
     private String userEmail;
     private Integer userPoint;
     private int userCoupon;
-    private List<GetCouponByUserIdx> userCoupons;
+    private List<GetUserCoupon> userCoupons;
 
     public GetUserInfoInPayment(String phoneNum, String userName, String userEmail, Integer userPoint) {
         this.phoneNum = phoneNum;

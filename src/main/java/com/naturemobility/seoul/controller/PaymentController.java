@@ -73,4 +73,13 @@ public class PaymentController {
         List<GetRefundsRes> result = paymentService.getRefundsList(partnerIdx);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
+
+    @GetMapping("/refund-paging-list")
+    BaseResponse<GetPagingRefunds> getPagingRefundList(@RequestParam("status")String status,
+                                                          @RequestParam(value = "page",required = false)Integer page)
+            throws BaseException{
+        Long partnerIdx = checkUserService.getPartnerIdx();
+        GetPagingRefunds result = paymentService.getPagingRefundsList(partnerIdx,page,status);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
+    }
 }

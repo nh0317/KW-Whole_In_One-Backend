@@ -1,5 +1,6 @@
 package com.naturemobility.seoul.domain.payment.refund;
 
+import com.naturemobility.seoul.domain.DTOCommon;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-public class GetRefundsRes {
+public class GetRefundsRes extends DTOCommon {
+    private Long storeIdx;
     private Long reservationIdx;
     private String merchantUid;
     private String refundReason;
@@ -21,4 +23,8 @@ public class GetRefundsRes {
     private Integer personCount;
     private String reservationTime;
     private Boolean isPaid;
+
+    public GetRefundsRes(Long storeIdx) {
+        this.storeIdx = storeIdx;
+    }
 }
