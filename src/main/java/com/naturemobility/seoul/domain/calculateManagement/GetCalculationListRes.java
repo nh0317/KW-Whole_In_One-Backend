@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class GetCalculationListRes {
+    final Long partnerPaymentIdx;
     final Integer sales;
     final Integer fees;
     final Integer price;

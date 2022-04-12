@@ -9,7 +9,8 @@
     </select>
 
     <select id="getCalculateList" resultType="GetCalculationListRes">
-        SELECT sales,
+        SELECT partnerPaymentIdx,
+               sales,
                price,
                fees,
                (CASE calculateStatus
@@ -26,7 +27,8 @@
     </select>
 
     <select id="getCalculateListWithFilter" resultType="GetCalculationListRes">
-        SELECT sales,
+        SELECT partnerPaymentIdx,
+               sales,
                price,
                fees,
                (CASE calculateStatus
