@@ -36,4 +36,11 @@
         WHERE reservationIdx = #{reservationIdx}
     </delete>
 
+    <select id="getRezListPerMonth" resultType="GetRezPerMonth">
+        select date_format(reservationTime,"%Y-%m-%d")as date, count(*) as cntReservation
+        from Reservations
+        where date_format(reservationTime,"%Y-%m-%d") between #{startDate} and #{endDate} and storeIdx=#{storeIdx}
+        group by date_format(reservationTime,"%Y-%m-%d");
+    </select>
+
 </mapper>

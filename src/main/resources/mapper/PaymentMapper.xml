@@ -41,7 +41,7 @@
         WHERE r.reservationIdx=#{reservationIdx} and p.refundStatus=#{refundStatus}
     </select>
     <select id = "findAllRefunds" resultType="GetRefundsRes">
-        SELECT p.merchantUid, p.refundReason, u.userName, u.userPhoneNumber, r.reservationIdx,
+        SELECT p.merchantUid, p.refundReason, u.userName, u.userPhoneNumber, r.reservationIdx,p.storeIdx
                date_format(r.reservationTime,"%Y-%m-%d %H:%i") as reservationTime, r.selectedHall, r.useTime, r.personCount,
                (case
                    when r.createdAt is null then 0
@@ -57,6 +57,60 @@
                 end) as refundStatus
         FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
         WHERE p.storeIdx = #{storeIdx} and (refundStatus = 1 or refundStatus = 2)
+        ORDER BY p.refundStatus, r.reservationTime
+    </select>
+    <select id = "findAllRequestingRefunds" parameterType="GetRefundsRes" resultType="GetRefundsRes">
+        SELECT p.merchantUid, p.refundReason, u.userName, u.userPhoneNumber, r.reservationIdx,p.storeIdx,
+                           date_format(r.reservationTime,"%Y-%m-%d %H:%i") as reservationTime, r.selectedHall, r.useTime, r.personCount,
+               (case
+                    when r.createdAt is null then 0
+                    else 1
+                   end) as isPaid,
+               (case
+                    when r.reservePrice is null then 0
+                    else r.reservePrice
+                   end) as amount,
+               (case
+                    when p.refundStatus = 1 then '환불 요청 중'
+                    when p.refundStatus = 2 then '환불 완료'
+                   end) as refundStatus
+        FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
+        WHERE p.storeIdx = #{storeIdx} and (refundStatus = 1)
+        ORDER BY p.refundStatus, r.reservationTime
+            LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+    </select>
+
+    <select id = "findAllApprovedRefunds" parameterType="GetRefundsRes" resultType="GetRefundsRes">
+        SELECT p.merchantUid, p.refundReason, u.userName, u.userPhoneNumber, r.reservationIdx,p.storeIdx,
+                           date_format(r.reservationTime,"%Y-%m-%d %H:%i") as reservationTime, r.selectedHall, r.useTime, r.personCount,
+               (case
+                    when r.createdAt is null then 0
+                    else 1
+                   end) as isPaid,
+               (case
+                    when r.reservePrice is null then 0
+                    else r.reservePrice
+                   end) as amount,
+               (case
+                    when p.refundStatus = 1 then '환불 요청 중'
+                    when p.refundStatus = 2 then '환불 완료'
+                   end) as refundStatus
+        FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
+        WHERE p.storeIdx = #{storeIdx} and (refundStatus = 2)
+        ORDER BY p.refundStatus, r.reservationTime
+            LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+    </select>
+    <select id="cntTotalRequesting" resultType="int">
+        SELECT count(*)
+        FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
+        WHERE p.storeIdx = #{storeIdx} and (refundStatus = 1)
+        ORDER BY p.refundStatus, r.reservationTime
+    </select>
+
+    <select id="cntTotalApproved" resultType="int">
+        SELECT count(*)
+        FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
+        WHERE p.storeIdx = #{storeIdx} and (refundStatus = 2)
         ORDER BY p.refundStatus, r.reservationTime
     </select>
 </mapper>

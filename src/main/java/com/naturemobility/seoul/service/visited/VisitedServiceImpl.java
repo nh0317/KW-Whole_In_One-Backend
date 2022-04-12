@@ -67,11 +67,10 @@ public class VisitedServiceImpl implements VisitedService {
                 if (page != null && page > visitedInfo.getPageInfo().getTotalPage()) {
                     return new ArrayList<>();
                 }
-                visiteds = visitedMapper.findAllByUserIdx(visitedInfo);
+                return visitedMapper.findAllByUserIdx(visitedInfo);
             } else if (page > totalVisited)
                 return new ArrayList<>();
             else return new ArrayList<>();
-            return visiteds;
         }catch (Exception e){
             e.printStackTrace();
             throw e;
