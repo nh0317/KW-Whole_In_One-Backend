@@ -9,5 +9,8 @@ import java.util.List;
 public interface CalculateManagementService {
     public List<GetCalculationListRes> getCalculateList(Long partnerIdx) throws BaseException;
 
+    public List<GetCalculationListRes> getCalculateListWithFilter(
+            Long partnerIdx, String startDate, String endDate, Integer calculationStatus) throws BaseException;
+
     public void calculate(Long partnerIdx, String calculationMonthDate) throws BaseException;
 }

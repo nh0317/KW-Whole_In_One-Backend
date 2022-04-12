@@ -25,6 +25,16 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
         return calculationList;
     }
 
+    @Override
+    public List<GetCalculationListRes> getCalculateListWithFilter(
+            Long partnerIdx, String startDate, String endDate, Integer calculationStatus) throws BaseException {
+
+        List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateListWithFilter(
+                partnerIdx,startDate,endDate,calculationStatus);
+
+        return calculationList;
+    }
+
     /*
     @Override
     public void calculate(Long partnerIdx, Long calculationIdx) throws BaseException {

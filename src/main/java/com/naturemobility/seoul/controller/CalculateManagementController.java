@@ -84,4 +84,21 @@ public class CalculateManagementController {
         List<GetCalculationListRes> calculateList = calculateManagementService.getCalculateList(partnerIdx);
         return new BaseResponse<>(SUCCESS, calculateList);
     }
+
+    /**
+     * 정산관리 내역 조회
+     * [GET] /calculate-management/calculation?startDate=&endDate=&calculationStatus
+     *
+     * @return BaseResponse<List < GetCalculateListRes>>
+     */
+    @GetMapping("/calculation-list")
+    public BaseResponse<List<GetCalculationListRes>> getCalculationListWithFilter(
+            @RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate,
+            @RequestParam("calculationStatus") Integer calculationStatus) throws BaseException {
+        Long partnerIdx = 0L;
+        partnerIdx = checkUserService.getPartnerIdx();
+        List<GetCalculationListRes> calculateList = calculateManagementService.getCalculateListWithFilter(
+                partnerIdx, startDate, endDate, calculationStatus);
+        return new BaseResponse<>(SUCCESS, calculateList);
+    }
 }
