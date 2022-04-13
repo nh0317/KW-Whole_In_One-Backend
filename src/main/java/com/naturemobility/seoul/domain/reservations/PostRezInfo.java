@@ -51,7 +51,7 @@ public class PostRezInfo {
         this.userIdx = userIdx;
         this.storeIdx = postPayReq.getStoreIdx();
         this.reservationTime = LocalDateTime.parse(postPayReq.getReservationTime(),
-                DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm")).toString();
+                DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm").withLocale(Locale.KOREA)).toString();
         this.useTime = postPayReq.getUseTime();
         if (postPayReq.getSelectedHall() == 18)
             this.numberOfGame = Double.valueOf((postPayReq.getUseTime()/60)).intValue();
@@ -64,7 +64,7 @@ public class PostRezInfo {
         this.payPrice = postPayReq.getAmount();
         this.selectedHall = postPayReq.getSelectedHall();
         this.endTime = LocalDateTime.parse(postPayReq.getReservationTime(),
-                DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm"))
+                DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm").withLocale(Locale.KOREA))
                 .plusMinutes(postPayReq.getUseTime()).toString();
         this.roomIdx = postPayReq.getRoomIdx();
         this.merchantUid = merchantUid;

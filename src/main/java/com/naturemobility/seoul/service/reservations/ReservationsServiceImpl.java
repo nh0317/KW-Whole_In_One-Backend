@@ -116,10 +116,10 @@ public class ReservationsServiceImpl implements ReservationsService {
     @Override
     public void checkDuplication(PostCheckReservationReq postCheckRez) throws  BaseException{
         String endTime
-                = LocalDateTime.parse(postCheckRez.getStartTime(), DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm"))
+                = LocalDateTime.parse(postCheckRez.getStartTime(), DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm").withLocale(Locale.KOREA))
                 .plusMinutes(postCheckRez.getUseTime()).toString();
         String startTime
-                = LocalDateTime.parse(postCheckRez.getStartTime(), DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm"))
+                = LocalDateTime.parse(postCheckRez.getStartTime(), DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm").withLocale(Locale.KOREA))
                 .toString();
         int checkDuplication1 = reservationMapper.checkDuplication1(startTime, endTime,
                 postCheckRez.getStoreIdx(), postCheckRez.getRoomIdx());

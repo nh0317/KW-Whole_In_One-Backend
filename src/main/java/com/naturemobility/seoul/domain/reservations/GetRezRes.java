@@ -46,7 +46,7 @@ public class GetRezRes {
         this.refundStatus = RefundStatus.getMsg(reservation.getRefundStatus());
         try{
             DateTimeFormatter format;
-            format = DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm");
+            format = DateTimeFormatter.ofPattern("yyyy.MM.dd a hh:mm").withLocale(Locale.KOREA);
             this.reservationTIme = reservation.getReservationTime().format(format);
             format = DateTimeFormatter.ofPattern("yyyy.MM.dd");
             if(reservation.getPaymentTime()!=null)
