@@ -76,7 +76,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
         try {
             if (partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
                 Long storeIdx = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-                StoreInfo storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+                StoreInfo storeInfo = partnerStoreMapper.findByStoreIdx(storeIdx,partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
                 List<String> storeImages = storeImageFileMapper.findByStoreIdx(storeIdx);
 
                 if (storeInfo.getStoreImage() == null || storeInfo.getStoreImage().length() == 0)

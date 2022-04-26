@@ -3,6 +3,7 @@ package com.naturemobility.seoul.domain.stores;
 import com.naturemobility.seoul.domain.DTOCommon;
 import com.naturemobility.seoul.domain.partnerStore.PostStoreReq;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.function.Supplier;
@@ -24,6 +25,9 @@ public class StoreInfo extends DTOCommon {
     // 골프장 전화번호
     private String storePhoneNumber;
 
+    //brand 조인 시
+    private String brandName;
+
     // 골프장 브랜드
     private Long storeBrand;
 
@@ -43,7 +47,7 @@ public class StoreInfo extends DTOCommon {
     private String storeTime;
 
     // 타석 수
-    private String batCount;
+    private Integer batCount;
 
     // 왼손타석 여부 0: 없음 1:가능
     private Boolean lefthandStatus;
@@ -69,8 +73,6 @@ public class StoreInfo extends DTOCommon {
     // 쿠폰 사용 가능 여부 0: 불가능, 1: 가능
     private Boolean couponStatus;
 
-    //brand 조인 시
-    private String brandName;
 
 
     public StoreInfo(PostStoreReq postStoreReq, Double lat, Double longitude) {

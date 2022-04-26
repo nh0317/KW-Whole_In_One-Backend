@@ -14,7 +14,7 @@ public interface PartnerStoreMapper {
 
     int update(StoreInfo storeInfo);
 
-    Optional<StoreInfo> findByStoreIdx(@Param("storeIdx") Long storeIdx);
+    Optional<StoreInfo> findByStoreIdx(@Param("storeIdx") Long storeIdx, @Param("partnerIdx")Long partnerIdx);
 
     void postCouponInfo(PostCouponInfo postcouponInfo);
 

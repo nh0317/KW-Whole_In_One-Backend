@@ -60,7 +60,11 @@
     </update>
 
     <select id="findByStoreIdx" resultType="StoreInfo">
-        SELECT *
+        SELECT storeName,storeInfo,storePhoneNumber,brandName,storeBrand,storeLocation,
+               storeImage,storeTime,
+               (select count(*) from Rooms where partnerIdx = #{partnerIdx}) as  batCount,
+               lefthandStatus,parkingStatus,groupSeatStatus,floorScreenStatus,storageStatus,
+               lessonStatus,reserveStatus,couponStatus
         FROM Stores s
                  LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
         WHERE storeIdx = #{storeIdx}

@@ -18,7 +18,7 @@ public class GetPartnerStoreRes {
     private String mainStoreImage;
     private List<String> storeImage;
     private String storeTime;
-    private String batCount;
+    private Integer batCount;
     private Boolean lefthandStatus;
     private Boolean parkingStatus;
     private Boolean groupSeatStatus;
