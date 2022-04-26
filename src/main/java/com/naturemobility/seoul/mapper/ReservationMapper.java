@@ -3,6 +3,7 @@ package com.naturemobility.seoul.mapper;
 import com.naturemobility.seoul.domain.reservations.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,7 +30,7 @@ public interface ReservationMapper {
     int updateAlreadyUsed(@Param("alreadyUsed")Boolean alreadyUsed, @Param("reservationIdx")Long reservationIdx);
 
     List<GetRezTimes> getCanRezTime(@Param("firstTime") LocalDateTime firstTime,
-                                         @Param("rezDate") String rezDate, @Param("endTime") LocalDateTime endTime,
-                                         @Param("storeIdx")Long storeIdx, @Param("roomIdx") Long roomIdx,
-                                         @Param("hall")Integer hall);
+                                    @Param("rezDate") String rezDate, @Param("endTime") LocalDateTime endTime,
+                                    @Param("storeIdx")Long storeIdx, @Param("roomIdx") Long roomIdx,
+                                    @Param("hall")Integer hall, @Param("playTime") Integer playTime);
 }

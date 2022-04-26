@@ -134,7 +134,15 @@
                 where (alreadyUsed = 0) and (s.storeIdx = #{storeIdx})
                         and r.roomIdx = #{roomIdx} and r.selectedHall = #{hall}
                 group by h.hour
-            )and ps.storeIdx = #{storeIdx} and sp.deletedAt is null
+            )and ps.storeIdx = #{storeIdx} and sp.deletedAt is null and ps.deletedAt is null
+              and sp.hole = #{hall}
+              and (sp.startDate is null
+                or date_format(#{rezDate},"%Y-%m-%d")
+                    between date_format(sp.startDate,"%Y-%m-%d") and  date_format(sp.endDate,"%Y-%m-%d"))
+              and (case
+                        when sp.startDate is null then sp.endTime >= time_format(date_add(h.hour ,INTERVAL #{playTime} MINUTE),"%H:%i:%s")
+                        else true
+                    end)
             group by h.hour, r.reservationTime
             order by h.hour;
     </select>
