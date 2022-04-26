@@ -7,8 +7,10 @@ import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.userPayment.*;
 import com.naturemobility.seoul.service.userpayment.UserPaymentService;
 import com.naturemobility.seoul.utils.CheckUserService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,14 @@ public class UserPaymentController {
         Long userIdx = checkUserService.getUserIdx();
         PostUserPaymentRes postUserPaymentRes = userPaymentService.registerUserPayment(billingKey.getBillingKey(), userIdx);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, postUserPaymentRes);
+    }
+
+    @GetMapping("/m_register_card")
+    RedirectView registerMobileUserPayment(@Param("billingKey") String billingKey)
+            throws Exception {
+        Long userIdx = checkUserService.getUserIdx();
+        PostUserPaymentRes postUserPaymentRes = userPaymentService.registerUserPayment(billingKey, userIdx);
+        return new RedirectView("/payment");
     }
 
     @GetMapping("/user_payments")
