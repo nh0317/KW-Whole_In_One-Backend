@@ -126,6 +126,7 @@ public class PriceServiceImpl implements PriceService{
         Integer currentPrice = weekPriceMapper.findCurrentPrice(storeIdx,
                         getCurPriceReq.getHole(), localDate, getCurPriceReq.getTime())
                         .orElseGet(()->{
+
             // 평일/주말 가격 탐색
             String currentWeek=localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN).replace("요일", "");
 
@@ -159,11 +160,9 @@ public class PriceServiceImpl implements PriceService{
             else{
                 return 0;
             }
-            double hour = getCurPriceReq.getPeriod().doubleValue() / 60;
-            log.info("현재 가격 : {} * {}", price,hour);
-            return Double.valueOf((price * getCurPriceReq.getCount() * hour)).intValue();
+            return price;
         });
-        double hour = getCurPriceReq.getPeriod().doubleValue() / 60;
+        double hour = getCurPriceReq.getPeriod().doubleValue() / getCurPriceReq.getInterval();
         log.info("현재 가격 : {} * {}", currentPrice,hour);
         return Double.valueOf((currentPrice * getCurPriceReq.getCount() * hour)).intValue();
     }

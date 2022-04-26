@@ -12,4 +12,9 @@ public class GetCurPriceReq {
     private Integer hole;
     private Integer count;
     private Integer period;
+
+    public int getInterval(){
+        if (hole == 9) return 30;
+        else return 60;
+    }
 }

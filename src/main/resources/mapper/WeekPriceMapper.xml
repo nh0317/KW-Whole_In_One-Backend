@@ -89,10 +89,11 @@
         SELECT sp.price
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
         WHERE ps.storeIdx =#{storeIdx} and ps.deletedAt is null and sp.deletedAt is null and sp.hole=#{hole} and sp.startDate is not null
-            and (DATE_FORMAT(#{currentDate}, '%m:%d') between DATE_FORMAT(sp.startDate, '%m:%d') and DATE_FORMAT(sp.endDate, '%m:%d'))
+            and (DATE_FORMAT(#{currentDate}, '%Y-%m-%d')
+            between DATE_FORMAT(sp.startDate, '%Y-%m-%d') and DATE_FORMAT(sp.endDate, '%Y-%m-%d'))
             and (str_to_date(concat(curdate(),' ',#{currentTime}), '%Y-%m-%d %H:%i')
-            between TIME_FORMAT(sp.startTime, '%H:%i')
-                and (case
+            between str_to_date(concat(curdate(),' ',sp.startTime), '%Y-%m-%d %H:%i')
+            and (case
                         when time_format(sp.endTime, '%H:%i') &lt; time_format(sp.startTime, '%H:%i')
                             then date_add(str_to_date(concat(curdate(),' ',sp.endTime), '%Y-%m-%d %H:%i'), INTERVAL 1 DAY)
                         else str_to_date(concat(curdate(),' ',sp.endTime), '%Y-%m-%d %H:%i')
@@ -104,8 +105,8 @@
         WHERE ps.storeIdx =#{storeIdx} and sp.isHoliday=#{isHoliday} and ps.deletedAt is null and sp.deletedAt is null
             and sp.hole=#{hole} and sp.startDate is null
             and (str_to_date(concat(curdate(),' ',#{currentTime}), '%Y-%m-%d %H:%i')
-            between TIME_FORMAT(sp.startTime, '%H:%i')
-                and (case
+            between str_to_date(concat(curdate(),' ',sp.startTime), '%Y-%m-%d %H:%i')
+            and (case
                         when time_format(sp.endTime, '%H:%i') &lt; time_format(sp.startTime, '%H:%i')
                             then date_add(str_to_date(concat(curdate(),' ',sp.endTime), '%Y-%m-%d %H:%i'), INTERVAL 1 DAY)
                         else str_to_date(concat(curdate(),' ',sp.endTime), '%Y-%m-%d %H:%i')
