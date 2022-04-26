@@ -203,11 +203,8 @@ public class UsersServiceImpl implements UsersService {
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
 
         // 2. UserInfoRes로 변환하여 return
-        String image = userInfo.getUserImage();
-        if (image == null)
-            image = "https://whole-in-one.s3.ap-northeast-2.amazonaws.com/558dff33-c1fe-49ab-b2a9-a871287d83a8.jpg";
         return new GetUserRes(userInfo.getUserIdx(), userInfo.getUserEmail(), userInfo.getUserNickname(),
-                userInfo.getUserImage(), image);
+                userInfo.getUserImage(), userInfo.getUserImage());
     }
 
     /**
@@ -351,11 +348,7 @@ public class UsersServiceImpl implements UsersService {
     public GetMyPageRes myPage(Long userIdx) throws BaseException {
         log.info("user {}", userIdx);
         UserInfo user = usersMapper.findByIdx(userIdx).orElseThrow(()-> new BaseException(NOT_FOUND_USER));
-        String image = user.getUserImage();
-        if(image == null){
-            image ="https://whole-in-one.s3.ap-northeast-2.amazonaws.com/558dff33-c1fe-49ab-b2a9-a871287d83a8.jpg";
-        }
-        return new GetMyPageRes(image,user.getUserNickname(),
+        return new GetMyPageRes(user.getUserImage(),user.getUserNickname(),
                 usersMapper.cntReservation(userIdx).orElseGet(()->0), usersMapper.cntStoreLike(userIdx).orElseGet(()->0),
                 user.getUserPoint(),usersMapper.cntCoupon(userIdx).orElseGet(()->0));
     }

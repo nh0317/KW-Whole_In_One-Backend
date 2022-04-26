@@ -37,9 +37,8 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public GetStoreRes retrieveStoreInfoByStoreIdx(Long storeIdx) throws BaseException {
-        GetStoreRes storeInfo;
-        storeInfo = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
-        return storeInfo;
+        return storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
+
     }
 
     @Override

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @ToString
@@ -56,5 +58,9 @@ public class UserInfo extends DTOCommon {
 
     public Boolean getIsEnabled() {
         return userStatus.equals(UserStatus.ACTIVE.getValue());
+    }
+
+    public String getUserImage() {
+        return Objects.requireNonNullElse(this.userImage, "https://i.ibb.co/xYJ4ZjX/iconmonstr-golf-2-240-3.png");
     }
 }
