@@ -1,20 +1,17 @@
 package com.naturemobility.seoul.domain.visited;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @ToString
+@NoArgsConstructor
 public class GetVisitedByUserIdx {
-    private final Long storeIdx;
-    private final String storeName;
-    private final String storeImage;
-    private final String storeType;
-    private final Float reviewStar;
-    private final Boolean reserveStatus;
-    private final Boolean couponStatus;
+    private Long storeIdx;
+    private String storeName;
+    private String storeImage="https://i.ibb.co/h1kC5wc/image.png";
+    private String storeType;
+    private Float reviewStar;
+    private Boolean reserveStatus;
+    private Boolean couponStatus;
 }
