@@ -2,12 +2,15 @@ package com.naturemobility.seoul.domain.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class GetUserCoupon {
-    private final Long couponIdx;
-    private final String couponName;
-    private final Integer couponPercentage;
-    private final Integer couponStatus;
+    private Long couponIdx;
+    private String storeName;
+    private String couponDeadline;
+    private String couponName;
+    private Integer couponPercentage;
+    private Integer couponStatus;
 }

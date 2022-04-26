@@ -74,11 +74,10 @@
 
     <select id="cntCoupon" resultType="Integer">
         SELECT count(*) as cntCoupon
-        FROM Users as u
-                 LEFT JOIN UserCoupons as uc ON u.userIdx = uc.userIdx
-        WHERE u.userIdx = #{userIdx}
-          AND uc.couponStatus = 0
-        GROUP BY u.userIdx;
+        FROM UserCoupons
+                 INNER JOIN Coupons ON Coupons.couponIdx = UserCoupons.couponIdx
+                 INNER JOIN Stores ON Coupons.storeIdx = Stores.storeIdx
+        WHERE userIdx = 1 and couponDeadline > now() and UserCoupons.couponStatus = 0;
     </select>
 
     <select id="cntStoreLike" resultType="Integer">
@@ -124,9 +123,16 @@
     </update>
 
     <select id="getUserCouponsList" resultType="GetUserCoupon">
-        SELECT UserCoupons.couponIdx, couponName, couponPercentage, couponStatus
+        SELECT UserCoupons.couponIdx, couponName, couponPercentage,
+		        storeName, date_format(couponDeadline,"%Y-%m-%d") as couponDeadline,
+                 ( case
+                    when UserCoupons.couponStatus = 0 and couponDeadline > now() then 0
+                    else 1
+                    end
+                )as couponStatus
         FROM UserCoupons
                  INNER JOIN Coupons ON Coupons.couponIdx = UserCoupons.couponIdx
+                 INNER JOIN Stores ON Coupons.storeIdx = Stores.storeIdx
         WHERE userIdx = #{userIdx};
     </select>
 
