@@ -81,7 +81,7 @@ public class StoreInfo extends DTOCommon {
         this.storeLatitude = lat;
         this.storeLongitude = longitude;
         this.storeTime = postStoreReq.getStoreTime();
-        this.batCount = postStoreReq.getBatCount();
+//        this.batCount = postStoreReq.getBatCount();
         this.lefthandStatus = postStoreReq.getLefthandStatus();
         this.parkingStatus = postStoreReq.getParkingStatus();
         this.groupSeatStatus = postStoreReq.getGroupSeatStatus();

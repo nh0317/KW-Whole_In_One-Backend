@@ -15,7 +15,7 @@ public interface StoresMapper {
 
     List<SearchStoreRes> findBySearch(@Param("storeName") String storeName, @Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude);
 
-    GetStoreRes retrieveStoreInfoByStoreIdx(@PathVariable("storeIdx") Long storeIdx);
+    GetStoreRes retrieveStoreInfoByStoreIdx(@Param("storeIdx") Long storeIdx, @Param("partnerIdx")Long partnerIdx);
 
     Integer checkStoreIdx(@PathVariable("storeIdx") Long storeIdx);
 

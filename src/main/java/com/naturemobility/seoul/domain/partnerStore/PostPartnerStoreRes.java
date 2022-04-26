@@ -15,7 +15,7 @@ public class PostPartnerStoreRes {
     private String storeBrand;
     private String storeLocation;
     private String storeTime;
-    private String batCount;
+//    private String batCount;
     private Boolean lefthandStatus;
     private Boolean parkingStatus;
     private Boolean groupSeatStatus;
@@ -31,7 +31,7 @@ public class PostPartnerStoreRes {
         this.storePhoneNumber = storeInfo.getStorePhoneNumber();
         this.storeLocation = storeInfo.getStoreLocation();
         this.storeTime = storeInfo.getStoreTime();
-        this.batCount = storeInfo.getBatCount();
+//        this.batCount = storeInfo.getBatCount();
         this.lefthandStatus = storeInfo.getLefthandStatus();
         this.parkingStatus = storeInfo.getParkingStatus();
         this.groupSeatStatus = storeInfo.getGroupSeatStatus();

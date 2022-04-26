@@ -158,14 +158,14 @@ public class ReservationsServiceImpl implements ReservationsService {
 
     @Override
     public GetRezResByStoreIdx getStoreInfo(Long storeIdx){
-        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
+        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx, storesMapper.retrievePartnerIdx(storeIdx));
         return new GetRezResByStoreIdx(getStoreRes.getStoreName(), getStoreRes.getStoreLocation());
     }
 
     @Override
     public List<GetCanRezTimeRes> getCanRezTimeRes(String reservationDate, Long storeIdx, Integer playTime,
                                                    Long roomIdx, Integer hall){
-        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
+        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx, storesMapper.retrievePartnerIdx(storeIdx));
         List<String> storeTimes = List.of(getStoreRes.getStoreTime().split("~"));
         LocalTime startTime = LocalTime.parse(storeTimes.get(0).trim(), DateTimeFormatter.ofPattern("HH:mm"));
         LocalTime endLocalTime = LocalTime.parse(storeTimes.get(1).trim(),DateTimeFormatter.ofPattern("HH:mm"));

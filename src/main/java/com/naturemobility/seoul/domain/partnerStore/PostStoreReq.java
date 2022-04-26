@@ -20,7 +20,7 @@ public class PostStoreReq {
 //    private String mainStoreImage;
 //    private List<String> storeImage;
     private String storeTime;
-    private String batCount;
+//    private String batCount;
     private Boolean lefthandStatus;
     private Boolean parkingStatus;
     private Boolean groupSeatStatus;

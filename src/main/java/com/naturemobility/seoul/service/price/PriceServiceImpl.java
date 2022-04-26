@@ -56,7 +56,7 @@ public class PriceServiceImpl implements PriceService{
 
         String date = "2022-01-01";
         //운영 시간 내의 시간인지 확인한다.
-        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx);
+        GetStoreRes getStoreRes = storesMapper.retrieveStoreInfoByStoreIdx(storeIdx,partnerIdx);
         String[] storeTimes = getStoreRes.getStoreTime().split("~");
         LocalDateTime startTime = LocalDateTime.parse(date+" "+storeTimes[0].trim(),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

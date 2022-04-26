@@ -26,10 +26,10 @@
                 FROM Reviews
                 WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar,
                storePhoneNumber,
-               (SELECT Count(reviewIdx) FROM Reviews)     AS reviewCount,
+               (SELECT Count(reviewIdx) FROM Reviews WHERE storeIdx = #{storeIdx})     AS reviewCount,
                storeLocation,
                storeTime,
-               batCount,
+               (select count(*) from Rooms where partnerIdx = #{partnerIdx}) as  batCount,
                lefthandStatus,
                parkingStatus,
                groupseatStatus,
