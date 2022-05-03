@@ -13,6 +13,7 @@ public class GetStoreRes {
     private String storeImage="https://i.ibb.co/h1kC5wc/image.png";
     private String storeBrand;
     private String storeName;
+    private String storeInfo;
     private Float reviewStar;
     private String storePhoneNumber;
     private Integer reviewCount;

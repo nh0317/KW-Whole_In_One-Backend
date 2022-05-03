@@ -21,7 +21,7 @@
     <select id="retrieveStoreInfoByStoreIdx" resultType="GetStoreRes">
         SELECT storeImage,
                brandName                                  AS storeBrand,
-               storeName,
+               storeName,storeInfo,
                (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
                 FROM Reviews
                 WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar,
