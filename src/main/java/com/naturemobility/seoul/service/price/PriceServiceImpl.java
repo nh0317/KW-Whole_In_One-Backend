@@ -66,7 +66,6 @@ public class PriceServiceImpl implements PriceService{
         if(endTime.isBefore(startTime)) {
             endTime = endTime.plusDays(1);
         }
-        log.info(startTime + " "+postPriceReq.getPriceStartDateTime(date));
         if((postPriceReq.getPriceStartDateTime(date).isAfter(startTime) || postPriceReq.getPriceStartDateTime(date).isEqual(startTime))
                 && (postPriceReq.getPriceEndDateTime(date).isBefore(endTime) || postPriceReq.getPriceEndDateTime(date).isEqual(endTime))) {
             // 해당 가게에 가격을 등록한다.
