@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CookieUtil {
     public Cookie createCookie(String name, String value, int validity){
         Cookie token = new Cookie(name, value);
-        token.setHttpOnly(false);
+        token.setHttpOnly(true);
         token.setMaxAge(validity);
         token.setPath("/");
         return token;
