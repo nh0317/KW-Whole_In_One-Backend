@@ -40,8 +40,8 @@
         FROM Payment p left join Reservations r on strcmp(r.merchantUid, p.merchantUid) = 0
         WHERE r.reservationIdx=#{reservationIdx} and p.refundStatus=#{refundStatus}
     </select>
-    <select id = "findAllRefunds" resultType="GetRefundsRes">
-        SELECT p.merchantUid, p.refundReason, u.userName, u.userPhoneNumber, r.reservationIdx,p.storeIdx
+    <select id = "findAllRefunds" resultType="GetRefunsResNoPaging">
+        SELECT p.merchantUid, p.refundReason, u.userName, u.userPhoneNumber, r.reservationIdx,p.storeIdx,
                date_format(r.reservationTime,"%Y-%m-%d %H:%i") as reservationTime, r.selectedHall, r.useTime, r.personCount,
                (case
                    when r.createdAt is null then 0
@@ -56,7 +56,7 @@
                   when p.refundStatus = 2 then '환불 완료'
                 end) as refundStatus
         FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
-        WHERE p.storeIdx = #{storeIdx} and (refundStatus = 1 or refundStatus = 2)
+        WHERE p.storeIdx = #{storeIdx} and refundStatus = #{refundStatus}
         ORDER BY p.refundStatus, r.reservationTime
     </select>
     <select id = "findAllRequestingRefunds" parameterType="GetRefundsRes" resultType="GetRefundsRes">

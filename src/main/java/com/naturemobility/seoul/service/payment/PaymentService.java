@@ -28,7 +28,7 @@ public interface PaymentService {
 
     GetUserInfoInPayment getUserInfo(Long userIdx) throws BaseException;
 
-    List<GetRefundsRes> getRefundsList(Long partnerIdx) throws BaseException;
+    List<GetRefunsResNoPaging> getRefundsList(Long partnerIdx) throws BaseException;
 
     GetPagingRefunds getPagingRefundsList(Long partnerIdx, Integer page, String status) throws BaseException;
 }

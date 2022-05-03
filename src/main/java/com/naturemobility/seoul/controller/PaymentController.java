@@ -68,9 +68,9 @@ public class PaymentController {
     }
 
     @GetMapping("/refund-list")
-    BaseResponse<List<GetRefundsRes>> getRefundList() throws BaseException{
+    BaseResponse<List<GetRefunsResNoPaging>> getRefundList() throws BaseException{
         Long partnerIdx = checkUserService.getPartnerIdx();
-        List<GetRefundsRes> result = paymentService.getRefundsList(partnerIdx);
+        List<GetRefunsResNoPaging> result = paymentService.getRefundsList(partnerIdx);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
 

@@ -264,10 +264,11 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public List<GetRefundsRes> getRefundsList(Long partnerIdx) throws BaseException{
+    public List<GetRefunsResNoPaging> getRefundsList(Long partnerIdx) throws BaseException{
 
         Long store = partnerMapper.findStoreIdx(partnerIdx).orElseThrow(()-> new BaseException(NOT_FOUND_DATA));
-        List<GetRefundsRes> allRefunds = paymentMapper.findAllRefunds(store);
+        List<GetRefunsResNoPaging> allRefunds = paymentMapper.findAllRefunds(store,1);
+        allRefunds.addAll(paymentMapper.findAllRefunds(store,2));
         return allRefunds;
     }
 
@@ -283,15 +284,23 @@ public class PaymentServiceImpl implements PaymentService {
         else if(status.equals("Approved"))
             total = paymentMapper.cntTotalApproved(store);
         else return getPagingRefunds;
-
-        getPagingRefunds.setRefunds(getRefundsList(page, status, getRefundsRes, total));
-        getPagingRefunds.setTotalPage(getRefundsRes.getPageInfo().getTotalPage());
-        getPagingRefunds.setItemsPerPage(getRefundsRes.getRecordsPerPage());
+        if (total == 0){
+            getPagingRefunds.setRefunds(new ArrayList<>());
+            getPagingRefunds.setTotalPage(0);
+            getPagingRefunds.setItemsPerPage(getRefundsRes.getRecordsPerPage());
+        }
+        else if(page!=null) {
+            getPagingRefunds.setRefunds(getRefundsList(page, status, getRefundsRes, total));
+            getPagingRefunds.setTotalPage(getRefundsRes.getPageInfo().getTotalPage());
+            getPagingRefunds.setItemsPerPage(getRefundsRes.getRecordsPerPage());
+        }else{
+            getPagingRefunds.setRefunds(getRefundsList(page, status, getRefundsRes, total));
+        }
         return getPagingRefunds;
     }
 
     private List<GetRefundsRes> getRefundsList(Integer page, String status, GetRefundsRes getRefundsRes, Integer total) {
-        if (total != null && total > 0) {
+        if (page != null && total != null && total > 0) {
             if (page != null && page >= 1) {
                 getRefundsRes.setPage(page);
             }
@@ -299,7 +308,7 @@ public class PaymentServiceImpl implements PaymentService {
             pageInfo.SetTotalData(total);
             getRefundsRes.setPageInfo(pageInfo);
 
-            if (page!=null && page > getRefundsRes.getPageInfo().getTotalPage()) {
+            if (page > getRefundsRes.getPageInfo().getTotalPage()) {
                 return new ArrayList<>();
             }
             if(status.equals("Requesting"))
@@ -307,7 +316,8 @@ public class PaymentServiceImpl implements PaymentService {
             else if(status.equals("Approved"))
                 return  paymentMapper.findAllApprovedRefunds(getRefundsRes);
             else return new ArrayList<>();
-        } else if (page > total)
+        }
+        else if (page!=null && page > total)
             return new ArrayList<>();
         else return new ArrayList<>();
     }
