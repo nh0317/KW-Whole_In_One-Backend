@@ -55,6 +55,8 @@ public class ReservationsServiceImpl implements ReservationsService {
         List<ReservationInfo> reservationList = new ArrayList<>();
         ReservationInfo reservationInfo = new ReservationInfo(userIdx);
         Integer total = reservationMapper.cntTotal(userIdx);
+        if(total == 0)
+            return new ArrayList<>();
         if(total != null && total >0) {
             if(page!=null && page > 1){
                 reservationInfo.setPage(page);
@@ -89,28 +91,23 @@ public class ReservationsServiceImpl implements ReservationsService {
 
     @Override
     public void postReservation(PostRezReq postRezReq, Long userIdx) throws BaseException {
-        try{
-            Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
+        Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
 
-            String startTime = postRezReq.getReservationTime();
-            String endTime = postRezReq.getEndTime();
-            Long storeIdx = postRezReq.getStoreIdx();
-            Long roomIdx = postRezReq.getRoomIdx();
+        String startTime = postRezReq.getReservationTime();
+        String endTime = postRezReq.getEndTime();
+        Long storeIdx = postRezReq.getStoreIdx();
+        Long roomIdx = postRezReq.getRoomIdx();
 
-            Integer checkDuplication1 = reservationMapper.checkDuplication1(startTime, endTime, storeIdx, roomIdx);
-            Integer checkDuplication2 = reservationMapper.checkDuplication2(startTime, endTime, storeIdx, roomIdx);
+        Integer checkDuplication1 = reservationMapper.checkDuplication1(startTime, endTime, storeIdx, roomIdx);
+        Integer checkDuplication2 = reservationMapper.checkDuplication2(startTime, endTime, storeIdx, roomIdx);
 
-            if (checkDuplication1 >= 1 || checkDuplication2 >= 1) {
-                throw new BaseException(RESERVATION_DUPLICATION);
-            }
-
-            PostRezInfo postRezInfo = new PostRezInfo(userIdx, "Role_MEMBER", payPrice, postRezReq);
-            reservationMapper.postReservation(postRezInfo);
-            return;
-        }catch (Exception e){
-            e.printStackTrace();
-            throw  e;
+        if (checkDuplication1 >= 1 || checkDuplication2 >= 1) {
+            throw new BaseException(RESERVATION_DUPLICATION);
         }
+
+        PostRezInfo postRezInfo = new PostRezInfo(userIdx, "Role_MEMBER", payPrice, postRezReq);
+        reservationMapper.postReservation(postRezInfo);
+        return;
     }
 
     @Override
