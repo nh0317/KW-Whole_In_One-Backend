@@ -82,10 +82,8 @@
 
     <select id="cntStoreLike" resultType="Integer">
         SELECT count(*) as cntLikeStore
-        FROM Users as u
-                 LEFT JOIN Visited as v ON u.userIdx = v.userIdx
-        WHERE u.userIdx = #{userIdx}
-        GROUP BY u.userIdx;
+        FROM  Visited
+        WHERE userIdx = #{userIdx}
     </select>
 
     <select id="cntReservation" resultType="Integer">
