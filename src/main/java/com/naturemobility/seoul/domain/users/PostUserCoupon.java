@@ -10,7 +10,7 @@ public class PostUserCoupon {
     private Long couponIdx;
     private Long userIdx;
 
-    public PostUserCoupon(Long couponIdx, Long userIdx) {
+    public PostUserCoupon(Long userIdx, Long couponIdx) {
         this.couponIdx = couponIdx;
         this.userIdx = userIdx;
     }
