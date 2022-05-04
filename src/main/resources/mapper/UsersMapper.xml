@@ -76,8 +76,7 @@
         SELECT count(*) as cntCoupon
         FROM UserCoupons
                  INNER JOIN Coupons ON Coupons.couponIdx = UserCoupons.couponIdx
-                 INNER JOIN Stores ON Coupons.storeIdx = Stores.storeIdx
-        WHERE userIdx = 1 and couponDeadline > now() and UserCoupons.couponStatus = 0;
+        WHERE userIdx = #{userIdx} and couponDeadline > now() and UserCoupons.couponStatus = 0;
     </select>
 
     <select id="cntStoreLike" resultType="Integer">
