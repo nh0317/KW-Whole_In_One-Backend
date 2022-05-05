@@ -23,7 +23,7 @@ public interface PaymentMapper {
     Optional<String> findMerchantUidByRefundStatus(@Param("reservationIdx") Long reservationIdx,@Param("refundStatus")int refundStatus);
 
     Optional<Integer> findUserIdx(@Param("merchantUid") String merchantUid);
-    List<GetRefunsResNoPaging> findAllRefunds(@Param("storeIdx")Long storeIdx, @Param("refundStatus")Integer refundStatus);
+    List<GetRefundsRes> findAllRefunds(@Param("storeIdx")Long storeIdx, @Param("refundStatus")Integer refundStatus);
     List<GetRefundsRes> findAllRequestingRefunds(GetRefundsRes getRefundsRes);
     List<GetRefundsRes> findAllApprovedRefunds(GetRefundsRes getRefundsRes);
     int cntTotalRequesting(@Param("storeIdx") Long storeIdx);
