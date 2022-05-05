@@ -10,8 +10,15 @@
                r.useTime,
                r.selectedHall,
                r.personCount,
-               r.alreadyUsed,
-               p.refundStatus,
+               (CASE
+                    WHEN alreadyUsed = 1 then 1
+                    WHEN  now() >= endTime then 1
+                    ELSE alreadyUsed
+                   END) as alreadyUsed,
+               (CASE
+                    WHEN refundStatus is null then 0
+                    else refundStatus
+                   END) as refundStatus,
                (SELECT re.reviewScore
                        FROM Reviews re
                        WHERE re.reservationIdx = r.reservationIdx) AS score
