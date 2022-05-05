@@ -43,6 +43,7 @@
         SET storeName=#{storeName},
             storeInfo=#{storeInfo},
             storePhoneNumber=#{storePhoneNumber},
+            storeBrand=#{storeBrand},
             storeLocation=#{storeLocation},
             storeLatitude=#{storeLatitude},
             storeLongitude=#{storeLongitude},
