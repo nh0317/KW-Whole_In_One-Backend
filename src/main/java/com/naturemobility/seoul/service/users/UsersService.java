@@ -2,6 +2,7 @@ package com.naturemobility.seoul.service.users;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.domain.users.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,9 @@ public interface UsersService {
     PatchUserRes updateUserInfo(UserInfo userInfo, PatchUserReq patchUserReq) throws BaseException;
     void updatePW(HttpServletResponse res, UserInfo userInfo, PatchPWReq patchPWReq) throws BaseException;
     void deleteUserInfo(UserInfo userInfo) throws BaseException;
+
+    PostUserImageRes postUserImage(MultipartFile userImage, Long userIdx) throws BaseException;
+
     GetUserRes findUserInfo(Long userIdx) throws BaseException;
     PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException;
 

@@ -10,6 +10,7 @@ import com.naturemobility.seoul.jwt.JwtService;
 import com.naturemobility.seoul.mapper.UsersMapper;
 import com.naturemobility.seoul.domain.users.UserStatus;
 import com.naturemobility.seoul.redis.RedisService;
+import com.naturemobility.seoul.service.s3.FileUploadService;
 import com.naturemobility.seoul.utils.CookieUtil;
 import com.naturemobility.seoul.utils.ValidationRegex;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +49,7 @@ public class UsersServiceImpl implements UsersService {
     private final SecretPropertyConfig secretPropertyConfig;
     private final CookieUtil cookieUtil;
     private final RedisService redisService;
+    private final FileUploadService fileUploadService;
 
     /**
      * 중복 회원 검증
@@ -191,6 +194,15 @@ public class UsersServiceImpl implements UsersService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public PostUserImageRes postUserImage(MultipartFile userImage, Long userIdx) throws BaseException{
+        String filepath = fileUploadService.uploadImage(userImage);
+        UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
+        userInfo.setUserImage(filepath);
+        usersMapper.update(userInfo);
+        return new PostUserImageRes(filepath);
+
+    }
     /**
      * 회원 조회
      * @param userIdx
@@ -367,5 +379,6 @@ public class UsersServiceImpl implements UsersService {
         jwtService.setTokens(res, authentication, jwt, refreshJwt);
         return new PostLoginRes(email, jwt, refreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
     }
+
 
 }
