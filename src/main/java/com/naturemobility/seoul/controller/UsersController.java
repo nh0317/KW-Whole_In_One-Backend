@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,7 +79,7 @@ public class UsersController {
      * @RequestBody PatchUserReq
      */
     @ResponseBody
-    @PatchMapping("mypage/edit")
+    @PostMapping("mypage/edit")
     public BaseResponse<PatchUserRes> pathUser(@RequestBody PatchUserReq parameters) throws BaseException {
         UserInfo userInfo = checkUserService.getUser();
         return new BaseResponse<>(SUCCESS, usersService.updateUserInfo(userInfo, parameters));
@@ -92,7 +93,7 @@ public class UsersController {
      * @RequestBody PatchPWReq
      */
     @ResponseBody
-    @PatchMapping("mypage/edit_password")
+    @PostMapping("mypage/edit_password")
     public BaseResponse<Void> editPW(HttpServletResponse response, @RequestBody PatchPWReq patchPWReq) throws BaseException {
         // 2. Post UserInfo
         UserInfo userInfo = checkUserService.getUser();
@@ -236,5 +237,12 @@ public class UsersController {
         Long userIdx = checkUserService.getUserIdx();
         List<GetUserCoupon> getUserCoupons = usersService.getUserCoupon(userIdx);
         return new BaseResponse<>(SUCCESS,getUserCoupons);
+    }
+
+    @PostMapping("/update/userImage")
+    public BaseResponse<PostUserImageRes> postUserImage(MultipartFile userImage) throws BaseException{
+        Long userIdx = checkUserService.getUserIdx();
+        PostUserImageRes result = usersService.postUserImage(userImage, userIdx);
+        return new BaseResponse<>(SUCCESS, result);
     }
 }
