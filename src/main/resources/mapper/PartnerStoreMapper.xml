@@ -123,4 +123,9 @@
         WHERE imgFileIdx = #{imgFileIdx};
     </delete>
 
+    <select id="findALlByBrandName" resultType="StoreInfo">
+        SELECT *
+        FROM Stores s left join StoreBrand b on s.storeBrand = b.brandIdx
+        WHERE b.brandName = #{brandName};
+    </select>
 </mapper>
