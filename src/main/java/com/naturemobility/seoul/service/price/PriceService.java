@@ -13,7 +13,7 @@ public interface PriceService {
     PostPriceRes registerPrice(PostPriceReq postPriceReq, Long partnerIdx, Long storePriceIdx) throws BaseException;
     List<String> getWeek(Long partnerIdx, Boolean isHoliday)throws BaseException;
     List<GetPriceRes> getPrice(Long storeIdx, Boolean isHoliday) throws BaseException;
-    List<GetPriceRes> getPeriodPrice(Boolean isHoilday, Long storeIdx) throws BaseException;
+    List<GetPriceRes> getPeriodPrice(Boolean isHoilday, Long storeIdx, Boolean all) throws BaseException;
 
     void deletePrice(Long partnerIdx, Long storePriceIdx) throws BaseException;
     Integer getCurrentPrice(GetCurPriceReq getCurPriceReq, Long storeIdx) throws BaseException;
