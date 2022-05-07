@@ -14,12 +14,16 @@
     </update>
 
     <select id="findAllByUserIdx" parameterType="VisitedInfo" resultType="GetVisitedByUserIdx">
-        select s.storeIdx,s.storeName, s.storeImage, b.brandName AS storeType,  s.reserveStatus, s.couponStatus,
+        select s.storeIdx,s.storeName, s.storeImage, b.brandName AS storeType,  s.reserveStatus,
+               count(if(c.couponDeadline > now(), c.couponDeadline, null)) as couponStatus,
                (SELECT IFNULL(format(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1),1), 0)
                 FROM Reviews r
                 WHERE r.storeIdx = s.storeIdx)                              AS reviewStar
-        FROM Visited v left join Stores s on v.storeIdx = s.storeIdx left join StoreBrand b on s.storeBrand = b.brandIdx
+        FROM Visited v left join Stores s on v.storeIdx = s.storeIdx
+                       left join StoreBrand b on s.storeBrand = b.brandIdx
+                       left join Coupons c on s.storeIdx = c.storeIdx
         WHERE v.userIdx=#{userIdx}
+        group by s.storeIdx, v.updatedAt
         Order By v.updatedAt DESC
         LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
     </select>
