@@ -32,8 +32,8 @@ public class SecretPropertyConfig {
     @Value("${iamport.imp_secret}")
     private String impSecret;
 
-    @Value("${billingKey.secret}")
-    private String aes256Key;
+//    @Value("${billingKey.secret}")
+//    private String aes256Key;
 
     @Value("${spring.redis.port}")
     private String redisPort;
