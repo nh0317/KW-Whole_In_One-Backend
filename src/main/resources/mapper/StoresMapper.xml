@@ -258,4 +258,5 @@
         FROM Rooms
         WHERE partnerIdx = #{partnerIdx} and roomType = #{roomType}
     </select>
+
 </mapper>

@@ -10,4 +10,7 @@
         INSERT INTO StoreBrand (brandName)
         VALUES (#{brandName})
     </insert>
+    <delete id="delete" parameterType="BrandInfo">
+        delete from StoreBrand where brandIdx = #{brandIdx}
+    </delete>
 </mapper>
