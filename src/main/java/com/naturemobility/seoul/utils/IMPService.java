@@ -27,11 +27,11 @@ public class IMPService {
     SecretPropertyConfig secretPropertyConfig;
 
     public String decryptBillingKey(Long userPaymentIdx) throws Exception{
-        String key = secretPropertyConfig.getAes256Key();
-        AES256 aes256 = new AES256(key);
+//        String key = secretPropertyConfig.getAes256Key();
+//        AES256 aes256 = new AES256(key);
         String customerUid = userPaymentMapper.findUserPayment(userPaymentIdx)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        customerUid = aes256.decrypt(customerUid);
+//        customerUid = aes256.decrypt(customerUid);
         return customerUid;
     }
 

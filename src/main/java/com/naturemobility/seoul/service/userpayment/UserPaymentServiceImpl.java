@@ -6,7 +6,6 @@ import com.naturemobility.seoul.domain.userPayment.*;
 import com.naturemobility.seoul.mapper.StoresMapper;
 import com.naturemobility.seoul.mapper.UserPaymentMapper;
 import com.naturemobility.seoul.mapper.UsersMapper;
-import com.naturemobility.seoul.utils.AES256;
 import com.naturemobility.seoul.utils.IMPService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,8 @@ public class UserPaymentServiceImpl implements UserPaymentService {
     @Override
     @Transactional
     public PostUserPaymentRes registerUserPayment(String billingKey, Long userIdx)  throws Exception {
-        String key = secretPropertyConfig.getAes256Key();
-        AES256 aes256 = new AES256(key);
+//        String key = secretPropertyConfig.getAes256Key();
+//        AES256 aes256 = new AES256(key);
 
 //            String url = "https://api.iamport.kr/subscribe/customers/" + billingKey;
         billingKey = URLEncoder.encode(billingKey, "UTF-8");
@@ -56,7 +55,7 @@ public class UserPaymentServiceImpl implements UserPaymentService {
         String cardCo= CardCode.cardCoOf(cardCode);
         String formattedCardNumber = String.join("-", cardNumber.split("(?<=\\G.{" + 4 + "})"));
 
-        UserPaymentInfo userPaymentInfo = new UserPaymentInfo(userIdx, aes256.encrypt(billingKey),
+        UserPaymentInfo userPaymentInfo = new UserPaymentInfo(userIdx, billingKey,
                 formattedCardNumber, cardType, cardCo);
         userPaymentMapper.saveUserPayment(userPaymentInfo);
         return new PostUserPaymentRes(userPaymentInfo.getUserPaymentIdx(), userPaymentInfo.getCardNumber(),
@@ -65,11 +64,12 @@ public class UserPaymentServiceImpl implements UserPaymentService {
 
     @Override
     public Map<String,String> createBillingKey(Long userIdx) throws Exception {
-        String key = secretPropertyConfig.getAes256Key();
-        AES256 aes256 = new AES256(key);
+//        String key = secretPropertyConfig.getAes256Key();
+//        AES256 aes256 = new AES256(key);
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String billingKey = aes256.encrypt(now.format(formatter)+userIdx);
+        String billingKey = now.format(formatter)+userIdx;
+//        String billingKey = aes256.encrypt(now.format(formatter)+userIdx);
         Map<String, String> result = new HashMap<>();
         result.put("billingKey", billingKey);
         return result;
@@ -83,11 +83,11 @@ public class UserPaymentServiceImpl implements UserPaymentService {
 
     @Override
    public Map<String,String> getBillingKey(Long userPaymentIdx) throws  Exception{
-        String key = secretPropertyConfig.getAes256Key();
-        AES256 aes256 = new AES256(key);
+//        String key = secretPropertyConfig.getAes256Key();
+//        AES256 aes256 = new AES256(key);
         String customerUid = userPaymentMapper.findUserPayment(userPaymentIdx)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        customerUid = aes256.decrypt(customerUid);
+//        customerUid = aes256.decrypt(customerUid);
        Map<String, String> result = new HashMap<>();
        result.put("customerUid", customerUid);
        return result;

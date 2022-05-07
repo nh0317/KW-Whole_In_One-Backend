@@ -122,7 +122,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public PostPayRes requestBillingKeyPay(PostPayReq postPayReq, String name) throws Exception{
         String customerUid =impService.decryptBillingKey(postPayReq.getUserPaymentIdx());
-
+        String customerUid = postPayReq.getUserPaymentIdx();
         String url = "https://api.iamport.kr/subscribe/payments/again";
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
