@@ -25,4 +25,6 @@ public interface WeekPriceMapper {
 
     Optional<Integer> findCurrentWeekPrice(@Param("storeIdx") Long storeIdx,@Param("hole") Integer hole,
                                            @Param("currentTime") String currentTime, @Param("isHoliday")Boolean isHoliday);
+
+    List<GetPriceRes> findAllPeriodPriceByStoreIdx(@Param("isHoliday") Boolean isHoliday, @Param("storeIdx") Long storeIdx);
 }

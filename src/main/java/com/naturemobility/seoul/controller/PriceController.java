@@ -81,8 +81,10 @@ public class PriceController {
      */
     @GetMapping("/{storeIdx}/period_price")
     public BaseResponse<List<GetPriceRes>> getPeriodPrice(@PathVariable("storeIdx") Long storeIdx,
-                                                          @RequestParam(value = "isHoliday",required = false) Boolean isHoliday) throws BaseException{
-        List<GetPriceRes> weeks = priceService.getPeriodPrice(isHoliday,storeIdx);
+                                                          @RequestParam(value = "isHoliday",required = false) Boolean isHoliday,
+                                                          @RequestParam(value = "all",required = false) Boolean all)
+            throws BaseException{
+        List<GetPriceRes> weeks = priceService.getPeriodPrice(isHoliday,storeIdx,all);
         return new BaseResponse<>(SUCCESS, weeks);
     }
     /**

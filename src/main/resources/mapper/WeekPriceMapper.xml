@@ -68,6 +68,22 @@
             </otherwise>
         </choose>
     </select>
+    <select id="findAllPeriodPriceByStoreIdx" resultType="GetPriceRes">
+        SELECT sp.storePriceIdx, ps.name, sp.price, TIME_FORMAT(sp.startTime, '%H:%i')as startTime, TIME_FORMAT(sp.endTime, '%H:%i') as endTime, sp.startDate, sp.endDate, sp.hole,sp.isHoliday
+        FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
+        <choose>
+            <when test="isHoliday!=null">
+                WHERE sp.isHoliday=#{isHoliday} and ps.storeIdx =#{storeIdx}
+                and sp.startDate is not null and ps.deletedAt is null and sp.deletedAt is null
+                ORDER BY sp.startDate, sp.startTime, sp.hole
+            </when>
+            <otherwise>
+                WHERE ps.storeIdx =#{storeIdx} and sp.startDate is not null and ps.deletedAt is null
+                and sp.deletedAt is null
+                ORDER BY sp.isHoliday,sp.startDate, sp.startTime, sp.hole
+            </otherwise>
+        </choose>
+    </select>
     <select id="findPriceSchemeByStoreIdx" resultType="Long">
         SELECT sp.storePriceIdx
         FROM StorePrice sp join PriceScheme ps on sp.priceSchemeIdx=ps.priceSchemeIdx
