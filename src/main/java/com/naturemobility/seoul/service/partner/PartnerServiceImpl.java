@@ -14,6 +14,7 @@ import com.naturemobility.seoul.utils.ValidationRegex;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -281,12 +282,15 @@ public class PartnerServiceImpl implements PartnerService{
         }catch ( UsernameNotFoundException exception){
             throw new BaseException(WRONG_PASSWORD);
         }
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = jwtService.createJwt(authentication);
-        String refreshJwt = jwtService.createRefreshJwt(authentication);
-        jwtService.setTokens(response, authentication, jwt, refreshJwt);
-        return new PostLoginRes(email, jwt, refreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
+        try {
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtService.createJwt(authentication);
+            String refreshJwt = jwtService.createRefreshJwt(authentication);
+            jwtService.setTokens(response, authentication, jwt, refreshJwt);
+            return new PostLoginRes(email, jwt, refreshJwt, Long.parseLong(secretPropertyConfig.getTokenValidityInSeconds()));
+        }catch(BadCredentialsException e){
+            throw new BaseException(WRONG_PASSWORD);
+        }
     }
 }
