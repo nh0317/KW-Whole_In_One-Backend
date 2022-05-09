@@ -10,17 +10,17 @@
 
     <select id="getTodayRes" resultType="GetTodayRes">
         SELECT COUNT(reservationIdx)    AS reservationCount,
-               IFNULL(0, SUM(payPrice)) AS todaySales
+               IFNULL(SUM(payPrice),0) AS todaySales
         FROM Reservations
-        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
+        WHERE DATE_FORMAT(createdAt, '%Y-%m-%d') = CURDATE()
           AND storeIdx = #{storeIdx};
     </select>
 
     <select id="getMonthRes" resultType="GetMonthRes">
         SELECT COUNT(reservationIdx)    AS monthReservatioCount,
-               IFNULL(0, SUM(payPrice)) AS monthSales
+               IFNULL(SUM(payPrice),0) AS monthSales
         FROM Reservations
-        WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+        WHERE DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
           AND storeIdx = #{storeIdx};
     </select>
 
