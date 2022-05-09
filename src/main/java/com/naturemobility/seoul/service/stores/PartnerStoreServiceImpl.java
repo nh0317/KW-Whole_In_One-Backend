@@ -45,19 +45,35 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
         if (coords == null) {
             throw new BaseException(REQUEST_ERROR);
         }
-        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        StoreInfo originStore = partnerStoreMapper.findByStoreIdx(storeIdx,partnerIdx)
-                .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
 
         StoreInfo storeInfo = new StoreInfo(postStoreReq, coords.get("latitude"), coords.get("longitude"));
 
-        List<StoreInfo> allBrandStore = partnerStoreMapper.findALlByBrandName(originStore.getBrandName());
-        if (allBrandStore.size() <= 1 && !originStore.getBrandName().equals(storeInfo.getStoreBrand())){
-            Long brandIdx = brandMapper.findBrandIdxByBrandName(originStore.getBrandName())
-                    .orElseThrow(() -> new BaseException(RESPONSE_ERROR));
-            brandMapper.delete(new BrandInfo(brandIdx, originStore.getBrandName()));
+        if (partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
+
+            Long storeIdx = partnerMapper.findStoreIdx(partnerIdx)
+                    .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+            StoreInfo originStore = partnerStoreMapper.findByStoreIdx(storeIdx,partnerIdx)
+                    .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+
+            List<StoreInfo> allBrandStore = partnerStoreMapper.findALlByBrandName(originStore.getBrandName());
+            if (allBrandStore.size() <= 1 && !originStore.getBrandName().equals(storeInfo.getStoreBrand())){
+                Long brandIdx = brandMapper.findBrandIdxByBrandName(originStore.getBrandName())
+                        .orElseThrow(() -> new BaseException(RESPONSE_ERROR));
+                brandMapper.delete(new BrandInfo(brandIdx, originStore.getBrandName()));
+            }
+            saveBrand(postStoreReq, storeInfo);
+            storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
+            partnerStoreMapper.update(storeInfo);
+        } else {
+            saveBrand(postStoreReq, storeInfo);
+            partnerStoreMapper.save(storeInfo);
+            partnerMapper.saveStoreIdx(partnerIdx, storeInfo.getStoreIdx());
         }
+
+        return new PostPartnerStoreRes(storeInfo, postStoreReq.getStoreBrand());
+    }
+
+    private void saveBrand(PostStoreReq postStoreReq, StoreInfo storeInfo) throws BaseException {
         if (brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).isPresent()) {
             storeInfo.setStoreBrand(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
         } else if (postStoreReq.getStoreBrand().equals("미설정") || postStoreReq.getStoreBrand() == null || postStoreReq.getStoreBrand().equals(""))
@@ -67,15 +83,6 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
             brandMapper.save(brandInfo);
             storeInfo.setStoreBrand(brandInfo.getBrandIdx());
         }
-        if (partnerMapper.findStoreIdx(partnerIdx).isPresent()) {
-            storeInfo.setStoreIdx(partnerMapper.findStoreIdx(partnerIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
-            partnerStoreMapper.update(storeInfo);
-        } else {
-            partnerStoreMapper.save(storeInfo);
-            partnerMapper.saveStoreIdx(partnerIdx, storeInfo.getStoreIdx());
-        }
-
-        return new PostPartnerStoreRes(storeInfo, postStoreReq.getStoreBrand());
     }
 
     @Override
