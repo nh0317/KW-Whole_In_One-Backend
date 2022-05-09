@@ -9,14 +9,9 @@ import com.naturemobility.seoul.domain.partnerStore.*;
 import com.naturemobility.seoul.domain.storeImage.StoreImageFileInfo;
 
 import com.naturemobility.seoul.domain.stores.StoreInfo;
-import com.naturemobility.seoul.mapper.BrandMapper;
-import com.naturemobility.seoul.mapper.PartnerMapper;
-import com.naturemobility.seoul.mapper.PartnerStoreMapper;
-import com.naturemobility.seoul.mapper.StoreImageFileMapper;
+import com.naturemobility.seoul.mapper.*;
 import com.naturemobility.seoul.service.s3.FileUploadService;
-import com.naturemobility.seoul.utils.CheckUserService;
 import com.naturemobility.seoul.utils.GeocoderService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +45,19 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
         if (coords == null) {
             throw new BaseException(REQUEST_ERROR);
         }
+        Long storeIdx = partnerMapper.findStoreIdx(partnerIdx)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+        StoreInfo originStore = partnerStoreMapper.findByStoreIdx(storeIdx,partnerIdx)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
+
         StoreInfo storeInfo = new StoreInfo(postStoreReq, coords.get("latitude"), coords.get("longitude"));
+
+        List<StoreInfo> allBrandStore = partnerStoreMapper.findALlByBrandName(originStore.getBrandName());
+        if (allBrandStore.size() <= 1 && !originStore.getBrandName().equals(storeInfo.getStoreBrand())){
+            Long brandIdx = brandMapper.findBrandIdxByBrandName(originStore.getBrandName())
+                    .orElseThrow(() -> new BaseException(RESPONSE_ERROR));
+            brandMapper.delete(new BrandInfo(brandIdx, originStore.getBrandName()));
+        }
         if (brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).isPresent()) {
             storeInfo.setStoreBrand(brandMapper.findBrandIdxByBrandName(postStoreReq.getStoreBrand()).orElseThrow(() -> new BaseException(NOT_FOUND_DATA)));
         } else if (postStoreReq.getStoreBrand().equals("미설정") || postStoreReq.getStoreBrand() == null || postStoreReq.getStoreBrand().equals(""))

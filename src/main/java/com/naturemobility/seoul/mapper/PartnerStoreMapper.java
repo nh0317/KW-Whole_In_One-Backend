@@ -6,6 +6,7 @@ import com.naturemobility.seoul.domain.stores.StoreInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper
@@ -33,4 +34,6 @@ public interface PartnerStoreMapper {
     Long getStoreIdxByImgFileIdx(@Param("imgFileIdx") Long imgFileIdx);
 
     void deleteImgFile(@Param("imgFileIdx") Long imgFileIdx);
+
+    List<StoreInfo> findALlByBrandName(@Param("brandName")String brandName);
 }

@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface BrandMapper {
     int save(BrandInfo brandInfo);
     Optional<Long> findBrandIdxByBrandName(@Param("brandName") String brandName);
+    int delete(BrandInfo brandInfo);
 }

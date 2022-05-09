@@ -7,11 +7,13 @@ import com.naturemobility.seoul.domain.users.PatchPWReq;
 import com.naturemobility.seoul.domain.users.PostLoginReq;
 import com.naturemobility.seoul.domain.users.PostLoginRes;
 import com.naturemobility.seoul.service.partner.PartnerService;
+import com.naturemobility.seoul.service.users.UsersService;
 import com.naturemobility.seoul.utils.CheckUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
@@ -25,6 +27,9 @@ import static com.naturemobility.seoul.utils.ValidationRegex.isRegexEmail;
 public class PartnerController {
     @Autowired
     PartnerService partnerService;
+
+    @Autowired
+    UsersService usersService;
     
     @Autowired
     CheckUserService checkUserService;
@@ -83,7 +88,14 @@ public class PartnerController {
         // 2. Post PartnerInfo
         return new BaseResponse<>(SUCCESS,check);
     }
-    
+
+    @PostMapping("/refresh")
+    public BaseResponse<PostLoginRes> refreshToken(HttpServletRequest request, HttpServletResponse response)
+            throws BaseException {
+        PostLoginRes result = usersService.refreshToken(request, response);
+        return new BaseResponse<>(SUCCESS, result);
+    }
+
     /**
      * 회원 개인 정보 조회 API
      * [GET] /partner/mypage/edit

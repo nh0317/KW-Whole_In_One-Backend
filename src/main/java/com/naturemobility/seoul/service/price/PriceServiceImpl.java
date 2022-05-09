@@ -89,9 +89,11 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
-    public List<GetPriceRes> getPeriodPrice(Boolean isHoilday,Long storeIdx) throws BaseException {
-        List<GetPriceRes> priceInfos = weekPriceMapper.findPeriodPriceByStoreIdx(isHoilday,storeIdx);
-        return priceInfos;
+    public List<GetPriceRes> getPeriodPrice(Boolean isHoilday,Long storeIdx, Boolean all) throws BaseException {
+        if (all != null && all)
+            return weekPriceMapper.findAllPeriodPriceByStoreIdx(isHoilday,storeIdx);
+        else
+            return weekPriceMapper.findPeriodPriceByStoreIdx(isHoilday,storeIdx);
     }
 
     @Override
