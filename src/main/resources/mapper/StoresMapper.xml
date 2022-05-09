@@ -20,16 +20,17 @@
 
     <select id="retrieveStoreInfoByStoreIdx" resultType="GetStoreRes">
         SELECT storeImage,
-               brandName                                  AS storeBrand,
-               storeName,storeInfo,
+               brandName                                                           AS storeBrand,
+               storeName,
+               storeInfo,
                (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
                 FROM Reviews
-                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar,
+                WHERE Reviews.storeIdx = Stores.storeIdx)                          AS reviewStar,
                storePhoneNumber,
-               (SELECT Count(reviewIdx) FROM Reviews WHERE storeIdx = #{storeIdx})     AS reviewCount,
+               (SELECT Count(reviewIdx) FROM Reviews WHERE storeIdx = #{storeIdx}) AS reviewCount,
                storeLocation,
                storeTime,
-               (select count(*) from Rooms where partnerIdx = #{partnerIdx}) as  batCount,
+               (select count(*) from Rooms where partnerIdx = #{partnerIdx})       as batCount,
                lefthandStatus,
                parkingStatus,
                groupseatStatus,
@@ -112,6 +113,7 @@
     </select>
 
     <select id="retrieveStoreInfoByMapWithFilter2" resultType="GetStoreResByMap">
+        -- 브랜드, 시설, 거리 전체 조회
         SELECT storeIdx,storeImage,
         brandName AS storeBrand,
         storeName,
@@ -146,6 +148,197 @@
         END DESC;
 
     </select>
+
+    <select id="r retrieveStoreInfoByMapWithBrandFilter" resultType="GetStoreResByMap">
+        -- 브랜드만 조회
+        SELECT storeIdx,storeImage,
+        brandName AS storeBrand,
+        storeName,
+        storeLatitude,
+        storeLongitude,
+        round((6371 *
+        acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+        - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+        1) as distanceFromUser,
+        (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+        FROM Reviews
+        WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+        INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+        WHERE storeBrand IN (
+        <foreach collection="brand" item="brand" index="index" separator=",">
+            ${brand}
+        </foreach>)
+        ORDER BY CASE
+        WHEN @orderRule = 1 THEN distanceFromUser
+        END ASC,
+        CASE
+        WHEN @orderRule = 2 THEN reviewStar
+        END DESC;
+    </select>
+
+    <select id="retrieveStoreInfoByMapWithFacilityFilter" resultType="GetStoreResByMap">
+        -- 시설만 조회
+        SELECT storeIdx,
+               storeImage,
+               brandName                                  AS storeBrand,
+               storeName,
+               storeLatitude,
+               storeLongitude,
+               round((6371 *
+                      acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                          - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+                     1)                                   as distanceFromUser,
+               (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+                FROM Reviews
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+                 INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+        WHERE lefthandStatus = #{lefthandStatus}
+          AND parkingStatus = #{parkingStatus}
+          AND groupseatStatus = #{groupseatStatus}
+          AND floorscreenStatus = #{floorscreenStatus}
+          AND storageStatus = #{storageStatus}
+          AND lessonStatus = #{lessonStatus}
+        ORDER BY CASE
+                     WHEN @orderRule = 1 THEN distanceFromUser
+                     END ASC,
+                 CASE
+                     WHEN @orderRule = 2 THEN reviewStar
+                     END DESC;
+
+    </select>
+
+    <select id="retrieveStoreInfoByMapWithDistanceFilter" resultType="GetStoreResByMap">
+        -- 거리만 조회
+        SELECT storeIdx,
+               storeImage,
+               brandName                                  AS storeBrand,
+               storeName,
+               storeLatitude,
+               storeLongitude,
+               round((6371 *
+                      acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                          - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+                     1)                                   as distanceFromUser,
+               (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+                FROM Reviews
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+                 INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+        HAVING distanceFromUser &lt;= #{distance}
+        ORDER BY CASE
+                     WHEN @orderRule = 1 THEN distanceFromUser
+                     END ASC,
+                 CASE
+                     WHEN @orderRule = 2 THEN reviewStar
+                     END DESC;
+
+    </select>
+
+    <select id="retrieveStoreInfoByMapWithBrandFacilityFilter" resultType="GetStoreResByMap">
+        -- 브랜드 + 시설 조회
+        SELECT storeIdx,storeImage,
+        brandName AS storeBrand,
+        storeName,
+        storeLatitude,
+        storeLongitude,
+        round((6371 *
+        acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+        - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+        1) as distanceFromUser,
+        (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+        FROM Reviews
+        WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+        INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+        WHERE storeBrand IN (
+        <foreach collection="brand" item="brand" index="index" separator=",">
+            ${brand}
+        </foreach>)
+        AND lefthandStatus = #{lefthandStatus}
+        AND parkingStatus = #{parkingStatus}
+        AND groupseatStatus = #{groupseatStatus}
+        AND floorscreenStatus = #{floorscreenStatus}
+        AND storageStatus = #{storageStatus}
+        AND lessonStatus = #{lessonStatus}
+        ORDER BY CASE
+        WHEN @orderRule = 1 THEN distanceFromUser
+        END ASC,
+        CASE
+        WHEN @orderRule = 2 THEN reviewStar
+        END DESC;
+    </select>
+
+    <select id="retrieveStoreInfoByMapWithBrandDistanceFilter" resultType="GetStoreResByMap">
+        -- 브랜드 + 거리 조회
+        SELECT storeIdx,storeImage,
+        brandName AS storeBrand,
+        storeName,
+        storeLatitude,
+        storeLongitude,
+        round((6371 *
+        acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+        - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+        1) as distanceFromUser,
+        (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+        FROM Reviews
+        WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+        INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+        WHERE storeBrand IN (
+        <foreach collection="brand" item="brand" index="index" separator=",">
+            ${brand}
+        </foreach>)
+        HAVING distanceFromUser &lt;= #{distance}
+        ORDER BY CASE
+        WHEN @orderRule = 1 THEN distanceFromUser
+        END ASC,
+        CASE
+        WHEN @orderRule = 2 THEN reviewStar
+        END DESC;
+
+    </select>
+
+    <select id="retrieveStoreInfoByMapWithFacilityDistanceFilter" resultType="GetStoreResByMap">
+        -- 시설 + 거리 조회
+        SELECT storeIdx,
+               storeImage,
+               brandName                                  AS storeBrand,
+               storeName,
+               storeLatitude,
+               storeLongitude,
+               round((6371 *
+                      acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
+                          - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
+                     1)                                   as distanceFromUser,
+               (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
+                FROM Reviews
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+
+        FROM Stores
+                 INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+        WHERE lefthandStatus = #{lefthandStatus}
+          AND parkingStatus = #{parkingStatus}
+          AND groupseatStatus = #{groupseatStatus}
+          AND floorscreenStatus = #{floorscreenStatus}
+          AND storageStatus = #{storageStatus}
+          AND lessonStatus = #{lessonStatus}
+        HAVING distanceFromUser &lt;= #{distance}
+        ORDER BY CASE
+                     WHEN @orderRule = 1 THEN distanceFromUser
+                     END ASC,
+                 CASE
+                     WHEN @orderRule = 2 THEN reviewStar
+                     END DESC;
+
+    </select>
+
     <select id="retrieveBrandInfo" resultType="GetBrandRes">
         SELECT brandIdx, brandName
         FROM StoreBrand;
@@ -203,7 +396,7 @@
     </select>
 
     <select id="retrieveStoreImages" resultType="GetStoreImagesRes">
-        SELECT imgFileIdx,storeImage
+        SELECT imgFileIdx, storeImage
         From StoreImageFile
         WHERE storeIdx = #{storeIdx}
     </select>
@@ -256,6 +449,7 @@
     <select id="retrieveRoomNameByRoomType" resultType="GetRoomNameRes">
         SELECT roomIdx, roomType, roomName
         FROM Rooms
-        WHERE partnerIdx = #{partnerIdx} and roomType = #{roomType}
+        WHERE partnerIdx = #{partnerIdx}
+          and roomType = #{roomType}
     </select>
 </mapper>

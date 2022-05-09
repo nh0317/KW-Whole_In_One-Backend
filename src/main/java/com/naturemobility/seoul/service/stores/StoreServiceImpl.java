@@ -82,10 +82,49 @@ public class StoreServiceImpl implements StoreService {
     public List<GetStoreResByMap> retrieveStoreInfoByMapWithFilter2(Double userLatitude, Double userLongitude, Integer orderRule, Integer[] brand,
                                                                     Integer lefthandStatus, Integer parkingStauts, Integer groupseatStatus, Integer floorscreenStatus,
                                                                     Integer storageStatus, Integer lessonStatus, Integer distance) throws BaseException {
+
         List<GetStoreResByMap> storeInfoList;
         storesMapper.setOrderRule(orderRule);
-        storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude, brand, lefthandStatus, parkingStauts,
-                groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
+
+        // facilityCheck
+        final boolean facilityCheck = (lefthandStatus == -1 || parkingStauts == -1 || groupseatStatus == -1 || floorscreenStatus == -1 || storageStatus == -1
+                || lessonStatus == -1);
+
+        // 브랜드만 조회
+        if (facilityCheck && (distance == -1)) {
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithBrandFilter(userLatitude, userLongitude, brand);
+        }
+
+        // 시설만 조회
+        else if ((brand.length == 0) && (distance == -1)) {
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithFacilityFilter(userLatitude, userLongitude, lefthandStatus, parkingStauts,
+                    groupseatStatus, floorscreenStatus, storageStatus, lessonStatus);
+        }
+
+        // 거리만 조회
+        else if ((brand.length == 0) && facilityCheck) {
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithDistanceFilter(userLatitude, userLongitude, distance);
+        }
+
+        // 브랜드 + 시설
+        else if (distance == -1) {
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithBrandFacilityFilter(userLatitude, userLongitude, brand, lefthandStatus, parkingStauts,
+                    groupseatStatus, floorscreenStatus, storageStatus, lessonStatus);
+        }
+
+        // 브랜드 + 거리
+        else if (facilityCheck == false) {
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithBrandDistanceFilter(userLatitude, userLongitude, brand, distance);
+        }
+
+        //시설 + 거리
+        else if (brand.length == 0) {
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithFacilityDistanceFilter(userLatitude, userLongitude, lefthandStatus, parkingStauts,
+                    groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
+        } else {
+            storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude, brand, lefthandStatus, parkingStauts,
+                    groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
+        }
         return storeInfoList;
     }
 
@@ -104,8 +143,8 @@ public class StoreServiceImpl implements StoreService {
         partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
         roomIdxRes = storesMapper.retrieveRoomIdx(partnerIdx);
 
-        for (GetRoomIdxRes i:roomIdxRes) {
-            i.roomIdx = storesMapper.getRoomIdx(partnerIdx,i.getRoomType());
+        for (GetRoomIdxRes i : roomIdxRes) {
+            i.roomIdx = storesMapper.getRoomIdx(partnerIdx, i.getRoomType());
         }
 
 
@@ -116,10 +155,11 @@ public class StoreServiceImpl implements StoreService {
     public List<GetRoomNameRes> retrieveRoomName(Long storeIdx, String roomType) throws BaseException {
         Long partnerIdx = storesMapper.retrievePartnerIdx(storeIdx);
 
-        if (roomType== null || roomType.equals(""))
+        if (roomType == null || roomType.equals(""))
             return storesMapper.retrieveRoomName(partnerIdx);
         else return storesMapper.retrieveRoomNameByRoomType(partnerIdx, roomType);
     }
+
     @Override
     public List<CouponInfo> retrieveCouponInfo(Long storeIdx) throws BaseException {
         List<CouponInfo> couponInfos = storesMapper.retrieveCouponInfo(storeIdx);
