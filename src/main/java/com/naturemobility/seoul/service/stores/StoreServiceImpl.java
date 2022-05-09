@@ -87,41 +87,48 @@ public class StoreServiceImpl implements StoreService {
         storesMapper.setOrderRule(orderRule);
 
         // facilityCheck
-        final boolean facilityCheck = (lefthandStatus == -1 || parkingStauts == -1 || groupseatStatus == -1 || floorscreenStatus == -1 || storageStatus == -1
+        boolean facilityCheck = (lefthandStatus == -1 || parkingStauts == -1 || groupseatStatus == -1 || floorscreenStatus == -1 || storageStatus == -1
                 || lessonStatus == -1);
 
         // 브랜드만 조회
-        if (facilityCheck && (distance == -1)) {
+        if ((facilityCheck && (distance == -1)) == true) {
+            //System.out.println("브랜드만 조회");
             storeInfoList = storesMapper.retrieveStoreInfoByMapWithBrandFilter(userLatitude, userLongitude, brand);
         }
 
         // 시설만 조회
         else if ((brand.length == 0) && (distance == -1)) {
+            //System.out.println("시설만 조회");
             storeInfoList = storesMapper.retrieveStoreInfoByMapWithFacilityFilter(userLatitude, userLongitude, lefthandStatus, parkingStauts,
                     groupseatStatus, floorscreenStatus, storageStatus, lessonStatus);
         }
 
         // 거리만 조회
         else if ((brand.length == 0) && facilityCheck) {
+            //System.out.println("거리만 조회");
             storeInfoList = storesMapper.retrieveStoreInfoByMapWithDistanceFilter(userLatitude, userLongitude, distance);
         }
 
         // 브랜드 + 시설
         else if (distance == -1) {
+            //System.out.println("브랜드+시설만 조회");
             storeInfoList = storesMapper.retrieveStoreInfoByMapWithBrandFacilityFilter(userLatitude, userLongitude, brand, lefthandStatus, parkingStauts,
                     groupseatStatus, floorscreenStatus, storageStatus, lessonStatus);
         }
 
         // 브랜드 + 거리
-        else if (facilityCheck == false) {
+        else if (facilityCheck) {
+            //System.out.println("브랜드+거리만 조회");
             storeInfoList = storesMapper.retrieveStoreInfoByMapWithBrandDistanceFilter(userLatitude, userLongitude, brand, distance);
         }
 
         //시설 + 거리
         else if (brand.length == 0) {
+            //System.out.println("시설+거리 조회");
             storeInfoList = storesMapper.retrieveStoreInfoByMapWithFacilityDistanceFilter(userLatitude, userLongitude, lefthandStatus, parkingStauts,
                     groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
         } else {
+            //System.out.println("전체 조회");
             storeInfoList = storesMapper.retrieveStoreInfoByMapWithFilter2(userLatitude, userLongitude, brand, lefthandStatus, parkingStauts,
                     groupseatStatus, floorscreenStatus, storageStatus, lessonStatus, distance);
         }

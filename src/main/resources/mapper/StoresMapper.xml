@@ -149,7 +149,7 @@
 
     </select>
 
-    <select id="r retrieveStoreInfoByMapWithBrandFilter" resultType="GetStoreResByMap">
+    <select id="retrieveStoreInfoByMapWithBrandFilter" resultType="GetStoreResByMap">
         -- 브랜드만 조회
         SELECT storeIdx,storeImage,
         brandName AS storeBrand,
