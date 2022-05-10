@@ -36,7 +36,7 @@
                floorscreenStatus,
                lessonStatus
         FROM Stores
-                 INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
+                 LEFT JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
         WHERE storeIdx = #{storeIdx}
     </select>
 
