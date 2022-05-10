@@ -56,7 +56,7 @@ public class PartnerStoreServiceImpl implements PartnerStoreService {
                     .orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
 
             List<StoreInfo> allBrandStore = partnerStoreMapper.findALlByBrandName(originStore.getBrandName());
-            if (allBrandStore.size() <= 1 && !originStore.getBrandName().equals(storeInfo.getStoreBrand())){
+            if (!allBrandStore.isEmpty() && allBrandStore.size() <= 1 && !originStore.getBrandName().equals(storeInfo.getStoreBrand())){
                 Long brandIdx = brandMapper.findBrandIdxByBrandName(originStore.getBrandName())
                         .orElseThrow(() -> new BaseException(RESPONSE_ERROR));
                 brandMapper.delete(new BrandInfo(brandIdx, originStore.getBrandName()));
