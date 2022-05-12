@@ -25,6 +25,7 @@ public class GetStoreRes {
     private Integer parkingStatus;
     private Integer groupseatStatus;
     private Integer floorscreenStatus;
+    private Integer storageStatus;
     private Integer lessonStatus;
     //private final String storePrice; -DB 업데이트후 추가 예정z
 }

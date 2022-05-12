@@ -35,6 +35,7 @@
                parkingStatus,
                groupseatStatus,
                floorscreenStatus,
+               storageStatus,
                lessonStatus
         FROM Stores
                  LEFT JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
