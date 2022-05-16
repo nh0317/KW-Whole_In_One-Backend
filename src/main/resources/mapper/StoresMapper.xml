@@ -56,6 +56,11 @@
 
     <select id="retrieveStoreInfoByMap" resultType="GetStoreResByMap">
         SELECT storeIdx,
+               reserveStatus,
+               (SELECT count(1)
+                FROM Coupons
+                WHERE Coupons.storeIdx = Stores.storeIdx
+                  AND couponDeadline > CURDATE())         AS couponStatus,
                storeImage,
                brandName                                  AS storeBrand,
                storeName,
@@ -115,7 +120,11 @@
 
     <select id="retrieveStoreInfoByMapWithFilter2" resultType="GetStoreResByMap">
         -- 브랜드, 시설, 거리 전체 조회
-        SELECT storeIdx,storeImage,
+        SELECT storeIdx,
+        reserveStatus,
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        couponStatus,
+        storeImage,
         brandName AS storeBrand,
         storeName,
         storeLatitude,
@@ -152,7 +161,11 @@
 
     <select id="retrieveStoreInfoByMapWithBrandFilter" resultType="GetStoreResByMap">
         -- 브랜드만 조회
-        SELECT storeIdx,storeImage,
+        SELECT storeIdx,
+        reserveStatus,
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        couponStatus,
+        storeImage,
         brandName AS storeBrand,
         storeName,
         storeLatitude,
@@ -182,6 +195,11 @@
     <select id="retrieveStoreInfoByMapWithFacilityFilter" resultType="GetStoreResByMap">
         -- 시설만 조회
         SELECT storeIdx,
+               reserveStatus,
+               (SELECT count(1)
+                FROM Coupons
+                WHERE Coupons.storeIdx = Stores.storeIdx
+                  AND couponDeadline > CURDATE())         AS couponStatus,
                storeImage,
                brandName                                  AS storeBrand,
                storeName,
@@ -215,6 +233,11 @@
     <select id="retrieveStoreInfoByMapWithDistanceFilter" resultType="GetStoreResByMap">
         -- 거리만 조회
         SELECT storeIdx,
+               reserveStatus,
+               (SELECT count(1)
+                FROM Coupons
+                WHERE Coupons.storeIdx = Stores.storeIdx
+                  AND couponDeadline > CURDATE())         AS couponStatus,
                storeImage,
                brandName                                  AS storeBrand,
                storeName,
@@ -242,7 +265,11 @@
 
     <select id="retrieveStoreInfoByMapWithBrandFacilityFilter" resultType="GetStoreResByMap">
         -- 브랜드 + 시설 조회
-        SELECT storeIdx,storeImage,
+        SELECT storeIdx,
+        reserveStatus,
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        couponStatus,
+        storeImage,
         brandName AS storeBrand,
         storeName,
         storeLatitude,
@@ -277,7 +304,11 @@
 
     <select id="retrieveStoreInfoByMapWithBrandDistanceFilter" resultType="GetStoreResByMap">
         -- 브랜드 + 거리 조회
-        SELECT storeIdx,storeImage,
+        SELECT storeIdx,
+        reserveStatus,
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        couponStatus,
+        storeImage,
         brandName AS storeBrand,
         storeName,
         storeLatitude,
@@ -309,18 +340,22 @@
     <select id="retrieveStoreInfoByMapWithFacilityDistanceFilter" resultType="GetStoreResByMap">
         -- 시설 + 거리 조회
         SELECT storeIdx,
+               reserveStatus,
+               (SELECT count(1)
+                FROM Coupons
+                WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS couponStatus,
                storeImage,
-               brandName                                  AS storeBrand,
+               brandName                                                                 AS storeBrand,
                storeName,
                storeLatitude,
                storeLongitude,
                round((6371 *
                       acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
                           - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
-                     1)                                   as distanceFromUser,
+                     1)                                                                  as distanceFromUser,
                (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
                 FROM Reviews
-                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
+                WHERE Reviews.storeIdx = Stores.storeIdx)                                AS reviewStar
 
         FROM Stores
                  INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
