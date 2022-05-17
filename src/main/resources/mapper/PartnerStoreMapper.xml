@@ -61,11 +61,23 @@
     </update>
 
     <select id="findByStoreIdx" resultType="StoreInfo">
-        SELECT storeName,storeInfo,storePhoneNumber,brandName,storeBrand,storeLocation,
-               storeImage,storeTime,
-               (select count(*) from Rooms where partnerIdx = #{partnerIdx}) as  batCount,
-               lefthandStatus,parkingStatus,groupSeatStatus,floorScreenStatus,storageStatus,
-               lessonStatus,reserveStatus,couponStatus
+        SELECT storeName,
+               storeInfo,
+               storePhoneNumber,
+               brandName,
+               storeBrand,
+               storeLocation,
+               storeImage,
+               storeTime,
+               (select count(*) from Rooms where partnerIdx = #{partnerIdx}) as batCount,
+               lefthandStatus,
+               parkingStatus,
+               groupSeatStatus,
+               floorScreenStatus,
+               storageStatus,
+               lessonStatus,
+               reserveStatus,
+               couponStatus
         FROM Stores s
                  LEFT JOIN StoreBrand b ON s.storebrand = b.brandIdx
         WHERE storeIdx = #{storeIdx}
@@ -105,11 +117,11 @@
         WHERE couponIdx = #{couponIdx}
     </select>
 
-    <delete id="deleteCouponInfo">
-        DELETE
-        FROM Coupons
+    <update id="deleteCouponInfo">
+        UPDATE Coupons
+        SET deletedAt = NOW()
         WHERE couponIdx = #{couponIdx}
-    </delete>
+    </update>
 
     <select id="getStoreIdxByImgFileIdx" resultType="Long">
         SELECT storeIdx
@@ -125,7 +137,8 @@
 
     <select id="findALlByBrandName" resultType="StoreInfo">
         SELECT *
-        FROM Stores s left join StoreBrand b on s.storeBrand = b.brandIdx
+        FROM Stores s
+                 left join StoreBrand b on s.storeBrand = b.brandIdx
         WHERE b.brandName = #{brandName};
     </select>
 </mapper>
