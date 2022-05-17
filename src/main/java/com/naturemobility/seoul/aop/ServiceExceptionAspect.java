@@ -17,7 +17,7 @@ import java.util.Iterator;
 @Aspect
 @Log4j2
 public class ServiceExceptionAspect {
-    @Around("execution(* com.naturemobility.seoul.service.*.*(..)) || execution(* com.naturemobility.seoul.utils.*.*(..))  || execution(* com.naturemobility.seoul.mapper.*.*(..))")
+    @Around("execution(* com.naturemobility.seoul.service.*.*(..)) || execution(* com.naturemobility.seoul.utils.*.*(..))  || execution(* com.naturemobility.seoul.mapper.*.*(..)) || execution(* com.naturemobility.seoul.domain.*.*(..))")
     public Object serviceExceptionHandler(ProceedingJoinPoint proceedingJoinPoint) throws BaseException {
         try{
             return proceedingJoinPoint.proceed();
