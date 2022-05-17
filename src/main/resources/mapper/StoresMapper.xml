@@ -343,19 +343,20 @@
                reserveStatus,
                (SELECT count(1)
                 FROM Coupons
-                WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS couponStatus,
+                WHERE Coupons.storeIdx = Stores.storeIdx
+                  AND couponDeadline > CURDATE())         AS couponStatus,
                storeImage,
-               brandName                                                                 AS storeBrand,
+               brandName                                  AS storeBrand,
                storeName,
                storeLatitude,
                storeLongitude,
                round((6371 *
                       acos(cos(radians(#{userLatitude})) * cos(radians(storeLatitude)) * cos(radians(storeLongitude)
                           - radians(#{userLongitude})) + sin(radians(#{userLatitude})) * sin(radians(storeLatitude)))),
-                     1)                                                                  as distanceFromUser,
+                     1)                                   as distanceFromUser,
                (SELECT IFNULL(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1), 0)
                 FROM Reviews
-                WHERE Reviews.storeIdx = Stores.storeIdx)                                AS reviewStar
+                WHERE Reviews.storeIdx = Stores.storeIdx) AS reviewStar
 
         FROM Stores
                  INNER JOIN StoreBrand ON StoreBrand.brandIdx = storeBrand
@@ -403,6 +404,7 @@
         FROM Coupons
         WHERE couponDeadline >= NOW()
           AND storeIdx = #{storeIdx}
+          AND deletedAt IS NULL
     </select>
 
     <select id="retrieveReservedRoomIdx" resultType="Long">
