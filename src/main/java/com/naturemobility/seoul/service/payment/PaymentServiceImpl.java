@@ -11,6 +11,7 @@ import com.naturemobility.seoul.domain.payment.refund.*;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayReq;
 import com.naturemobility.seoul.domain.payment.subscription.PostPayRes;
 import com.naturemobility.seoul.domain.reservations.PostRezReq;
+import com.naturemobility.seoul.domain.users.GetUserCoupon;
 import com.naturemobility.seoul.domain.users.UserInfo;
 import com.naturemobility.seoul.mapper.*;
 import com.naturemobility.seoul.service.reservations.ReservationsService;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 import static com.naturemobility.seoul.utils.ExternalAPI.getResponse;
@@ -253,11 +253,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public GetUserInfoInPayment getUserInfo(Long userIdx) throws BaseException{
+    public GetUserInfoInPayment getUserInfo(Long userIdx, Long storeIdx) throws BaseException{
         UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
-        GetUserInfoInPayment getUserInfoInPayment = new GetUserInfoInPayment(userInfo.getUserPhoneNumber(), userInfo.getUserName(), userInfo.getUserEmail(), userInfo.getUserPoint());
-        getUserInfoInPayment.setUserCoupon(usersMapper.cntCoupon(userIdx).orElseGet(()->0));
-        getUserInfoInPayment.setUserCoupons(usersMapper.getUserCouponsList(userIdx).stream().filter((items)->items.getCouponStatus()==0).collect(Collectors.toList()));
+        GetUserInfoInPayment getUserInfoInPayment = new GetUserInfoInPayment(userInfo.getUserPhoneNumber(),
+                userInfo.getUserName(), userInfo.getUserEmail(), userInfo.getUserPoint());
+        List<GetUserCoupon> userCouponList = usersMapper.getUserCouponsListByStoreIdx(userIdx,storeIdx);
+        getUserInfoInPayment.setUserCoupon(userCouponList.size());
+        getUserInfoInPayment.setUserCoupons(userCouponList);
         return getUserInfoInPayment;
     }
 

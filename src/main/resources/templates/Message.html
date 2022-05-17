@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:if="${#strings.length(message) != 0}">
+        <script>
+            top.alert("[[${message}]]");
+        </script>
+    </th:block>
+    <th:block th:if="${#strings.length(href) != 0}">
+        <script>
+            top.location.href = '[[${href}]]';
+        </script>
+    </th:block>
+</head>
+<body>
+<div>
+    페이지 전환
+</div>
+<div th:text="${message}">
+</div>
+<div th:text="${href}">
+</div>
+</body>
+</html>

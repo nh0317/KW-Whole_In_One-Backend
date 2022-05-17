@@ -61,9 +61,9 @@ public class PaymentController {
     }
 
     @GetMapping("/get_user_info")
-    BaseResponse<GetUserInfoInPayment> getUserInfo() throws BaseException{
+    BaseResponse<GetUserInfoInPayment> getUserInfo(@RequestParam("storeIdx") Long storeIdx) throws BaseException{
         Long userIdx = checkUserService.getUserIdx();
-        GetUserInfoInPayment result = paymentService.getUserInfo(userIdx);
+        GetUserInfoInPayment result = paymentService.getUserInfo(userIdx, storeIdx);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
 

@@ -133,6 +133,21 @@
         WHERE userIdx = #{userIdx};
     </select>
 
+    <select id="getUserCouponsListByStoreIdx" resultType="GetUserCoupon">
+        SELECT UserCoupons.couponIdx, couponName, couponPercentage,
+                storeName, date_format(couponDeadline,"%Y-%m-%d") as couponDeadline,
+                 ( case
+                    when UserCoupons.couponStatus = 0 and couponDeadline > now() then 0
+                    else 1
+                    end
+                )as couponStatus
+        FROM UserCoupons
+                 INNER JOIN Coupons ON Coupons.couponIdx = UserCoupons.couponIdx
+                 INNER JOIN Stores ON Coupons.storeIdx = Stores.storeIdx
+        WHERE userIdx = #{userIdx} and Coupons.storeIdx = #{storeIdx} and Coupons.deletedAt is null
+                and UserCoupons.couponStatus = 0;
+    </select>
+
     <select id="postCouponCheck" resultType="Integer">
         SELECT COUNT(1) AS couponCheck
         FROM UserCoupons

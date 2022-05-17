@@ -85,6 +85,10 @@ dependencies {
 
 	//temp
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+	//thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.7'
+
 	//Swagger
 //	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }
