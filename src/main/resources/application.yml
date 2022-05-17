@@ -42,6 +42,12 @@ spring:
     name: wholeinone
 #    config:
 #      import: optional:configserver:http://localhost:8082
+  thymeleaf:
+    prefix : classpath:templates/
+    check-template-location: true
+    suffix: .html
+    mode: HTML5
+    cache: false
 
 # mybatis
 mybatis:
