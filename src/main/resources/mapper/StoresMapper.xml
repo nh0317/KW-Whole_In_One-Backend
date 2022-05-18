@@ -60,7 +60,8 @@
                (SELECT count(1)
                 FROM Coupons
                 WHERE Coupons.storeIdx = Stores.storeIdx
-                  AND couponDeadline > CURDATE())         AS couponStatus,
+                  AND couponDeadline > CURDATE()
+                  AND deletedAt is NULL)         AS couponStatus,
                storeImage,
                brandName                                  AS storeBrand,
                storeName,
