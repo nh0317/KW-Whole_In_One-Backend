@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,8 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static com.naturemobility.seoul.config.BaseResponseStatus.REQUEST_ERROR;
-import static com.naturemobility.seoul.config.BaseResponseStatus.RESPONSE_ERROR;
+import static com.naturemobility.seoul.config.BaseResponseStatus.*;
 
 @RestControllerAdvice
 @Log4j2
@@ -37,6 +37,13 @@ public class ExceptionControllerAdvice {
         log.info(exception.getMessage());
         printErrorLog(req, exception);
         return new BaseResponse<>(RESPONSE_ERROR);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public BaseResponse<Object> maxUploadSizeExceptionHandler(RuntimeException exception, HttpServletRequest req){
+        log.info(exception.getMessage());
+        printErrorLog(req, exception);
+        return new BaseResponse<>(EXCEED_MAXIMUM_FILE_SIZE);
     }
 
     private void printErrorLog(HttpServletRequest req, Exception exception) {
