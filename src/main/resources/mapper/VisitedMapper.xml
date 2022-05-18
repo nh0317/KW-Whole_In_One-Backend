@@ -15,7 +15,7 @@
 
     <select id="findAllByUserIdx" parameterType="VisitedInfo" resultType="GetVisitedByUserIdx">
         select s.storeIdx,s.storeName, s.storeImage, b.brandName AS storeType,  s.reserveStatus,
-               count(if(c.couponDeadline > now(), c.couponDeadline, null)) as couponStatus,
+               count(if(c.couponDeadline > now() and c.deletedAt is null, c.couponDeadline, null)) as couponStatus,
                (SELECT IFNULL(format(ROUND(SUM(reviewScore) / COUNT(reviewIdx), 1),1), 0)
                 FROM Reviews r
                 WHERE r.storeIdx = s.storeIdx)                              AS reviewStar

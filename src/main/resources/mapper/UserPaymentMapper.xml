@@ -19,7 +19,7 @@
                    when cardType=1 then "체크카드"
                 end) as cardType, isMain
         FROM UserPayment
-        WHERE userIdx = #{userIdx}
+        WHERE userIdx = #{userIdx} and deletedAt is null
         Order by isMain desc
     </select>
 
@@ -30,7 +30,7 @@
                     when cardType=1 then "체크카드"
                    end) as cardType, isMain
         FROM UserPayment
-        WHERE userIdx = #{userIdx} and isMain=1
+        WHERE userIdx = #{userIdx} and isMain=1 and deletedAt is null
     </select>
 
     <update id="updateMain" >
@@ -38,10 +38,13 @@
             SET isMain=#{isMain}
         WHERE userPaymentIdx = #{userPaymentIdx}
     </update>
-    <delete id="deleteUserPayment">
-        DELETE FROM UserPayment
+
+    <update id="deleteUserPayment">
+        UPDATE UserPayment
+        SET deletedAt=now()
         WHERE userPaymentIdx=#{userPaymentIdx}
-    </delete>
+    </update>
+
     <select id="findMainCard" resultType="Long">
         SELECT userPaymentIdx
         FROM userPaymentIdx

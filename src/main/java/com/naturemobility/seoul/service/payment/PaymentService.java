@@ -26,7 +26,7 @@ public interface PaymentService {
     @Transactional
     PostApproveRefundRes approveRefund(PostApproveRefundReq postApproveRefund, Long partnerIdx) throws BaseException;
 
-    GetUserInfoInPayment getUserInfo(Long userIdx) throws BaseException;
+    GetUserInfoInPayment getUserInfo(Long userIdx, Long storeIdx) throws BaseException;
 
     List<GetRefundsRes> getRefundsList(Long partnerIdx, String status) throws BaseException;
 

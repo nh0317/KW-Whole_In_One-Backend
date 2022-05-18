@@ -7,15 +7,19 @@ import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.domain.userPayment.*;
 import com.naturemobility.seoul.service.userpayment.UserPaymentService;
 import com.naturemobility.seoul.utils.CheckUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@Controller
+@Slf4j
 @RequestMapping("payment")
 public class UserPaymentController {
     @Autowired
@@ -24,6 +28,7 @@ public class UserPaymentController {
     CheckUserService checkUserService;
 
     @GetMapping("billingKey")
+    @ResponseBody
     BaseResponse<Map<String,String>> requestBillingKey() throws Exception{
         Long userIdx = checkUserService.getUserIdx();
         Map<String, String> result = userPaymentService.createBillingKey(userIdx);
@@ -31,6 +36,7 @@ public class UserPaymentController {
     }
 
     @PostMapping("/register_card")
+    @ResponseBody
     BaseResponse<PostUserPaymentRes> registerUserPayment(@RequestBody PostRegisterCardReq billingKey)
             throws Exception {
         Long userIdx = checkUserService.getUserIdx();
@@ -39,14 +45,29 @@ public class UserPaymentController {
     }
 
     @GetMapping("/m_register_card")
-    RedirectView registerMobileUserPayment(@Param("billingKey") String billingKey)
+    String registerMobileUserPayment(@RequestParam("billingKey") String billingKey,
+                                           @RequestParam("imp_success") Boolean imp_success,
+                                           @RequestParam(required = false, value = "error_msg") String error_msg,
+                                     Model model)
             throws Exception {
         Long userIdx = checkUserService.getUserIdx();
-        PostUserPaymentRes postUserPaymentRes = userPaymentService.registerUserPayment(billingKey, userIdx);
-        return new RedirectView("/payment");
+        if (!imp_success) {
+            model.addAttribute("message",error_msg);
+        }else{
+            try {
+                PostUserPaymentRes postUserPaymentRes = userPaymentService.registerUserPayment(billingKey, userIdx);
+                model.addAttribute("message","결제 수단 등록에 성공했습니다. ");
+            } catch (Exception e) {
+                model.addAttribute("message","결제 수단 등록에 실패했습니다. ");
+                return "Message";
+            }
+        }
+        model.addAttribute("href","payment");
+        return "Message";
     }
 
     @GetMapping("/user_payments")
+    @ResponseBody
     BaseResponse<List<GetUserPayments>> getUserPayments() throws BaseException {
         Long userIdx = checkUserService.getUserIdx();
         List<GetUserPayments> result =userPaymentService.getUserPayments(userIdx);
@@ -54,18 +75,21 @@ public class UserPaymentController {
     }
 
     @DeleteMapping("/user_payment/{userPaymentIdx}")
+    @ResponseBody
     BaseResponse<Void> deleteCustomerUid(@PathVariable("userPaymentIdx") Long uid) throws Exception {
         userPaymentService.deleteUserPayment(uid);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS);
     }
 
     @PostMapping("/update_main")
+    @ResponseBody
     BaseResponse<PostMain> updateMain(@RequestBody PostMain postMain) throws BaseException {
         PostMain result = userPaymentService.updateMain(postMain);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
 
     @PostMapping("/get_main")
+    @ResponseBody
     BaseResponse<GetUserPayments> getMain() throws BaseException {
         Long userIdx = checkUserService.getUserIdx();
         GetUserPayments result = userPaymentService.getMain(userIdx);
@@ -73,12 +97,14 @@ public class UserPaymentController {
     }
 
     @GetMapping("/customerUid/{uid}")
+    @ResponseBody
     BaseResponse<Map<String,String>> getCustomerUid(@PathVariable("uid") Long uid) throws Exception {
         Map<String,String> result = userPaymentService.getBillingKey(uid);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS, result);
     }
 
     @GetMapping("/get_main")
+    @ResponseBody
     BaseResponse<GetUserPayments> getMainCard() throws BaseException{
         Long userIdx = checkUserService.getUserIdx();
         GetUserPayments result = userPaymentService.getMain(userIdx);

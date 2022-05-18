@@ -45,6 +45,7 @@ public interface UsersMapper {
                           @Param("couponStatus") Boolean couponStatus);
 
     List<GetUserCoupon> getUserCouponsList(@Param("userIdx") Long userIdx);
+    List<GetUserCoupon> getUserCouponsListByStoreIdx(@Param("userIdx") Long userIdx, @Param("storeIdx") Long storeIdx);
 
     Integer postCouponCheck(@Param("userIdx") Long userIdx, @Param("couponIdx") Long couponIdx);
 }
