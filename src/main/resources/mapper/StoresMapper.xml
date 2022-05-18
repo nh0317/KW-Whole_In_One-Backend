@@ -122,7 +122,8 @@
         -- 브랜드, 시설, 거리 전체 조회
         SELECT storeIdx,
         reserveStatus,
-        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE() AND
+        deletedAt is NULL) AS
         couponStatus,
         storeImage,
         brandName AS storeBrand,
@@ -163,7 +164,8 @@
         -- 브랜드만 조회
         SELECT storeIdx,
         reserveStatus,
-        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE() AND
+        deletedAt is NULL) AS
         couponStatus,
         storeImage,
         brandName AS storeBrand,
@@ -199,7 +201,8 @@
                (SELECT count(1)
                 FROM Coupons
                 WHERE Coupons.storeIdx = Stores.storeIdx
-                  AND couponDeadline > CURDATE())         AS couponStatus,
+                  AND couponDeadline > CURDATE()
+                  AND deletedAt is NULL)                  AS couponStatus,
                storeImage,
                brandName                                  AS storeBrand,
                storeName,
@@ -237,7 +240,8 @@
                (SELECT count(1)
                 FROM Coupons
                 WHERE Coupons.storeIdx = Stores.storeIdx
-                  AND couponDeadline > CURDATE())         AS couponStatus,
+                  AND couponDeadline > CURDATE()
+                  AND deletedAt is NULL)                  AS couponStatus,
                storeImage,
                brandName                                  AS storeBrand,
                storeName,
@@ -267,7 +271,8 @@
         -- 브랜드 + 시설 조회
         SELECT storeIdx,
         reserveStatus,
-        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE() AND
+        deletedAt is NULL) AS
         couponStatus,
         storeImage,
         brandName AS storeBrand,
@@ -306,7 +311,8 @@
         -- 브랜드 + 거리 조회
         SELECT storeIdx,
         reserveStatus,
-        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()) AS
+        (SELECT count(1) FROM Coupons WHERE Coupons.storeIdx = Stores.storeIdx AND couponDeadline > CURDATE()
+        AND deletedAt is NULL) AS
         couponStatus,
         storeImage,
         brandName AS storeBrand,
@@ -344,7 +350,8 @@
                (SELECT count(1)
                 FROM Coupons
                 WHERE Coupons.storeIdx = Stores.storeIdx
-                  AND couponDeadline > CURDATE())         AS couponStatus,
+                  AND couponDeadline > CURDATE()
+                  AND deletedAt is NULL)                  AS couponStatus,
                storeImage,
                brandName                                  AS storeBrand,
                storeName,
