@@ -58,6 +58,7 @@ public enum BaseResponseStatus {
     ALREADY_REFUND(false,3030,"이미 전액환불된 주문입니다"),
     NOT_REQUESTED_REFUND(false,3031,"환불 요청 상태가 아닙니다"),
     NOT_PAID(false,3032,"결제 정보가 없습니다."),
+    EXCEED_MAXIMUM_FILE_SIZE(false, 3040,"파일 용량이 너무 큽니다."),
 //    FAILED_TO_GET_USER(false, 3012, "회원 정보 조회에 실패하였습니다."),
 //    FAILED_TO_POST_USER(false, 3013, "회원가입에 실패하였습니다."),
 //    FAILED_TO_LOGIN(false, 3014, "로그인에 실패하였습니다."),
