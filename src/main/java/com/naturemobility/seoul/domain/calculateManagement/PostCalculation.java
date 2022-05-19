@@ -16,16 +16,35 @@ public class PostCalculation {
     private Integer sales;
     // 수수료 퍼센트
     private Integer fee;
+
+    //쿠폰 할인 금액
+    private int couponDiscount;
+
+    //포인트 할인 금액
+    private int pointDiscount;
+
     // 정산 금액
     private Integer price;
     //정산 요청 월
     private String getCheckMonthRes;
 
-    public PostCalculation(Long partnerIdx, Integer sales, String getCheckMonthRes) {
+    public PostCalculation(Long partnerIdx, Integer sales,int couponDiscount, int pointDiscount, String getCheckMonthRes) {
         this.partnerIdx = partnerIdx;
+        // 매출
         this.sales = sales;
+
+
+        //할인 금액
+        this.couponDiscount = couponDiscount;
+        this.pointDiscount = pointDiscount;
+
+        //매출에서 수수료 산정
         this.fee = (int) Math.round(this.sales * DEFAULTFEE * 0.01);
-        this.price = sales - (int) Math.round(this.sales * DEFAULTFEE * 0.01);
+
+        // 할인 금액과 수수료를 제외한 정산 금액
+        // 포인트는 플랫폼이 부담하므로 제외하지 않는다.
+        this.price = sales - couponDiscount - fee;
+
         this.getCheckMonthRes = getCheckMonthRes;
     }
 }

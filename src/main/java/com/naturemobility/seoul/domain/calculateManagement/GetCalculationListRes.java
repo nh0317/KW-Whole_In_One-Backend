@@ -9,6 +9,8 @@ public class GetCalculationListRes {
     final Long partnerPaymentIdx;
     final Integer sales;
     final Integer fees;
+    final int couponDiscount;
+    final int pointDiscount;
     final Integer price;
     final String calculateStatus;
     final String calculateDate;

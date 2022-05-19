@@ -20,6 +20,7 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
     @Override
     public List<GetCalculationListRes> getCalculateList(Long partnerIdx) throws BaseException {
         //Long storeIdx = calculateManagementMapper.getStoreIdx(partnerIdx);
+        postPartnerPayment(partnerIdx);
         List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateList(partnerIdx);
         return calculationList;
     }
@@ -28,31 +29,29 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
     public List<GetCalculationListRes> getCalculateListWithFilter(
             Long partnerIdx, String startDate, String endDate, Integer [] calculationStatus) throws BaseException {
 
+        postPartnerPayment(partnerIdx);
+        List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateListWithFilter(
+                partnerIdx, startDate, endDate, calculationStatus);
+        return  calculationList;
+    }
+
+    private void postPartnerPayment(Long partnerIdx) {
         //현재 날짜를 기준으로 한달전을 string 값으로 가져옴
-        String getCheckMonthRes = calculateManagementMapper.getCheckMonth();
+        String getCheckMonthRes = "2022-01";
         //전달에 정산된 기록 체크
         int duplicationVerification = calculateManagementMapper.checkDuplication(partnerIdx, getCheckMonthRes);
 
-        //정산된 기록이 있다면 calculationList 반환
-        if (duplicationVerification == 1) {
-            List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateListWithFilter(
-                    partnerIdx, startDate, endDate, calculationStatus);
-
-            return calculationList;
-
-            //없다면 전달 정산을 해준후 calculationList 반환
-        } else {
-            Long storeIdx = calculateManagementMapper.getStoreIdx(partnerIdx);
-            int amount = calculateManagementMapper.getCalculatedAmount(storeIdx, getCheckMonthRes);
-            int canceledAmount = calculateManagementMapper.getCanceledAmount(storeIdx, getCheckMonthRes);
-            amount -= canceledAmount;
-            PostCalculation postCalculation = new PostCalculation(partnerIdx, amount, getCheckMonthRes);
+        Long storeIdx = calculateManagementMapper.getStoreIdx(partnerIdx);
+        int amount = calculateManagementMapper.getCalculatedAmount(storeIdx, getCheckMonthRes);
+        //정산된 기록이 없다면 전달 정산을 함
+        if (duplicationVerification == 0 && amount != 0) {
+//            int canceledAmount = calculateManagementMapper.getCanceledAmount(storeIdx, getCheckMonthRes);
+            int couponDiscount = calculateManagementMapper.getCouponDiscount(storeIdx, getCheckMonthRes);
+            int pointDiscount = calculateManagementMapper.getDiscountPoint(storeIdx, getCheckMonthRes);
+//            amount -= canceledAmount;
+            PostCalculation postCalculation = new PostCalculation(partnerIdx, amount, couponDiscount, pointDiscount, getCheckMonthRes);
             calculateManagementMapper.postCalculation(postCalculation);
 
-            List<GetCalculationListRes> calculationList = calculateManagementMapper.getCalculateListWithFilter(
-                    partnerIdx, startDate, endDate, calculationStatus);
-
-            return calculationList;
         }
     }
 

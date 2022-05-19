@@ -35,4 +35,8 @@ public interface CalculateManagementMapper {
     void changeCalculateStatus(@Param("partnerPaymentIdx") Long partnerPaymentIdx);
 
     int checkCalculationDuplication(@Param("partnerPaymentIdx") Long partnerPaymentIdx);
+
+    int getCouponDiscount(@Param("storeIdx") Long storeIdx, @Param("getCheckMonthRes") String getCheckMonthRes);
+
+    int getDiscountPoint(@Param("storeIdx") Long storeIdx, @Param("getCheckMonthRes") String getCheckMonthRes);
 }

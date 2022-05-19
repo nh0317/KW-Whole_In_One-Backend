@@ -13,6 +13,8 @@
                sales,
                price,
                fees,
+               couponDiscount,
+               pointDiscount,
                (CASE calculateStatus
                     WHEN 0 THEN '정산 미완료'
                     WHEN 1 THEN '정산 완료'
@@ -31,6 +33,8 @@
                sales,
                price,
                fees,
+                couponDiscount,
+                pointDiscount,
                (CASE calculateStatus
                     WHEN 0 THEN '정산 미완료'
                     WHEN 1 THEN '정산 완료'
@@ -58,20 +62,21 @@
 
     <update id="changeCalculateStatus">
         UPDATE PartnerPayment
-        SET calculateStatus = 1
+        SET calculateStatus = 1, calculatedAt = now()
         WHERE partnerPaymentIdx = #{partnerPaymentIdx}
     </update>
 
     <select id="getCalculatedAmount" resultType="Integer">
-        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{getCheckMonthRes}), amount,
-                      0)) AS fee
-        FROM Payment
-        WHERE storeIdx = #{storeIdx};
+        SELECT IFNULL(SUM(reservePrice),0) AS fee
+        FROM Payment p left join Reservations r on p.merchantUid = r.merchantUid
+        WHERE p.storeIdx = #{storeIdx}
+            and DATE_FORMAT(p.createdAt, '%Y-%m') = #{getCheckMonthRes}
+            and (refundStatus = 0 or refundStatus = 1);
     </select>
 
     <insert id="postCalculation" parameterType="PostCalculation">
-        INSERT INTO PartnerPayment (partnerIdx, sales, fees, price, calculateDate)
-        VALUES (#{partnerIdx}, #{sales}, #{fee}, #{price}, #{getCheckMonthRes});
+        INSERT INTO PartnerPayment (partnerIdx, sales, couponDiscount, pointDiscount, fees, price, calculateDate)
+        VALUES (#{partnerIdx}, #{sales},#{couponDiscount},#{pointDiscount}, #{fee}, #{price}, #{getCheckMonthRes});
     </insert>
 
     <select id="checkDuplication" resultType="Integer">
@@ -82,10 +87,10 @@
     </select>
 
     <select id="getCanceledAmount" resultType="Integer">
-        SELECT SUM(IF(DATE_FORMAT(createdAt, '%Y-%m') = DATE_FORMAT(createdAt, #{getCheckMonthRes}), cancelAmount,
+        SELECT SUM(IF(DATE_FORMAT(p.createdAt, '%Y-%m') = #{getCheckMonthRes}, cancelAmount,
                       0)) AS cancelAmount
-        FROM Payment
-        WHERE storeIdx = #{storeIdx};
+        FROM Payment p left join Reservations r on p.merchantUid = r.merchantUid
+        WHERE p.storeIdx = #{storeIdx} and refundStatus = 2;
     </select>
 
     <select id="getCheckMonth" resultType="String">
@@ -105,4 +110,18 @@
           AND calculateStatus = 1;
     </select>
 
+    <select id="getCouponDiscount" resultType="int">
+        SELECT IFNULL(SUM(round(reservePrice*(couponPercentage/100))),0) AS couponDiscount
+        FROM Payment p left join Reservations r on p.merchantUid = r.merchantUid left join Coupons c on c.couponIdx = p.couponIdx
+        WHERE p.storeIdx = #{storeIdx} and DATE_FORMAT(p.createdAt, '%Y-%m') = #{getCheckMonthRes}
+          and (refundStatus = 0 or refundStatus = 1);
+    </select>
+
+    <select id="getDiscountPoint" resultType="int">
+        SELECT IFNULL(sum(discountPrice),0) - round(IFNULL(sum(reservePrice*(couponPercentage/100)),0))
+        FROM Payment p left join Reservations r on p.merchantUid = r.merchantUid
+                       left join Coupons c on c.couponIdx = p.couponIdx
+        WHERE p.storeIdx = #{storeIdx} and DATE_FORMAT(p.createdAt, '%Y-%m') = #{getCheckMonthRes}
+          and (refundStatus = 0 or refundStatus = 1);
+    </select>
 </mapper>

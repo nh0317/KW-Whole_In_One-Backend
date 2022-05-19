@@ -48,8 +48,8 @@
                    else 1
                end) as isPaid,
                (case
-                   when r.reservePrice is null then 0
-                   else r.reservePrice
+                   when r.payPrice is null then 0
+                   else r.payPrice
                end) as amount,
                (case
                   when p.refundStatus = 1 then '환불 요청 중'
@@ -67,8 +67,8 @@
                     else 1
                    end) as isPaid,
                (case
-                    when r.reservePrice is null then 0
-                    else r.reservePrice
+                    when r.payPrice is null then 0
+                    else r.payPrice
                    end) as amount,
                (case
                     when p.refundStatus = 1 then '환불 요청 중'
@@ -88,8 +88,8 @@
                     else 1
                    end) as isPaid,
                (case
-                    when r.reservePrice is null then 0
-                    else r.reservePrice
+                    when r.payPrice is null then 0
+                    else r.payPrice
                    end) as amount,
                (case
                     when p.refundStatus = 1 then '환불 요청 중'
