@@ -75,7 +75,7 @@ public class PaymentServiceImpl implements PaymentService {
         UserInfo userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
         int earnPoint = Double.valueOf(amount * 0.03).intValue();
         int point = earnPoint - usedPoint;
-        if (userInfo.getUserPoint() - point < 0)
+        if (userInfo.getUserPoint() + point < 0)
             point = userInfo.getUserPoint();
         usersMapper.updateUserPoint(userIdx, point);
         userInfo = usersMapper.findByIdx(userIdx).orElseThrow(() -> new BaseException(NOT_FOUND_DATA));
