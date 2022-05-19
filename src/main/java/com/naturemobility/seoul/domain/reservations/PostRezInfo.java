@@ -80,7 +80,7 @@ public class PostRezInfo {
         this.numberOfGame = postRezReq.getNumberOfGame();
         this.request = postRezReq.getRequest();
         this.personCount = postRezReq.getPersonCount();
-        this.price = postRezReq.getPrice();
+        this.price = postRezReq.getPrice() + postRezReq.getDiscountPrice();
         this.discountPrice = postRezReq.getDiscountPrice();
         this.payPrice = payPrice;
         this.selectedHall = postRezReq.getSelectedHall();

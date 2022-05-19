@@ -91,7 +91,7 @@ public class ReservationsServiceImpl implements ReservationsService {
 
     @Override
     public void postReservation(PostRezReq postRezReq, Long userIdx) throws BaseException {
-        Integer payPrice = postRezReq.getPrice() - postRezReq.getDiscountPrice();
+        Integer payPrice = postRezReq.getPrice();
 
         String startTime = postRezReq.getReservationTime();
         String endTime = postRezReq.getEndTime();
