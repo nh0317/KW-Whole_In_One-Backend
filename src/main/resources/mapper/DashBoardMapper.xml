@@ -10,18 +10,19 @@
 
     <select id="getTodayRes" resultType="GetTodayRes">
         SELECT COUNT(reservationIdx)    AS reservationCount,
-               IFNULL(SUM(payPrice),0) AS todaySales
+               IFNULL(SUM(payPrice), 0) AS todaySales
         FROM Reservations
         WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
           AND storeIdx = #{storeIdx};
     </select>
 
     <select id="getMonthRes" resultType="GetMonthRes">
-        SELECT COUNT(reservationIdx)    AS monthReservatioCount,
-               IFNULL(SUM(payPrice),0) AS monthSales
+        SELECT COUNT(reservationIdx)                                         AS monthReservatioCount,
+               (IFNULL(SUM(reservePrice), 0) - IFNULL(SUM(cancelAmount), 0)) AS monthSales
         FROM Reservations
-        WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
-          AND storeIdx = #{storeIdx};
+                 INNER JOIN Payment ON Payment.merchantUid = Reservations.merchantUid
+        WHERE DATE_FORMAT(Payment.createdAt, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+          AND Reservations.storeIdx = #{storeIdx};
     </select>
 
     <select id="getTodayRezList" resultType="GetRezListRes">
@@ -61,8 +62,8 @@
     </select>
 
     <insert id="postMemo" parameterType="PostMemoInfo">
-        INSERT INTO DashBoardMemo (memo,partnerIdx)
-        VALUES (#{memo},#{partnerIdx});
+        INSERT INTO DashBoardMemo (memo, partnerIdx)
+        VALUES (#{memo}, #{partnerIdx});
     </insert>
 
     <select id="getPartnerIdxByMemoIdx" resultType="Long">
