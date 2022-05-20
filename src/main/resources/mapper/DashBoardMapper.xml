@@ -11,7 +11,8 @@
     <select id="getTodayRes" resultType="GetTodayRes">
         SELECT (SELECT COUNT(reservationIdx)
                 FROM Reservations
-                WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE())  AS reservationCount,
+                WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
+                  AND Reservations.storeIdx = #{storeIdx})                   AS reservationCount,
                (IFNULL(SUM(reservePrice), 0) - IFNULL(SUM(cancelAmount), 0)) AS todaySales
         FROM Reservations
                  INNER JOIN Payment ON Payment.merchantUid = Reservations.merchantUid
@@ -20,7 +21,10 @@
     </select>
 
     <select id="getMonthRes" resultType="GetMonthRes">
-        SELECT COUNT(reservationIdx)                                         AS monthReservatioCount,
+        SELECT (SELECT COUNT(reservationIdx)
+                FROM Reservations
+                WHERE DATE_FORMAT(reservationTime, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+                  AND Reservations.storeIdx = #{storeIdx})                   AS monthReservatioCount,
                (IFNULL(SUM(reservePrice), 0) - IFNULL(SUM(cancelAmount), 0)) AS monthSales
         FROM Reservations
                  INNER JOIN Payment ON Payment.merchantUid = Reservations.merchantUid
