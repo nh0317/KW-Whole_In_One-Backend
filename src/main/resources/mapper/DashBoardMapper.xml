@@ -9,11 +9,14 @@
     </select>
 
     <select id="getTodayRes" resultType="GetTodayRes">
-        SELECT COUNT(reservationIdx)    AS reservationCount,
-               IFNULL(SUM(payPrice), 0) AS todaySales
+        SELECT (SELECT COUNT(reservationIdx)
+                FROM Reservations
+                WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE())  AS reservationCount,
+               (IFNULL(SUM(reservePrice), 0) - IFNULL(SUM(cancelAmount), 0)) AS todaySales
         FROM Reservations
-        WHERE DATE_FORMAT(reservationTime, '%Y-%m-%d') = CURDATE()
-          AND storeIdx = #{storeIdx};
+                 INNER JOIN Payment ON Payment.merchantUid = Reservations.merchantUid
+        WHERE DATE_FORMAT(Payment.createdAt, '%Y-%m-%d') = CURDATE()
+          AND Reservations.storeIdx = #{storeIdx};
     </select>
 
     <select id="getMonthRes" resultType="GetMonthRes">
