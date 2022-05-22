@@ -19,11 +19,10 @@
                     WHEN refundStatus is null then 0
                     else refundStatus
                    END) as refundStatus,
-               (SELECT re.reviewScore
-                       FROM Reviews re
-                       WHERE re.reservationIdx = r.reservationIdx) AS score
+               re.reviewScore AS score
         FROM Reservations r left join Payment p  on strcmp(r.merchantUid, p.merchantUid) = 0
             left join Stores s on r.storeIdx=s.storeIdx
+            left join Reviews re on r.reservationIdx = re.reservationIdx
         WHERE r.userIdx=#{userIdx}
         Order By alreadyUsed, refundStatus, reservationTime DESC
             LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
