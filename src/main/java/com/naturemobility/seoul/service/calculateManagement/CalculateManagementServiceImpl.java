@@ -37,7 +37,7 @@ public class CalculateManagementServiceImpl implements CalculateManagementServic
 
     private void postPartnerPayment(Long partnerIdx) {
         //현재 날짜를 기준으로 한달전을 string 값으로 가져옴
-        String getCheckMonthRes = "2022-01";
+        String getCheckMonthRes = calculateManagementMapper.getCheckMonth();
         //전달에 정산된 기록 체크
         int duplicationVerification = calculateManagementMapper.checkDuplication(partnerIdx, getCheckMonthRes);
 
