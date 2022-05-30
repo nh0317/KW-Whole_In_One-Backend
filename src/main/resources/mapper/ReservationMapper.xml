@@ -35,7 +35,11 @@
                r.useTime,
                r.selectedHall,
                r.personCount,
-               r.alreadyUsed,
+                (CASE
+                WHEN r.alreadyUsed = 1 then 1
+                WHEN  now() >= r.endTime then 1
+                ELSE r.alreadyUsed
+                END) as alreadyUsed,
                r.reservePrice,
                r.discountPrice,
                r.payPrice,
