@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.naturemobility.seoul.config.BaseResponseStatus.*;
-
 @Service
 @Slf4j
 public class VisitedServiceImpl implements VisitedService {
@@ -53,42 +51,25 @@ public class VisitedServiceImpl implements VisitedService {
     @Override
     public List<GetVisitedByUserIdx> findAllVisitedStore(Long userIdx, Integer page) throws BaseException {
             VisitedInfo visitedInfo = new VisitedInfo(userIdx);
+            List<GetVisitedByUserIdx> result = new ArrayList<>();
+
             int totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
+            VisitedInfo pagingInfo = (VisitedInfo) visitedInfo.getPageInfo(page, totalVisited);
 
-            if (totalVisited==0)
-                return new ArrayList<>();
-
-            if (totalVisited > 0) {
-                if (page != null && page > 1) {
-                    visitedInfo.setPage(page);
-                }
-                PageInfo pageInfo = new PageInfo(visitedInfo);
-                pageInfo.SetTotalData(totalVisited);
-                visitedInfo.setPageInfo(pageInfo);
-
-                if (page != null && page > visitedInfo.getPageInfo().getTotalPage()) {
-                    return new ArrayList<>();
-                }
-                return visitedMapper.findAllByUserIdx(visitedInfo);
-            } else if (page > totalVisited)
-                return new ArrayList<>();
-            else return new ArrayList<>();
+            if (pagingInfo != null) {
+                result = visitedMapper.findAllByUserIdx(pagingInfo);
+            }
+            return result;
     }
 
     @Override
     public Map<String,Integer> getTotalPage(Long userIdx){
         VisitedInfo visitedInfo = new VisitedInfo(userIdx);
         int totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
-        Map<String, Integer> result = new HashMap<>();
-        if(totalVisited >0) {
-            PageInfo pageInfo = new PageInfo(visitedInfo);
-            pageInfo.SetTotalData(totalVisited);
-            visitedInfo.setPageInfo(pageInfo);
+        visitedInfo.setTotalData(totalVisited);
 
-            result.put("totalPage", visitedInfo.getPageInfo().getTotalPage());
-            return result;
-        }
-        result.put("totalPage", 0);
+        Map<String, Integer> result = new HashMap<>();
+        result.put("totalPage", visitedInfo.getTotalPage());
         return result;
     }
 }

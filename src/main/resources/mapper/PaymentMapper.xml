@@ -77,7 +77,7 @@
         FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
         WHERE p.storeIdx = #{storeIdx} and (refundStatus = 1)
         ORDER BY p.refundStatus, r.reservationTime
-            LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+            LIMIT #{firstIndex}, #{recordsPerPage}
     </select>
 
     <select id = "findAllApprovedRefunds" parameterType="GetRefundsRes" resultType="GetRefundsRes">
@@ -98,7 +98,7 @@
         FROM Payment p left join Users u on p.userIdx = u.userIdx left join Reservations r on r.merchantUid = p.merchantUid
         WHERE p.storeIdx = #{storeIdx} and (refundStatus = 2)
         ORDER BY p.refundStatus, r.reservationTime
-            LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+            LIMIT #{firstIndex}, #{recordsPerPage}
     </select>
     <select id="cntTotalRequesting" resultType="int">
         SELECT count(*)

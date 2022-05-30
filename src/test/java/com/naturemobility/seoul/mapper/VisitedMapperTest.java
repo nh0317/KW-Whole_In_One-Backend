@@ -24,9 +24,7 @@ class VisitedMapperTest {
         VisitedInfo user = new VisitedInfo(1L);
         Integer total = visitedMapper.cntTotalVisited(1L);
         if(total>0) {
-            PageInfo pageInfo = new PageInfo(user);
-            pageInfo.setTotalPage(total);
-            user.setPageInfo(pageInfo);
+            user.setTotalPage(total);
 
             List<GetVisitedByUserIdx> visited;
             visited = visitedMapper.findAllByUserIdx(user);

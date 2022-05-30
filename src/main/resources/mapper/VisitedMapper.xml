@@ -25,7 +25,7 @@
         WHERE v.userIdx=#{userIdx}
         group by s.storeIdx, v.updatedAt
         Order By v.updatedAt DESC
-        LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+        LIMIT #{firstIndex}, #{recordsPerPage}
     </select>
 
     <select id="cntTotalVisited" resultType="int">

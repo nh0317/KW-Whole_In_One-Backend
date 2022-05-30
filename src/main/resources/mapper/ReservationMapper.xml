@@ -25,7 +25,7 @@
             left join Reviews re on r.reservationIdx = re.reservationIdx
         WHERE r.userIdx=#{userIdx}
         Order By alreadyUsed, refundStatus, reservationTime DESC
-            LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
+            LIMIT #{firstIndex}, #{recordsPerPage}
     </select>
 
     <select id="findByRezIdx" resultType="ReservationInfo">

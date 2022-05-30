@@ -300,13 +300,13 @@ public class PaymentServiceImpl implements PaymentService {
                 getPagingRefunds.setRefunds(paymentMapper.findAllRefunds(store,2));
         }else{
             getPagingRefunds.setRefunds(getRefundsList(page, status, getRefundsRes, total));
-            getPagingRefunds.setTotalPage(getRefundsRes.getPageInfo().getTotalPage());
+            getPagingRefunds.setTotalPage(getRefundsRes.getTotalPage());
             getPagingRefunds.setItemsPerPage(getRefundsRes.getRecordsPerPage());
         }
         return getPagingRefunds;
     }
 
-    private List<GetRefundsRes> getRefundsList(Integer page, String status, GetRefundsRes getRefundsRes, Integer total) throws BaseException {
+    private List<GetRefundsRes> getRefundsList(Integer page, String status, GetRefundsRes getRefundsRes, int total) throws BaseException {
         if (page == null){
             if(status.equals("Requesting"))
                 return paymentMapper.findAllRefunds(getRefundsRes.getStoreIdx(),1);
@@ -314,25 +314,14 @@ public class PaymentServiceImpl implements PaymentService {
                 return  paymentMapper.findAllRefunds(getRefundsRes.getStoreIdx(),2);
             else return new ArrayList<>();
         }
-        else if (page != null && total != null && total > 0) {
-            if (page != null && page >= 1) {
-                getRefundsRes.setPage(page);
-            }
-            PageInfo pageInfo = new PageInfo(getRefundsRes);
-            pageInfo.SetTotalData(total);
-            getRefundsRes.setPageInfo(pageInfo);
-
-            if (page > getRefundsRes.getPageInfo().getTotalPage()) {
-                return new ArrayList<>();
-            }
+        List<GetRefundsRes> result = new ArrayList<>();
+        GetRefundsRes pagingDto = (GetRefundsRes) getRefundsRes.getPageInfo(page, total);
+        if (pagingDto != null){
             if(status.equals("Requesting"))
-                return paymentMapper.findAllRequestingRefunds(getRefundsRes);
+                result = paymentMapper.findAllRequestingRefunds(pagingDto);
             else if(status.equals("Approved"))
-                return  paymentMapper.findAllApprovedRefunds(getRefundsRes);
-            else return new ArrayList<>();
+                result = paymentMapper.findAllApprovedRefunds(pagingDto);
         }
-        else if (page!=null && page > total)
-            return new ArrayList<>();
-        else return new ArrayList<>();
+        return result;
     }
 }
