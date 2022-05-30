@@ -54,10 +54,10 @@ public class ReservationsServiceImpl implements ReservationsService {
     public List<GetRezResByUserIdx> findByUserIdx(Long userIdx, Integer page)throws BaseException {
         List<ReservationInfo> reservationList = new ArrayList<>();
         ReservationInfo reservationInfo = new ReservationInfo(userIdx);
-        Integer total = reservationMapper.cntTotal(userIdx);
+        int total = reservationMapper.cntTotal(userIdx);
         if(total == 0)
             return new ArrayList<>();
-        if(total != null && total >0) {
+        if(total >0) {
             if(page!=null && page > 1){
                 reservationInfo.setPage(page);
             }

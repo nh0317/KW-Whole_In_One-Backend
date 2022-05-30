@@ -53,13 +53,12 @@ public class VisitedServiceImpl implements VisitedService {
     @Override
     public List<GetVisitedByUserIdx> findAllVisitedStore(Long userIdx, Integer page) throws BaseException {
             VisitedInfo visitedInfo = new VisitedInfo(userIdx);
-            List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
-            Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
+            int totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
 
             if (totalVisited==0)
                 return new ArrayList<>();
 
-            if (totalVisited != null && totalVisited > 0) {
+            if (totalVisited > 0) {
                 if (page != null && page > 1) {
                     visitedInfo.setPage(page);
                 }
@@ -79,10 +78,9 @@ public class VisitedServiceImpl implements VisitedService {
     @Override
     public Map<String,Integer> getTotalPage(Long userIdx){
         VisitedInfo visitedInfo = new VisitedInfo(userIdx);
-        List<GetVisitedByUserIdx> visiteds = new ArrayList<>();
-        Integer totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
+        int totalVisited = visitedMapper.cntTotalVisited(visitedInfo.getUserIdx());
         Map<String, Integer> result = new HashMap<>();
-        if(totalVisited != null && totalVisited >0) {
+        if(totalVisited >0) {
             PageInfo pageInfo = new PageInfo(visitedInfo);
             pageInfo.SetTotalData(totalVisited);
             visitedInfo.setPageInfo(pageInfo);

@@ -28,7 +28,7 @@
         LIMIT #{pageInfo.firstIndex}, #{recordsPerPage}
     </select>
 
-    <select id="cntTotalVisited" resultType="Integer">
+    <select id="cntTotalVisited" resultType="int">
         select count(*)
         FROM Visited
         WHERE userIdx=#{userIdx}

@@ -16,7 +16,7 @@ public interface VisitedMapper {
     int delete(VisitedInfo visitedInfo);
 
 
-    Integer cntTotalVisited(@Param("userIdx") Long userIdx);
+    int cntTotalVisited(@Param("userIdx") Long userIdx);
     List<GetVisitedByUserIdx> findAllByUserIdx(VisitedInfo visitedInfo);
     Optional<VisitedInfo> findByStoreIdxAndUserIdx(VisitedInfo visitedInfo);
 

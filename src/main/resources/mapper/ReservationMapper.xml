@@ -51,7 +51,7 @@
         WHERE r.reservationIdx=#{reservationIdx}
     </select>
 
-    <select id="cntTotal" resultType="Integer">
+    <select id="cntTotal" resultType="int">
         select count(*)
         FROM Reservations
         WHERE userIdx=#{userIdx}

@@ -18,12 +18,6 @@ public class PageInfo {
     private boolean hasNextPage;
 
     public PageInfo(Criteria criteria){
-        if (criteria.getPage()<1)
-            criteria.setPage(1);
-        if (criteria.getRecordsPerPage()<1 || criteria.getRecordsPerPage()>100)
-            criteria.setRecordsPerPage(10);
-        if (criteria.getPageSize()<5 || criteria.getPageSize()>20)
-            criteria.setPageSize(10);
         this.criteria=criteria;
     }
 
