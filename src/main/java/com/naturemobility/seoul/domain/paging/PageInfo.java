@@ -45,7 +45,7 @@ public class PageInfo {
         this.pageSize = PAGE_SIZE;
     }
 
-    public void setTotalPage(int totalData){
+    public void setTotalData(int totalData){
         this.totalData=totalData;
         if (totalData>0)
             calculation();
