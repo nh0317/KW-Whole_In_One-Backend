@@ -1,7 +1,7 @@
 spring:
   cloud:
     config:
-      uri: http://seoul.naturemobility.com:18082
+      uri: http://13.124.163.85:8082
       name: wholeinone
 
 encrypt:
