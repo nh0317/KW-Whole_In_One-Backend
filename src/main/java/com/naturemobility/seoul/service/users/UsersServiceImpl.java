@@ -3,7 +3,6 @@ package com.naturemobility.seoul.service.users;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.config.SecretPropertyConfig;
-import com.naturemobility.seoul.config.secret.Secret;
 import com.naturemobility.seoul.domain.users.*;
 import com.naturemobility.seoul.jwt.JwtFilter;
 import com.naturemobility.seoul.jwt.JwtService;

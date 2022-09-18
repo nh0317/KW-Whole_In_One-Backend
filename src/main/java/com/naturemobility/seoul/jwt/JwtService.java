@@ -3,7 +3,6 @@ package com.naturemobility.seoul.jwt;
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.BaseResponseStatus;
 import com.naturemobility.seoul.config.SecretPropertyConfig;
-import com.naturemobility.seoul.config.secret.Secret;
 import com.naturemobility.seoul.redis.RedisService;
 import com.naturemobility.seoul.utils.CookieUtil;
 import io.jsonwebtoken.*;

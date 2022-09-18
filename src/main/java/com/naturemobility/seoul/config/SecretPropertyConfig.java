@@ -1,6 +1,5 @@
 package com.naturemobility.seoul.config;
 
-import com.naturemobility.seoul.config.secret.Secret;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

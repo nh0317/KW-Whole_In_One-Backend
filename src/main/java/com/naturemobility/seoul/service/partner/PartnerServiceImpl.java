@@ -2,7 +2,6 @@ package com.naturemobility.seoul.service.partner;
 
 import com.naturemobility.seoul.config.BaseException;
 import com.naturemobility.seoul.config.SecretPropertyConfig;
-import com.naturemobility.seoul.config.secret.Secret;
 import com.naturemobility.seoul.domain.partners.*;
 import com.naturemobility.seoul.domain.users.PatchPWReq;
 import com.naturemobility.seoul.domain.users.PostLoginReq;
