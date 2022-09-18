@@ -25,7 +25,7 @@ jobs:
         path: wholeinone-client
         repository: nh0317/wholeinone-client
         ref: master
-    - run: cd wholeinone-client && npm install --force && npm audit fix --force && npm rum build
+    - run: cd wholeinone-client && npm install --save --legacy-peer-deps && npm audit fix && npm rum build
     
     - uses: actions/checkout@v3
       with:
