@@ -41,6 +41,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Grant execute permission for gradlew
+      continue-on-error: true
       run: chmod +x wholeinone-server/gradlew
     
     - name: Restore keystore
