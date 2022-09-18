@@ -17,21 +17,21 @@ permissions:
   contents: read
 
 jobs:
-  checkout:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-          with:
-            repository: nh0317/wholeinone-client
-            ref: master
-        - run: ls
-        
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
+      with:
+        path: wholeinone-client
+        repository: nh0317/wholeinone-client
+        ref: master
+    - run: cd wholeinone-client && npm install --force
+    
+    - uses: actions/checkout@v3
+      with:
+        path: wholeinone-server
+    - run: ls
+        
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
@@ -39,10 +39,17 @@ jobs:
         distribution: 'temurin'
         
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x wholeinone-server/gradlew
+    
+    - name: Restore keystore
+      run : echo $BASE64KEYSTORE | base64 -d > wholeinone-server/keystore.jks
+      
+      
+    - name: Restore ssl-keystore
+      run : echo $BASE64SSL | base64 -d > wholeinone-server/ssl-keystore.p12
     
     - name: Build with Gradle
-      run: ./gradlew clean build -x test
+      run: cd wholeinone-server && ./gradlew clean build -x test
     
     - name: put jar file
       # You may pin to the exact commit or the version.
@@ -53,7 +60,7 @@ jobs:
         username: ${{ secrets.HOST_USERNAME }}
         password: ${{ secrets.HOST_PW }}
         port: 22
-        source: "./build/libs/*.jar"
+        source: "wholeinone-server/build/libs/*.jar"
         target: "/home/ec2-user/deploy"
         strip_components: 2
         
