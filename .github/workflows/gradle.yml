@@ -41,6 +41,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     
+    - name: Restore keystore
+      run : echo $BASE64KEYSTORE | base64 -d > keystore.jks
+    
     - name: Build with Gradle
       run: ./gradlew clean build -x test
     
