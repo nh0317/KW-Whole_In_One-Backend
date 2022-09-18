@@ -25,7 +25,7 @@ jobs:
         path: wholeinone-client
         repository: nh0317/wholeinone-client
         ref: master
-    - run: ls
+    - run: cd wholeinone-client && npm install --verbose
     
     - uses: actions/checkout@v3
       with:
