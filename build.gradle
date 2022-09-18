@@ -125,11 +125,11 @@ task installReact(type: Exec) {
 	inputs.dir "$frontendDir"
 	group = BasePlugin.BUILD_GROUP
 	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-		commandLine "npm.cmd", "audit", "fix"
-		commandLine 'npm.cmd', 'install', "--force"
+//		commandLine "npm.cmd", "audit", "fix"
+		commandLine 'npm.cmd', 'install', "--save" ,"--legacy-peer-deps"
 	} else {
-		commandLine "npm", "audit", "fix"
-		commandLine 'npm', 'install', "--force"
+//		commandLine "npm", "audit", "fix"
+		commandLine 'npm', 'install', "--save" ,"--legacy-peer-deps"
 	}
 }
 
@@ -141,7 +141,7 @@ task buildReact(type: Exec) {
 	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
 		commandLine "npm.cmd", "run-script", "build"
 	} else {
-		commandLine "sudo", "npm", "run-script", "build"
+		commandLine "CI=false", "npm", "run-script", "build"
 	}
 }
 
