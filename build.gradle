@@ -141,7 +141,7 @@ task buildReact(type: Exec) {
 	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
 		commandLine "npm.cmd", "run-script", "build"
 	} else {
-		commandLine "CI", "=", "false", "npm", "run-script", "build"
+		commandLine "CI=false npm", "run-script", "build"
 	}
 }
 
