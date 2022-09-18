@@ -22,6 +22,7 @@ jobs:
       steps:
         - uses: actions/checkout@v3
           with:
+            path: ../wholeinone-client
             repository: nh0317/wholeinone-client
             ref: master
         - run: ls
