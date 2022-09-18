@@ -43,7 +43,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: cd wholeinone-server && chmod +x gradlew
     
     - name: Restore keystore
       run : echo $BASE64KEYSTORE | base64 -d > keystore.jks
