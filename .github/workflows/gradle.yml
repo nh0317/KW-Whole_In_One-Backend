@@ -27,7 +27,7 @@ jobs:
         ref: master
     - run: cd wholeinone-client && npm install --save --legacy-peer-deps
 #     - run: cd wholeinone-client && npm audit fix
-    - run: cd wholeinone-client && npm rum build
+    - run: cd wholeinone-client && CI=false npm rum build
     
     - uses: actions/checkout@v3
       with:
