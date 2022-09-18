@@ -43,13 +43,13 @@ jobs:
         distribution: 'temurin'
         
     - name: Grant execute permission for gradlew
-      run: cd wholeinone-server && chmod +x gradlew
+      run: chmod +x wholeinone-server/gradlew
     
     - name: Restore keystore
-      run : echo $BASE64KEYSTORE | base64 -d > keystore.jks
+      run : echo $BASE64KEYSTORE | base64 -d > wholeinone-server/keystore.jks
     
     - name: Build with Gradle
-      run: ./gradlew clean build -x test
+      run: wholeinone-server/gradlew clean build -x test
     
     - name: put jar file
       # You may pin to the exact commit or the version.
@@ -60,7 +60,7 @@ jobs:
         username: ${{ secrets.HOST_USERNAME }}
         password: ${{ secrets.HOST_PW }}
         port: 22
-        source: "./build/libs/*.jar"
+        source: "wholeinone-server/build/libs/*.jar"
         target: "/home/ec2-user/deploy"
         strip_components: 2
         
