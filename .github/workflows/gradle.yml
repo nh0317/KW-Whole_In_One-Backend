@@ -47,6 +47,10 @@ jobs:
     
     - name: Restore keystore
       run : echo $BASE64KEYSTORE | base64 -d > wholeinone-server/keystore.jks
+      
+      
+    - name: Restore ssl-keystore
+      run : echo $BASE64SSL | base64 -d > wholeinone-server/ssl-keystore.p12
     
     - name: Build with Gradle
       run: cd wholeinone-server && ./gradlew clean build -x test
