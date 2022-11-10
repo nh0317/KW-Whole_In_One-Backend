@@ -44,7 +44,7 @@ jobs:
       run: chmod +x wholeinone-server/gradlew
     
     - name: Restore keystore
-      run : echo $BASE64KEYSTORE | base64 -d > wholeinone-server/keystore.jks
+      run : echo $BASE64KEYSTORE | base64 -d > wholeinone-server/src/main/resources/keystore.jks
       
       
     - name: Restore ssl-keystore
