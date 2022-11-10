@@ -44,11 +44,14 @@ jobs:
       run: chmod +x wholeinone-server/gradlew
     
     - name: Restore keystore
-      run : echo ${{BASE64KEYSTORE}} | base64 -d -i > wholeinone-server/keystore.jks && ls -a wholeinone-server/src/main/resources
-      
+      run : echo $KEYSTORE | base64 -d -i > wholeinone-server/keystore.jks
+      env:
+        KEYSTORE: ${{ secrets.BASE64KEYSTORE }}      
       
     - name: Restore ssl-keystore
-      run : echo ${{BASE64SSL}} | base64 -d -i > wholeinone-server/ssl-keystore.p12 && ls -a wholeinone-server
+      run : echo $KEYSTORE | base64 -d -i > wholeinone-server/ssl-keystore.p12
+      env:
+        KEYSTORE: ${{ secrets.BASE64SSL }}
     
     - name: Build with Gradle
       run: cd wholeinone-server && ./gradlew clean build -x test
