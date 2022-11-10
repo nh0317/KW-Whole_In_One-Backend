@@ -7,6 +7,6 @@ spring:
 encrypt:
   key-store:
     alias: tacokey
-    location: classpath:/keystore.jks
+    location: keystore.jks
     password: wholeinone
     secret: wholeinone
