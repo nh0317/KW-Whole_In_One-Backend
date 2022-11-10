@@ -9,9 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "test" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "test" ]
 
 permissions:
   contents: read
@@ -41,8 +41,6 @@ jobs:
         distribution: 'temurin'
         
     - name: Grant execute permission for gradlew
-      env:
-        CI: ""
       run: chmod +x wholeinone-server/gradlew
     
     - name: Restore keystore
@@ -54,7 +52,9 @@ jobs:
     
     - name: Build with Gradle
       run: cd wholeinone-server && ./gradlew clean build -x test
-    
+      env:
+        CI: ""
+        
     - name: put jar file
       # You may pin to the exact commit or the version.
       # uses: appleboy/scp-action@master
