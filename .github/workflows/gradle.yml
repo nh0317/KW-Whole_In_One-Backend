@@ -64,7 +64,7 @@ jobs:
         username: ${{ secrets.HOST_USERNAME }}
         password: ${{ secrets.HOST_PW }}
         port: 22
-        run: ll 
+        run: cd wholeinone-server
         source: "./build/libs/*.jar"
         target: "/home/ec2-user/deploy"
         strip_components: 2
